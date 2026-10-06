@@ -148,7 +148,7 @@ export function Contact({ index }: SectionProps) {
           <p className="contact__copyright">
             © {year} {profile.name} · Delhi NCR
           </p>
-          <p className="contact__colophon">Set in Cormorant Garamond, Pirata One, Barlow Condensed, Dela Gothic One &amp; Newsreader. Sanskrit in Tiro Devanagari.</p>
+          <p className="contact__colophon">Set in Pirata One, Barlow Condensed, Dela Gothic One &amp; Newsreader.</p>
           <div className="contact__actions">
             <NotesButton />
             <button type="button" className="contact__top" onClick={() => scrollToSection('top')}>

@@ -1,4 +1,4 @@
-import { Component, useEffect, useState, type ComponentType, type ReactNode } from 'react';
+import { Component, lazy, Suspense, useEffect, useState, type ComponentType, type ReactNode } from 'react';
 import { gsap, ScrollTrigger, useGSAP } from './lib/gsap';
 import { flags, prefersReducedMotion } from './lib/motion';
 import { naturalTop, startSmoothScroll } from './lib/scroll';
@@ -10,6 +10,9 @@ import { DeepToast } from './components/deep/DeepToast';
 import { LinerNotes } from './components/deep/LinerNotes';
 
 export type SectionProps = { index: number };
+
+/* The lake cover (मानसरोवर) is saved, not shipped on the page: its own chunk, at /?only=lake. */
+const LakePage = lazy(() => import('./sections/Lake/Lake').then((m) => ({ default: m.LakePage })));
 type Section = ComponentType<SectionProps>;
 
 /* The hero ships in the main bundle for a fast first paint; the drawers below the
@@ -191,6 +194,18 @@ export default function App() {
         <SvgDefs />
         <Kit />
       </>
+    );
+  }
+  if (flags.only === 'lake') {
+    return (
+      <div className="is-preview">
+        <SvgDefs />
+        <Suspense fallback={null}>
+          <LakePage />
+        </Suspense>
+        <div className="grain" aria-hidden="true" />
+        <LinerNotes />
+      </div>
     );
   }
   if (flags.only) return <Preview id={flags.only} />;

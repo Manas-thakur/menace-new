@@ -1,10 +1,9 @@
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { gsap, useGSAP } from '../../lib/gsap';
-import { deepCut } from '../../data/deep';
-import { discover } from '../../lib/deep';
-import { useReveal } from './useReveal';
+import { useReveal } from '../Hero/useReveal';
+import { found, swanSaying } from './verses';
 
-/* Deep cut 02. A hamsa crosses the lake of the mind, as Kālidāsa's royal swans fly
+/* (Saved cover.) Its second message. A hamsa crosses the lake of the mind, as Kālidāsa's royal swans fly
  * north to Mānasa. Stop it (rest on it, tap it, or focus it) and it bows to drink:
  * the old saying that a swan, given milk mixed with water, takes the milk and leaves
  * the water. */
@@ -35,7 +34,7 @@ const HEAD_BOW = { x: 23.5, y: 67.5, rotation: 70 };
 const BEAK_TIP_X = 176.7 / 200; // where the beak meets the water, as a fraction of the drawing
 
 export function Swan({ width, ready, still, reduced, onWake, onNote }: SwanProps) {
-  const cut = deepCut('swan');
+  const cut = swanSaying;
   const rootRef = useRef<HTMLDivElement>(null);
   const flipRef = useRef<SVGGElement>(null);
   const neckRef = useRef<SVGPathElement>(null);
@@ -45,7 +44,7 @@ export function Swan({ width, ready, still, reduced, onWake, onNote }: SwanProps
   const widthRef = useRef(width);
   widthRef.current = width;
   const [focused, setFocused] = useState(false);
-  const note = useReveal(() => discover('swan'), { linger: 3800, enabled: ready });
+  const note = useReveal(() => found('swan'), { linger: 3800, enabled: ready });
   const [noteX, setNoteX] = useState(0);
 
   const place = () => {

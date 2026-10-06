@@ -1,0 +1,710 @@
+/* Saved, not live (see Lake.tsx) — the cover that was: मानसरोवर, the lake of the mind.
+ * A page from an album — a dawn painting of the lake under Kailash, ruled in gold
+ * on a flowered margin. Sky and water are canvas (scene.ts, water.ts); everything a
+ * visitor reads or presses is HTML laid over the painting. */
+
+.cover-lake {
+  background: var(--color-paper-2);
+  color: var(--color-ink);
+}
+
+.lake {
+  --side: clamp(0.75rem, 1.4vw, 2rem);
+  --top: clamp(3rem, 4.4vw, 5rem);
+  --bottom: clamp(3rem, 4.2vw, 4.75rem);
+  --plaque-x: clamp(0.75rem, 2.4vw, 3rem);
+  --plaque-w: min(22.5rem, calc(100% - 2 * var(--plaque-x)));
+  --verse-w: min(32rem, calc(100% - 2rem));
+  position: relative;
+  display: grid;
+  grid-template-rows: var(--top) minmax(0, 1fr) var(--bottom);
+  height: 100svh;
+  min-height: 34rem;
+  padding-inline: var(--side);
+  overflow: clip;
+}
+/* a phone on its side: let the page run taller than the screen and scroll to the water */
+@media (max-height: 30rem) and (orientation: landscape) {
+  .lake {
+    min-height: 40rem;
+  }
+}
+.lake.is-intro {
+  visibility: hidden;
+}
+
+/* the album page: small gold flowers scattered over buff paper */
+.lake::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-color: var(--color-gold-deep);
+  opacity: 0.2;
+  -webkit-mask: url('/textures/flower.svg') 0 0 / 22px 22px repeat;
+  mask: url('/textures/flower.svg') 0 0 / 22px 22px repeat;
+}
+
+/* ── Margins ──────────────────────────────────────────── */
+.lake__margin {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-sm);
+  padding-inline: 0.15rem;
+  color: var(--color-ink-soft);
+  font: 400 var(--text-xs) / 1.2 var(--font-mono);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+}
+.lake__margin > * {
+  margin: 0;
+}
+.lake__margin > :first-child {
+  justify-self: start;
+}
+.lake__margin > :last-child {
+  justify-self: end;
+}
+.lake__margin > :nth-child(2) {
+  grid-column: 2;
+}
+
+.lake__cartouche {
+  display: flex;
+  align-items: center;
+  gap: 0.65em;
+  padding: 0.38em 1.15em 0.34em;
+  border: 1px solid var(--color-gold-deep);
+  border-radius: var(--radius-pill);
+  background: var(--color-paper);
+  box-shadow:
+    0 0 0 3px var(--color-paper-2),
+    0 0 0 4px color-mix(in oklch, var(--color-gold-deep) 55%, transparent);
+  color: var(--color-ink);
+  letter-spacing: 0.01em;
+  text-transform: none;
+  white-space: nowrap;
+}
+.lake__cartouche-deva {
+  color: var(--color-crimson);
+  font: 400 var(--text-md) / 1 var(--font-sanskrit);
+}
+.lake__cartouche-en {
+  font: italic 400 var(--text-sm) / 1 var(--font-serif);
+}
+.lake__cartouche-name {
+  display: none;
+}
+
+.lake__folio,
+.lake__places {
+  display: none;
+}
+
+.lake__nav {
+  display: none;
+}
+.lake__nav ul {
+  display: flex;
+  gap: clamp(1rem, 1.7vw, 2.5rem);
+}
+.lake__nav a {
+  display: block;
+  padding-block: 0.35em;
+  background: linear-gradient(currentColor 0 0) 0 100% / 0 1px no-repeat;
+  color: var(--color-ink);
+  font: 600 var(--text-sm) / 1 var(--font-condensed);
+  letter-spacing: var(--tracking-wide);
+  transition:
+    background-size var(--dur-short) var(--ease-out),
+    color var(--dur-short) var(--ease-out);
+}
+.lake__nav a:active {
+  color: var(--color-crimson-deep);
+}
+@media (hover: hover) and (pointer: fine) {
+  .lake__nav a:hover {
+    background-size: 100% 1px;
+    color: var(--color-crimson);
+  }
+}
+
+.lake__time {
+  color: var(--color-ink);
+  font-variant-numeric: tabular-nums;
+}
+.lake__colon {
+  font-weight: inherit;
+  animation: lake-colon 2s steps(1) infinite;
+}
+@keyframes lake-colon {
+  50% {
+    opacity: 0.2;
+  }
+}
+
+.lake__cue {
+  display: grid;
+  place-items: center;
+  width: clamp(2.25rem, 2.6vw, 3.25rem);
+  aspect-ratio: 1;
+  padding: 0;
+  border: 1px solid var(--color-ink-soft);
+  border-radius: 50%;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font: 400 var(--text-md) / 1 var(--font-serif);
+  cursor: pointer;
+  transition:
+    background-color var(--dur-short) var(--ease-out),
+    border-color var(--dur-short) var(--ease-out);
+}
+.lake__cue span {
+  animation: lake-cue 2.4s var(--ease-in-out) infinite;
+}
+@keyframes lake-cue {
+  50% {
+    transform: translateY(3px);
+  }
+}
+.lake__cue:active {
+  background: var(--color-paper-3);
+}
+@media (hover: hover) and (pointer: fine) {
+  .lake__cue:hover {
+    border-color: var(--color-gold-deep);
+    background: var(--color-gold);
+  }
+}
+
+@media (min-width: 40rem) {
+  .lake__folio,
+  .lake__places {
+    display: block;
+  }
+  .lake__cartouche-name {
+    display: inline;
+  }
+}
+@media (min-width: 64rem) {
+  .lake__nav {
+    display: block;
+  }
+}
+
+/* ── The painting, ruled in ink and gold ──────────────── */
+.lake__frame {
+  position: relative;
+  z-index: 1;
+  min-height: 0;
+}
+.lake__painting {
+  position: absolute;
+  inset: 0;
+  overflow: clip;
+  isolation: isolate;
+  background: var(--color-lake-deep);
+  box-shadow:
+    0 0 0 1px var(--color-ink),
+    0 0 0 4px var(--color-gold-deep),
+    0 0 0 5px var(--color-ink),
+    0 0 0 9px var(--color-paper-2),
+    0 0 0 10px color-mix(in oklch, var(--color-gold-deep) 70%, transparent);
+  -webkit-tap-highlight-color: transparent;
+}
+/* water.ts sizes the sky canvas a little wider than the painting and pulls it left */
+.lake__sky,
+.lake__water {
+  position: absolute;
+  left: 0;
+  display: block;
+  width: 100%;
+}
+.lake__sky {
+  top: 0;
+  height: var(--horizon, 60%);
+}
+.lake__water {
+  top: var(--horizon, 60%);
+  height: var(--water, 40%);
+}
+
+/* ── The name, standing on the water ──────────────────── */
+.lake__name {
+  --name-size: min(14.5vw, calc(var(--horizon, 50svh) * 0.31));
+  position: absolute;
+  z-index: 3;
+  top: calc(var(--horizon, 60%) - var(--name-base, 0.82em));
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  font: 600 var(--name-size) / 1 var(--font-display);
+  /* nothing below the water line: the letters stand in the lake */
+  clip-path: inset(-0.6em -0.3em calc(100% - var(--name-base, 0.82em)) -0.3em);
+  pointer-events: none;
+  filter: drop-shadow(0 0.03em 0.2em color-mix(in oklch, var(--color-indigo-night) 50%, transparent));
+}
+@media (min-width: 48rem) {
+  .lake__name {
+    --name-size: min(10.8vw, calc(var(--horizon, 50svh) * 0.31));
+  }
+}
+.lake__name-line {
+  position: relative;
+  white-space: nowrap;
+  background: linear-gradient(180deg, var(--color-dawn-gold) 14%, var(--color-gold) 52%, var(--color-gold-deep) 96%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.lake__probe {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  vertical-align: baseline;
+}
+
+/* ── Swan ─────────────────────────────────────────────── */
+.swan {
+  --swan-w: clamp(4.25rem, 6.6vw, 9.5rem);
+  position: absolute;
+  z-index: 4;
+  top: calc(var(--horizon, 60%) + var(--water, 40%) * var(--lane, 0.2) - var(--swan-w) * 0.5);
+  left: 0;
+  width: var(--swan-w);
+  will-change: transform;
+}
+.swan__btn {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.swan__art {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.swan__stop-lit {
+  stop-color: var(--color-sticker);
+}
+.swan__stop-shade {
+  stop-color: var(--color-snow-shade);
+}
+.swan__fill {
+  fill: url(#swan-plumage);
+}
+.swan__neck {
+  fill: none;
+  stroke: var(--color-sticker);
+  stroke-width: 9;
+  stroke-linecap: round;
+}
+.swan__wing {
+  fill: none;
+  stroke: var(--color-snow-shade);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+.swan__feather {
+  fill: none;
+  stroke: var(--color-snow-shade);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  opacity: 0.8;
+}
+.swan__beak {
+  fill: var(--color-tape);
+}
+.swan__knob,
+.swan__eye {
+  fill: var(--color-ink);
+}
+.swan__wake {
+  fill: none;
+  stroke: var(--color-paper-3);
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  opacity: 0.45;
+}
+.swan__waterline {
+  fill: none;
+  stroke: var(--color-lake-deep);
+  stroke-width: 1.5;
+  opacity: 0.5;
+}
+/* while it drinks, its note lies over everything else on the water */
+.swan.is-drinking {
+  z-index: 8;
+}
+.swan.is-drinking .swan__wake {
+  opacity: 0;
+  transition: opacity 1.2s var(--ease-out);
+}
+
+.swan__note {
+  position: absolute;
+  z-index: 1;
+  top: calc(100% + 0.25rem);
+  left: var(--note-x, 0);
+  display: grid;
+  gap: 0.25rem;
+  width: min(22rem, 82vw);
+  margin: 0;
+  padding: 0.95rem 1.1rem 1rem;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  box-shadow:
+    inset 0 0 0 1px var(--color-gold-deep),
+    var(--shadow-paper);
+  opacity: 0;
+  visibility: hidden;
+  translate: 0 6px;
+  pointer-events: none;
+  transition:
+    opacity var(--dur-long) var(--ease-out),
+    translate var(--dur-long) var(--ease-out),
+    visibility 0s linear var(--dur-long);
+}
+.swan.is-drinking .swan__note {
+  opacity: 1;
+  visibility: visible;
+  translate: 0 0;
+  transition-delay: 0.6s, 0.6s, 0s;
+}
+.swan__note-deva {
+  color: var(--color-crimson-deep);
+  font: 400 var(--text-sm) / 1.45 var(--font-sanskrit);
+}
+.swan__note-line {
+  margin-top: 0.35rem;
+  font: italic 400 var(--text-sm) / 1.4 var(--font-serif);
+}
+
+/* ── Lotus lanterns, still burning from the night ─────── */
+.lanterns {
+  --lantern: clamp(1.9rem, 3vw, 4.5rem);
+  position: absolute;
+  z-index: 2;
+  inset: var(--horizon, 60%) 0 0;
+  pointer-events: none;
+}
+.lantern {
+  --size: calc(var(--lantern) * (0.45 + var(--depth) * 1.25));
+  position: absolute;
+  top: calc(var(--depth) * 100% - var(--size) * 0.72);
+  width: var(--size);
+  aspect-ratio: 60 / 48;
+  animation: lantern-drift var(--dur) ease-in-out var(--delay) infinite alternate;
+}
+@keyframes lantern-drift {
+  to {
+    translate: var(--drift) 0;
+  }
+}
+.lantern__glow {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  width: 280%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, color-mix(in oklch, var(--color-dawn-gold) 42%, transparent), transparent);
+  animation: lantern-flicker 2.6s ease-in-out infinite alternate;
+}
+@keyframes lantern-flicker {
+  to {
+    opacity: 0.72;
+  }
+}
+.lantern__streak {
+  position: absolute;
+  top: 80%;
+  left: 50%;
+  width: 46%;
+  height: 300%;
+  translate: -50% 0;
+  background: radial-gradient(50% 100% at 50% 0%, color-mix(in oklch, var(--color-saffron) 50%, transparent), transparent);
+}
+.lantern__art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  animation: lantern-bob 4.4s ease-in-out infinite alternate;
+}
+@keyframes lantern-bob {
+  to {
+    transform: translateY(1.5px) rotate(1.4deg);
+  }
+}
+.lantern__leaf {
+  fill: color-mix(in oklch, var(--color-leaf-deep) 55%, var(--color-lake-deep));
+}
+.lantern__petal-back {
+  fill: var(--color-lotus-deep);
+}
+.lantern__light {
+  fill: var(--color-dawn-gold);
+}
+.lantern__petal {
+  fill: var(--color-lotus);
+  stroke: var(--color-dawn-gold);
+  stroke-width: 0.8;
+}
+
+/* ── The near shore ───────────────────────────────────── */
+.lake__shore {
+  position: absolute;
+  z-index: 5;
+  right: -0.5%;
+  bottom: -0.5%;
+  width: clamp(12rem, 25vw, 36rem);
+  height: auto;
+  pointer-events: none;
+}
+/* on a phone the text panel takes the near water, so the lotus floats further out */
+@media (max-width: 47.99rem) {
+  .lake__shore {
+    bottom: calc(var(--water, 40%) * 0.38);
+    width: 9.5rem;
+    opacity: 0.92;
+  }
+}
+.lotus__stop-heart {
+  stop-color: var(--color-paper);
+}
+.lotus__stop-petal {
+  stop-color: var(--color-lotus);
+}
+.lotus__stop-tip {
+  stop-color: var(--color-lotus-deep);
+}
+.lotus__stop-leaf-lit {
+  stop-color: color-mix(in oklch, var(--color-leaf) 50%, var(--color-dawn-gold));
+}
+.lotus__stop-leaf {
+  stop-color: color-mix(in oklch, var(--color-leaf-deep) 62%, var(--color-lake-deep));
+}
+.lotus__stop-leaf-deep {
+  stop-color: color-mix(in oklch, var(--color-leaf-deep) 34%, var(--color-lake-deep));
+}
+.lotus__pad {
+  fill: url(#lotus-leaf);
+}
+.lotus__vein {
+  fill: none;
+  stroke: color-mix(in oklch, var(--color-leaf) 30%, transparent);
+  stroke-width: 1;
+}
+.lotus__rim {
+  fill: none;
+  stroke: color-mix(in oklch, var(--color-dawn-gold) 45%, transparent);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+}
+.lotus__stalk {
+  fill: none;
+  stroke: color-mix(in oklch, var(--color-leaf-deep) 70%, var(--color-lake-deep));
+  stroke-width: 3.5;
+  stroke-linecap: round;
+}
+.lotus__petal {
+  fill: url(#lotus-petal);
+  stroke: color-mix(in oklch, var(--color-lotus-deep) 55%, transparent);
+  stroke-width: 0.8;
+}
+.lotus__petal--back {
+  opacity: 0.88;
+}
+.lotus__seed {
+  fill: var(--color-gold);
+}
+.lotus__stamen {
+  fill: var(--color-saffron);
+}
+.lotus__sway {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: lotus-sway 7s ease-in-out infinite alternate;
+}
+@keyframes lotus-sway {
+  from {
+    rotate: -1.5deg;
+  }
+  to {
+    rotate: 2deg;
+  }
+}
+
+/* ── What the still water shows ───────────────────────── */
+/* centred under the name; on wide screens, stepping right of the text panel if it is in the way */
+.lake__verse,
+.lake__hint {
+  position: absolute;
+  z-index: 6;
+  top: calc(var(--horizon, 60%) + var(--refl, 4rem) + var(--water, 40%) * 0.05);
+  left: 50%;
+}
+@media (min-width: 40rem) and (min-aspect-ratio: 1/1) {
+  .lake {
+    --verse-w: min(32rem, calc(100% - var(--plaque-x) * 2 - var(--plaque-w) - 3rem));
+  }
+  .lake__verse,
+  .lake__hint {
+    left: max(50%, calc(var(--plaque-x) + var(--plaque-w) + 1.5rem + var(--verse-w) / 2));
+  }
+}
+.lake__verse {
+  width: var(--verse-w);
+  margin: 0;
+  translate: -50% 0;
+  text-align: center;
+  pointer-events: none;
+}
+/* the deep water under the words, so they read over the reflected dawn */
+.lake__verse::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -30% -12%;
+  background: radial-gradient(closest-side, color-mix(in oklch, var(--color-lake-deep) 62%, transparent), transparent);
+  opacity: 0;
+  transition: opacity 1.6s var(--ease-out);
+}
+.lake[data-verse] .lake__verse::before {
+  opacity: 1;
+}
+.lake__verse > * {
+  margin: 0;
+  opacity: 0;
+}
+.lake__verse-deva {
+  color: var(--color-gold);
+  font: 400 var(--text-xl) / 1.2 var(--font-sanskrit);
+}
+.lake__verse-en {
+  margin-top: 0.35em;
+  color: var(--color-paper);
+  font: italic 400 var(--text-md) / 1.35 var(--font-serif);
+  text-wrap: balance;
+}
+.lake__verse-src {
+  margin-top: 0.7em;
+  color: var(--color-paper-3);
+  font: 400 var(--text-xs) / 1.3 var(--font-mono);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+}
+.lake__verse-name {
+  display: none;
+  max-width: 30rem;
+  margin: 1em auto 0;
+  color: var(--color-paper-2);
+  font: 400 var(--text-sm) / 1.45 var(--font-serif);
+  text-wrap: balance;
+}
+/* the line about the name needs room under the verse; short and narrow screens keep the verse alone */
+@media (min-width: 40rem) and (min-height: 47rem) {
+  .lake__verse-name {
+    display: block;
+  }
+}
+
+.lake__hint {
+  padding: 0.55em 1em;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: color-mix(in oklch, var(--color-lake-deep) 45%, transparent);
+  color: var(--color-paper-2);
+  font: italic 400 var(--text-sm) / 1.2 var(--font-serif);
+  white-space: nowrap;
+  translate: -50% 0;
+  cursor: pointer;
+  transition:
+    translate 1.4s var(--ease-out),
+    background-color var(--dur-short) var(--ease-out),
+    color var(--dur-short) var(--ease-out);
+}
+.lake[data-verse] .lake__hint {
+  translate: -50% calc(var(--verse-h, 8rem) + 0.75rem);
+}
+.lake__hint:active {
+  background: color-mix(in oklch, var(--color-lake-deep) 80%, transparent);
+}
+@media (hover: hover) and (pointer: fine) {
+  .lake__hint:hover {
+    color: var(--color-gold);
+    background: color-mix(in oklch, var(--color-lake-deep) 70%, transparent);
+  }
+}
+
+/* ── The text panel, as in the corner of a miniature ──── */
+.lake__plaque {
+  position: absolute;
+  z-index: 6;
+  bottom: var(--plaque-x);
+  left: var(--plaque-x);
+  width: var(--plaque-w);
+  padding: clamp(0.9rem, 1.1vw, 1.5rem) clamp(1rem, 1.35vw, 1.75rem) clamp(0.95rem, 1.1vw, 1.5rem);
+  background: var(--color-paper-2);
+  color: var(--color-ink);
+  box-shadow:
+    inset 0 0 0 1px var(--color-gold-deep),
+    inset 0 0 0 4px var(--color-paper-2),
+    inset 0 0 0 5px color-mix(in oklch, var(--color-crimson) 65%, transparent),
+    var(--shadow-paper);
+}
+.lake__plaque > * {
+  margin: 0;
+}
+.lake__role {
+  color: var(--color-crimson-deep);
+  font: 400 var(--text-xs) / 1.2 var(--font-mono);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+.lake__tagline {
+  margin-top: 0.45em;
+  font: 400 var(--text-md) / 1.38 var(--font-serif);
+  text-wrap: pretty;
+}
+.lake__cuts {
+  margin-top: 0.8em;
+  padding: 0.2em 0;
+  border: 0;
+  background: linear-gradient(currentColor 0 0) 0 100% / 100% 1px no-repeat;
+  color: var(--color-ink);
+  font: 700 var(--text-sm) / 1.1 var(--font-condensed);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color var(--dur-short) var(--ease-out);
+}
+.lake__cuts span {
+  display: inline-block;
+  transition: translate var(--dur-short) var(--ease-out);
+}
+.lake__cuts:active {
+  color: var(--color-crimson-deep);
+}
+@media (hover: hover) and (pointer: fine) {
+  .lake__cuts:hover {
+    color: var(--color-crimson);
+  }
+  .lake__cuts:hover span {
+    translate: 0.25em 0;
+  }
+}

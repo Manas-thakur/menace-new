@@ -1,44 +1,23 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type PointerEvent } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import type { SectionProps } from '../../App';
 import { Drawer } from '../../components/primitives/Drawer';
-import { gsap, useGSAP } from '../../lib/gsap';
+import { gsap, SplitText, useGSAP } from '../../lib/gsap';
 import { flags, prefersReducedMotion } from '../../lib/motion';
 import { scrollToSection } from '../../lib/scroll';
 import { profile } from '../../data/profile';
 import { deepCut, deepCuts } from '../../data/deep';
 import { discover, openLinerNotes } from '../../lib/deep';
-import { Lake } from './lake';
-import { Swan } from './Swan';
-import { Lanterns, LotusShore } from './Lotus';
+import { useReveal } from './useReveal';
+import { Skyline } from './Skyline';
+import { Cloud, Kites } from './Sky';
+import { Dial } from './Dial';
 import './Hero.css';
+import './Dial.css';
 
-/* Side A, the cover: मानसरोवर, the lake of the mind.
- *
- * Manas is Sanskrit for the mind, and Mānasarovar, under Kailash, is the lake the mind
- * made. The name stands on its water at first light; the water answers in the name's
- * own script. The lake breathes while the visitor moves. Be still, and it stills too —
- * and, as Patañjali says of the mind, shows what lies beneath (deep cut 01). */
-
-const STILL_MS = 2600; // how long a visitor has to be still before the lake follows
-const SETTLE_MS = 1300; // the water settling before the verse comes up through it
-const REFLECTION_WIDTH = 0.9; // the name in its own script, as a share of the written name's width
-
-const CONTENTS = [
-  { id: 'about', label: 'About' },
-  { id: 'work', label: 'Work' },
-  { id: 'projects', label: 'Projects' },
-  { id: 'photos', label: 'Photos' },
-  { id: 'contact', label: 'Contact' },
-];
-
-/** Where the water begins, as a share of the painting's height: lower on tall screens. */
-function horizonFor(W: number, H: number) {
-  const wide = Math.min(1, Math.max(0, (W / H - 0.75) / 0.6));
-  return Math.round(H * (0.47 + 0.1 * wide));
-}
-
-/** The swan's lane, as a share of the water's depth. */
-const laneFor = (W: number, H: number) => (W / H > 1 ? 0.2 : 0.16);
+// Mughal arch in object-bounding-box units (0–1), shared by the clip and the frame.
+const ARCH = 'M0 1V.44C0 .27 .2 .17 .37 .1C.45 .067 .485 .04 .5 0C.515 .04 .55 .067 .63 .1C.8 .17 1 .27 1 .44V1Z';
+const FRAME = 'M0 100V44C0 27 20 17 37 10C45 6.7 48.5 4 50 0C51.5 4 55 6.7 63 10C80 17 100 27 100 44V100';
+const FRAME_IN = 'M2.2 100V45C2.2 28.6 21.6 18.8 37.9 12.1C45.4 9 48.6 6.5 50 2.9C51.4 6.5 54.6 9 62.1 12.1C78.4 18.8 97.8 28.6 97.8 45V100';
 
 function useLocalTime(timeZone: string) {
   const fmt = useMemo(
@@ -53,470 +32,258 @@ function useLocalTime(timeZone: string) {
   return time;
 }
 
-type Geo = { W: number; H: number; horizon: number; lane: number };
-
-export function Hero({ index }: SectionProps) {
-  const stageRef = useRef<HTMLDivElement>(null);
-  const paintRef = useRef<HTMLDivElement>(null);
-  const skyRef = useRef<HTMLCanvasElement>(null);
-  const waterRef = useRef<HTMLCanvasElement>(null);
-  const nameRef = useRef<HTMLHeadingElement>(null);
-  const lineRef = useRef<HTMLSpanElement>(null);
-  const probeRef = useRef<HTMLSpanElement>(null);
-  const verseElRef = useRef<HTMLDivElement>(null);
-  const lakeRef = useRef<Lake | null>(null);
-  const geoRef = useRef<Geo | null>(null);
-
-  const [reduced] = useState(prefersReducedMotion);
-  const [intro] = useState(() => !flags.noIntro && !reduced);
-  // the hidden messages wait for the intro to land, so a reveal never fights it
-  const [introDone, setIntroDone] = useState(() => !intro);
-  const [swanReady, setSwanReady] = useState(() => !intro);
-  const [geo, setGeo] = useState<Geo | null>(null);
-  const [visible, setVisible] = useState(true);
-  const [still, setStill] = useState(false);
-  const [verse, setVerse] = useState(false);
-
-  const mind = deepCut('mind');
+function Ticket() {
   const time = useLocalTime(profile.timeZone);
   const [hh, mm] = time.split(':');
+  return (
+    <aside className="hero__ticket" aria-label="Now playing">
+      <div className="ticket">
+        <div className="ticket__stub" aria-hidden="true">
+          <span>Admit one</span>
+        </div>
+        <div className="ticket__body">
+          <p className="ticket__now">
+            <i className="ticket__dot loop" aria-hidden="true" /> Now playing
+          </p>
+          <p className="ticket__title">{profile.now}</p>
+          <p className="ticket__line">{profile.tagline}</p>
+          <p className="ticket__meta">
+            <span>Delhi × Daegu × Palo Alto</span>
+            <span>
+              <time aria-label={`${time} India Standard Time`}>
+                {hh}
+                <b className="ticket__colon loop" aria-hidden="true">
+                  :
+                </b>
+                {mm}
+              </time>{' '}
+              IST
+            </span>
+          </p>
+          <button type="button" className="ticket__cuts" onClick={() => openLinerNotes()}>
+            {deepCuts.length} deep cuts inside <span aria-hidden="true">→</span>
+          </button>
+        </div>
+      </div>
+    </aside>
+  );
+}
 
-  /* ── Layout: the painting's size, the water line, the name standing on it ── */
-  const layout = useCallback(() => {
-    const paint = paintRef.current;
-    const lake = lakeRef.current;
-    const name = nameRef.current;
-    const line = lineRef.current;
-    const probe = probeRef.current;
-    if (!paint || !lake || !name || !line || !probe) return;
-    const W = paint.clientWidth;
-    const H = paint.clientHeight;
-    if (!W || !H) return;
-    const horizon = horizonFor(W, H);
-    const lane = laneFor(W, H);
-    paint.style.setProperty('--horizon', `${horizon}px`);
-    paint.style.setProperty('--water', `${H - horizon}px`);
-    paint.style.setProperty('--lane', String(lane));
-    lake.resize(W, H, horizon);
-    // the probe is an empty inline box sitting on the baseline: lift the name until
-    // that baseline is the water line
-    name.style.setProperty('--name-base', `${line.offsetTop + probe.offsetTop}px`);
-    const width = line.offsetWidth;
-    const cx = name.offsetLeft + line.offsetLeft + width / 2;
-    const cs = getComputedStyle(line);
-    const family = getComputedStyle(paint).getPropertyValue('--font-sanskrit').trim();
-    lake.setText({
-      latin: { text: `${profile.first} ${profile.last}`, font: `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`, cx },
-      deva: { text: profile.devanagari, family, cx, maxWidth: width * REFLECTION_WIDTH },
-    });
-    paint.style.setProperty('--refl', `${Math.round(lake.reflectionDepth)}px`);
-    const next = { W, H, horizon, lane };
-    geoRef.current = next;
-    setGeo((prev) => (prev && prev.W === W && prev.H === H && prev.horizon === horizon ? prev : next));
-  }, []);
+/** Where the name tag hangs: from the top of the name's last letter, kept on screen. */
+type TagPos = { x: number; y: number; threadX: number };
+
+export function Hero({ index }: SectionProps) {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [intro] = useState(() => !flags.noIntro && !prefersReducedMotion());
+  // the hidden messages wait until the intro has landed, so a reveal never fights it
+  const [introDone, setIntroDone] = useState(() => !intro);
+
+  /* Deep cut 01 — "मानस". Rest on the name, tap it or use the keyboard button: the
+   * gothic letters flip away, the name rises in its own script, and a paper tag
+   * swings down from the last letter with what it means. */
+  const mind = deepCut('mind');
+  const name = useReveal(() => discover('mind'), { linger: 3200, enabled: introDone });
+  const [tagPos, setTagPos] = useState<TagPos | null>(null);
 
   useLayoutEffect(() => {
-    const sky = skyRef.current;
-    const water = waterRef.current;
-    const paint = paintRef.current;
-    if (!sky || !water || !paint) return;
-    const lake = new Lake(sky, water, { reduced, still: intro });
-    lakeRef.current = lake;
-    if (intro) {
-      lake.setDawn(0);
-      lake.setRise(0);
-    }
-    layout();
-    const ro = new ResizeObserver(() => layout());
-    ro.observe(paint);
-    // the hint steps down below the verse when it rises: keep its height to hand
-    const verseEl = verseElRef.current;
-    const vo = new ResizeObserver(() => verseEl && paint.style.setProperty('--verse-h', `${verseEl.offsetHeight}px`));
-    if (verseEl) vo.observe(verseEl);
-    // the reflection is drawn in the name's own script: wait for that face, then measure again
-    const deva = getComputedStyle(paint).getPropertyValue('--font-sanskrit').trim();
-    Promise.all([document.fonts.load(`400 100px ${deva}`, profile.devanagari), document.fonts.ready])
-      .then(() => lakeRef.current === lake && layout())
-      .catch(() => {});
-    return () => {
-      ro.disconnect();
-      vo.disconnect();
-      lake.destroy();
-      lakeRef.current = null;
-    };
-  }, [intro, reduced, layout]);
-
-  /* ── Is the cover on screen? The drawer marks itself offscreen or covered. ── */
-  useEffect(() => {
-    const section = stageRef.current?.closest<HTMLElement>('.drawer');
-    if (!section) return;
-    const check = () => setVisible(section.dataset.offscreen !== 'true' && section.dataset.covered !== 'true');
-    const mo = new MutationObserver(check);
-    mo.observe(section, { attributes: true, attributeFilter: ['data-offscreen', 'data-covered'] });
-    check();
-    return () => mo.disconnect();
-  }, []);
-  useEffect(() => {
-    lakeRef.current?.setVisible(visible);
-  }, [visible]);
-
-  /* ── Stillness ─────────────────────────────────────────────────────── */
-  const stillTimer = useRef<number | undefined>(undefined);
-  const settleTimer = useRef<number | undefined>(undefined);
-  const autoSettle = useRef(false);
-  const dismissed = useRef(false);
-  const stillRef = useRef(still);
-  stillRef.current = still;
-  const verseRef = useRef(verse);
-  verseRef.current = verse;
-  const armedRef = useRef(false);
-  armedRef.current = introDone && visible;
-
-  const becomeStill = useCallback((reveal: boolean, auto: boolean) => {
-    lakeRef.current?.setCalm(true);
-    setStill(true);
-    window.clearTimeout(settleTimer.current);
-    settleTimer.current = undefined;
-    if (!reveal) return;
-    autoSettle.current = auto;
-    settleTimer.current = window.setTimeout(() => {
-      settleTimer.current = undefined;
-      setVerse(true);
-    }, reduced ? 200 : SETTLE_MS);
-  }, [reduced]);
-
-  // while the swan's note is open the lake may still settle, but keeps its verse back
-  const swanOpen = useRef(false);
-  const arm = useCallback(() => {
-    window.clearTimeout(stillTimer.current);
-    // stillness only counts while someone can see the lake (not in a background tab)
-    if (!armedRef.current || document.hidden) return;
-    stillTimer.current = window.setTimeout(
-      () => becomeStill(!dismissed.current && !swanOpen.current && !verseRef.current, true),
-      STILL_MS
-    );
-  }, [becomeStill]);
-
-  /** Anything that moves the visitor's hand (or the page) stirs the water again. */
-  const unsettle = useCallback(() => {
-    if (settleTimer.current !== undefined && autoSettle.current) {
-      window.clearTimeout(settleTimer.current);
-      settleTimer.current = undefined;
-    }
-    if (stillRef.current) {
-      lakeRef.current?.setCalm(false);
-      setStill(false);
-    }
-    arm();
-  }, [arm]);
-
-  useEffect(() => {
-    if (!introDone || !visible) {
-      window.clearTimeout(stillTimer.current);
-      return;
-    }
-    arm();
-    const onScroll = () => unsettle();
-    // a tab sent to the background stops counting; a pending reveal waits for the visitor
-    const onVisibility = () => {
-      if (!document.hidden) return arm();
-      window.clearTimeout(stillTimer.current);
-      if (settleTimer.current !== undefined && autoSettle.current) {
-        window.clearTimeout(settleTimer.current);
-        settleTimer.current = undefined;
+    if (!name.open) return;
+    // Hang from beneath the first letter, into the open sky under the name — never
+    // over the name itself, and stepping left of "Thakur" if the two would touch.
+    const place = () => {
+      const wrap = wrapRef.current;
+      const first = wrap?.querySelector<HTMLElement>('.hero__first');
+      const last = wrap?.querySelector<HTMLElement>('.hero__last');
+      const card = wrap?.querySelector<HTMLElement>('.hero__name-tag');
+      if (!wrap || !first) return;
+      const w = wrap.getBoundingClientRect();
+      const r = first.getBoundingClientRect();
+      const cardW = card?.offsetWidth ?? 240;
+      const cardH = card?.offsetHeight ?? 140;
+      const anchorX = r.left - w.left + r.width * 0.14;
+      const anchorY = r.bottom - w.top - r.height * 0.1;
+      let x = Math.max(8, Math.min(anchorX - cardW * 0.3, w.width - cardW - 8));
+      const t = last?.getBoundingClientRect();
+      if (t) {
+        const tLeft = t.left - w.left;
+        const tTop = t.top - w.top;
+        const tBottom = t.bottom - w.top;
+        const overlapsY = anchorY < tBottom && anchorY + cardH > tTop;
+        if (overlapsY && x + cardW > tLeft - 8) x = Math.max(8, tLeft - 8 - cardW);
       }
+      const threadX = Math.max(16, Math.min(anchorX - x, cardW - 16));
+      setTagPos({ x, y: anchorY, threadX });
     };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    document.addEventListener('visibilitychange', onVisibility);
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      document.removeEventListener('visibilitychange', onVisibility);
-      window.clearTimeout(stillTimer.current);
-    };
-  }, [introDone, visible, arm, unsettle]);
+    place();
+    window.addEventListener('resize', place);
+    return () => window.removeEventListener('resize', place);
+  }, [name.open]);
 
-  // Leaving the cover lets the lake forget: come back, and be still again.
-  useEffect(() => {
-    if (visible) return;
-    window.clearTimeout(settleTimer.current);
-    settleTimer.current = undefined;
-    dismissed.current = false;
-    setVerse(false);
-    if (stillRef.current) {
-      lakeRef.current?.setCalm(false);
-      setStill(false);
-    }
-  }, [visible]);
-
-  useEffect(() => {
-    lakeRef.current?.setInner(verse);
-    if (verse) discover('mind');
-  }, [verse]);
-
-  useEffect(
-    () => () => {
-      window.clearTimeout(stillTimer.current);
-      window.clearTimeout(settleTimer.current);
-    },
-    []
-  );
-
-  /* ── The visitor's hand on the water ───────────────────────────────── */
-  const hand = useRef({ x: 0, y: 0, t: 0, rx: 0, ry: 0, rt: 0 });
-  const toPaint = (e: PointerEvent) => {
-    const paint = paintRef.current!;
-    const r = paint.getBoundingClientRect();
-    const k = paint.clientWidth / (r.width || 1); // the drawer may be scaled while it recedes
-    return { x: (e.clientX - r.left) * k, y: (e.clientY - r.top) * k };
-  };
-
-  const onPointerMove = (e: PointerEvent) => {
-    if (e.pointerType === 'touch') return; // a finger moving is a scroll, not a stir
-    const lake = lakeRef.current;
-    const g = geoRef.current;
-    if (!lake || !g) return;
-    const { x, y } = toPaint(e);
-    const h = hand.current;
-    const now = performance.now();
-    const dt = Math.max(8, now - h.t);
-    const speed = (Math.hypot(x - h.x, y - h.y) / dt) * 1000;
-    Object.assign(h, { x, y, t: now });
-    lake.stir(speed);
-    if (y > g.horizon + 2 && (Math.hypot(x - h.rx, y - h.ry) > 38 || now - h.rt > 140)) {
-      lake.drop(x, y - g.horizon, Math.min(0.6, Math.max(0.14, speed / 1800)), 2.2);
-      Object.assign(h, { rx: x, ry: y, rt: now });
-    }
-    unsettle();
-  };
-
-  const onPointerDown = (e: PointerEvent) => {
-    const lake = lakeRef.current;
-    const g = geoRef.current;
-    if (!lake || !g) return;
-    const { x, y } = toPaint(e);
-    if (y > g.horizon + 2 && !(e.target as HTMLElement).closest('button, a')) lake.drop(x, y - g.horizon, 1);
-    unsettle();
-  };
-
-  const onWake = useCallback((x: number, strength: number) => {
-    const g = geoRef.current;
-    if (g) lakeRef.current?.drop(x, (g.H - g.horizon) * g.lane, strength, 2.4);
-  }, []);
-
-  const onHint = () => {
-    if (verse) {
-      // Stir the water: the verse sinks, a pebble goes in, and the lake won't offer
-      // it again until the visitor comes back to it.
-      dismissed.current = true;
-      window.clearTimeout(settleTimer.current);
-      settleTimer.current = undefined;
-      setVerse(false);
-      const g = geoRef.current;
-      if (g) lakeRef.current?.drop(g.W / 2, Math.max(24, (g.H - g.horizon) * 0.45), 1.2, 3);
-      if (stillRef.current) {
-        lakeRef.current?.setCalm(false);
-        setStill(false);
-      }
-      arm();
-    } else {
-      dismissed.current = false;
-      becomeStill(true, false);
-    }
-  };
-
-  /* ── The verse comes up through the still water ─────────────────────── */
-  const verseShown = useRef(false);
+  const settled = useRef(false);
   useGSAP(
     () => {
-      if (verseShown.current === verse) return;
-      verseShown.current = verse;
-      const lines = gsap.utils.toArray<HTMLElement>('.lake__verse > *', stageRef.current);
-      if (reduced) {
-        gsap.set(lines, { opacity: verse ? 1 : 0, y: 0, filter: 'none' });
+      if (!settled.current) {
+        settled.current = true;
         return;
       }
-      if (verse) {
-        gsap.fromTo(
-          lines,
-          { opacity: 0, y: 16, filter: 'blur(6px)' },
-          { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.6, stagger: 0.32, ease: 'power2.out', overwrite: 'auto', clearProps: 'filter' }
-        );
+      const q = gsap.utils.selector(rootRef);
+      const chars = q('.hero__first .hero__char').length ? q('.hero__first .hero__char') : q('.hero__first');
+      const deva = q('.hero__deva');
+      const tag = q('.hero__name-tag');
+      if (prefersReducedMotion()) {
+        gsap.set(chars, { opacity: name.open ? 0 : 1, rotateX: 0 });
+        gsap.set(deva, { opacity: name.open ? 1 : 0, rotateX: 0 });
+        gsap.set(tag, { opacity: name.open ? 1 : 0, rotate: 0, y: 0 });
+        return;
+      }
+      if (name.open) {
+        gsap
+          .timeline()
+          .to(chars, { rotateX: 90, opacity: 0, transformPerspective: 600, duration: 0.3, ease: 'power2.in', stagger: 0.035, overwrite: 'auto' })
+          .fromTo(deva, { rotateX: -90, opacity: 0, transformPerspective: 600 }, { rotateX: 0, opacity: 1, duration: 0.65, ease: 'expoOut' }, '-=0.08')
+          .fromTo(tag, { rotate: -18, opacity: 0, y: -14 }, { rotate: 0, opacity: 1, y: 0, duration: 1.2, ease: 'elastic.out(1, 0.45)' }, '-=0.5');
       } else {
-        gsap.to(lines, { opacity: 0, y: 10, duration: 0.5, stagger: 0.05, ease: 'power2.in', overwrite: 'auto' });
+        gsap
+          .timeline()
+          .to(tag, { opacity: 0, y: -10, rotate: 8, duration: 0.3, ease: 'power2.in', overwrite: 'auto' })
+          .to(deva, { rotateX: 90, opacity: 0, transformPerspective: 600, duration: 0.3, ease: 'power2.in', overwrite: 'auto' }, 0)
+          .to(chars, { rotateX: 0, opacity: 1, transformPerspective: 600, duration: 0.55, ease: 'expoOut', stagger: 0.035, overwrite: 'auto' }, 0.22);
       }
     },
-    { dependencies: [verse], scope: stageRef }
+    { dependencies: [name.open], scope: rootRef }
   );
 
-  /* ── First light ───────────────────────────────────────────────────── */
   useGSAP(
     (_ctx, contextSafe) => {
       if (!intro || !contextSafe) return;
-      const stage = stageRef.current!;
+      const stage = rootRef.current!;
       let started = false;
       let cancelled = false;
 
       const play = contextSafe(() => {
-        // A stale run (StrictMode re-mount, fast unmount) must never start a second timeline.
+        // A stale run (StrictMode re-mount, fast unmount) must never start a second
+        // timeline: overlapping from() tweens would freeze elements mid-animation.
         if (started || cancelled) return;
-        const lake = lakeRef.current;
-        if (!lake) return;
         started = true;
-        layout();
+        const split = SplitText.create('.hero__first', { type: 'chars', charsClass: 'hero__char' });
         gsap.set(stage, { visibility: 'visible' });
-        const dawn = { p: 0 };
-        const rise = { r: 0 };
-        const g = () => geoRef.current;
 
         gsap
           .timeline({ defaults: { ease: 'expoOut' }, onComplete: () => setIntroDone(true) })
-          .from('.lake__margin > *', { opacity: 0, y: (i) => (i < 3 ? -8 : 8), duration: 1.1, stagger: 0.06, ease: 'power2.out' }, 0.1)
-          .to(dawn, { p: 1, duration: 3.8, ease: 'power1.inOut', onUpdate: () => lake.setDawn(dawn.p) }, 0.1)
-          // the first drop: a thought, and the lake wakes
-          .call(
-            () => {
-              const geo = g();
-              lake.setCalm(false);
-              if (geo) lake.drop(geo.W / 2, (geo.H - geo.horizon) * 0.42, 1.25, 3.4);
-            },
-            [],
-            0.75
-          )
-          .fromTo('.lake__name-line', { yPercent: 108 }, { yPercent: 0, duration: 2.6, ease: 'power3.out' }, 1.05)
-          .to(rise, { r: 1, duration: 2.6, ease: 'power3.out', onUpdate: () => lake.setRise(rise.r) }, 1.05)
-          .call(() => setSwanReady(true), [], 1.6)
-          .from('.lantern', { opacity: 0, duration: 2, stagger: 0.35, ease: 'power1.out' }, 1.6)
-          .from('.lake__shore', { yPercent: 12, opacity: 0, duration: 2 }, 1.3)
-          .from('.lake__plaque', { y: 28, opacity: 0, duration: 1.3 }, 2.5)
-          .from('.lake__hint', { opacity: 0, duration: 1.4, ease: 'power1.out' }, 3.1);
+          .from('.hero__arch', { scaleY: 0, transformOrigin: '50% 100%', duration: 1.15 }, 0.05)
+          .from('.hero__frame', { opacity: 0, duration: 0.6 }, 0.55)
+          .from('.hero__sun', { yPercent: 45, duration: 1.7 }, 0.1)
+          .from('.dial__ring', { rotate: -110, scale: 0.86, opacity: 0, duration: 1.25, stagger: 0.07 }, 0.2)
+          // needle drop: the arm swings in from its rest beside the platter, then lowers
+          .from('.dial__arm-swing', { rotation: -18, svgOrigin: '420 -20', duration: 1.1, ease: 'expoOut' }, 0.95)
+          .from('.dial__arm', { scale: 1.03, transformOrigin: '42% 0%', duration: 0.4, ease: 'power2.out' }, 1.85)
+          .from('.skyline__far', { yPercent: 18, opacity: 0, duration: 1.4 }, 0.45)
+          .from('.skyline__mid .landmark', { yPercent: 105, duration: 1.5, stagger: 0.11 }, 0.5)
+          .from('.skyline__bridge, .skyline__front', { yPercent: 30, opacity: 0, duration: 1.2 }, 0.62)
+          .from('.hero__cloud', { xPercent: (i) => (i ? 30 : -30), opacity: 0, duration: 1.6 }, 0.7)
+          .from(split.chars, { yPercent: -80, rotate: () => gsap.utils.random(-12, 12), opacity: 0, duration: 0.95, ease: 'slap', stagger: 0.065 }, 0.78)
+          .from('.hero__last', { clipPath: 'inset(0% 100% 0% 0%)', duration: 0.9 }, 1.08)
+          .from('.hero__stamp', { scale: 1.9, rotate: -24, opacity: 0, duration: 0.65, ease: 'slap' }, 1.25)
+          .from('.kite', { yPercent: 25, opacity: 0, duration: 1.3, stagger: 0.14 }, 1.0)
+          .from('.hero__ticket', { y: 48, rotate: 4, opacity: 0, duration: 0.95 }, 1.32)
+          .from('.hero__cue', { opacity: 0, y: -10, duration: 0.6 }, 1.65);
       });
 
-      // First light waits for someone to see it: a tab opened in the background keeps its
-      // night until it is brought forward.
-      let ready = false; // fonts are in, or we've waited long enough for them
-      const start = () => {
-        ready = true;
-        if (!document.hidden) play();
-      };
-      const onVisible = () => ready && !document.hidden && play();
-      document.addEventListener('visibilitychange', onVisible);
-      document.fonts.ready.then(start);
-      const fallback = window.setTimeout(start, 1800);
+      // Split only once the wordmark face has loaded, or the glyph boxes come out wrong.
+      document.fonts.ready.then(play);
+      const fallback = window.setTimeout(play, 1600);
       return () => {
         cancelled = true;
         window.clearTimeout(fallback);
-        document.removeEventListener('visibilitychange', onVisible);
       };
     },
-    { scope: stageRef }
+    { scope: rootRef }
   );
 
-  const g = geo;
   return (
     <Drawer id="top" index={index} label="Introduction" className="hero">
-      <div ref={stageRef} className={`lake ${intro ? 'is-intro' : ''}`} data-still={still || undefined} data-verse={verse || undefined}>
-        <div className="lake__margin lake__margin--top">
-          <p className="lake__folio">Side A · Vol. 26</p>
-          <p className="lake__cartouche">
-            <span className="lake__cartouche-deva" lang="sa">
-              मानसरोवर
-            </span>
-            <span className="lake__cartouche-en">
-              <span className="lake__cartouche-name">Mānasarovar, </span>the lake of the mind
-            </span>
-          </p>
-          <nav className="lake__nav" aria-label="Contents">
-            <ul>
-              {CONTENTS.map((c) => (
-                <li key={c.id}>
-                  <a
-                    href={`#${c.id}`}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      scrollToSection(c.id);
-                    }}
-                  >
-                    {c.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        </div>
+      <div ref={rootRef} className={`hero__stage ${intro ? 'is-intro' : ''}`}>
+        <svg width="0" height="0" className="hero__defs" aria-hidden="true" focusable="false">
+          <clipPath id="hero-arch" clipPathUnits="objectBoundingBox">
+            <path d={ARCH} />
+          </clipPath>
+          {/* rubber-stamp ink: light speckle so small type survives, slight wobble */}
+          <filter id="hero-ink" x="-5%" y="-10%" width="110%" height="120%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="21" result="speck" />
+            <feColorMatrix in="speck" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.5 1.45" result="mask" />
+            <feComposite in="SourceGraphic" in2="mask" operator="in" result="inked" />
+            <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="1" seed="2" result="warp" />
+            <feDisplacementMap in="inked" in2="warp" scale="2.5" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+        </svg>
 
-        <div className="lake__frame">
-          <div ref={paintRef} className="lake__painting" onPointerMove={onPointerMove} onPointerDown={onPointerDown}>
-            <canvas ref={skyRef} className="lake__sky" aria-hidden="true" />
-            <canvas ref={waterRef} className="lake__water" aria-hidden="true" />
-            <Lanterns />
-
-            <h1 ref={nameRef} className="lake__name">
-              <span ref={lineRef} className="lake__name-line">
-                {profile.first} {profile.last}
-                <span ref={probeRef} className="lake__probe" aria-hidden="true" />
-              </span>
-            </h1>
-            <p className="visually-hidden">
-              A painting at first light: Lake Mānasarovar below Mount Kailash. In the water the name is reflected in its own script, {profile.devanagari}.
-            </p>
-
-            {g && (
-              <Swan
-                width={g.W}
-                ready={swanReady}
-                still={still || !visible}
-                reduced={reduced}
-                onWake={onWake}
-                onNote={(open) => {
-                  swanOpen.current = open;
-                  if (!open) arm();
-                }}
-              />
-            )}
-            <LotusShore className="lake__shore" />
-
-            <div ref={verseElRef} id="lake-verse" className="lake__verse" aria-hidden={!verse}>
-              <p className="lake__verse-deva" lang="sa">
-                {mind.lines[0].text}
-              </p>
-              <p className="lake__verse-en">{mind.lines[1].text}</p>
-              <p className="lake__verse-src">Patañjali, Yoga Sūtra 1.2</p>
-              <p className="lake__verse-name">{mind.lines[2].text}</p>
-            </div>
-            <button type="button" className="lake__hint" aria-expanded={verse} aria-controls="lake-verse" onClick={onHint}>
-              {verse ? 'Stir the water' : 'Be still, and the lake will show you.'}
-            </button>
-
-            <div className="lake__plaque">
-              <p className="lake__role">{profile.now}</p>
-              <p className="lake__tagline">{profile.tagline}</p>
-              <button type="button" className="lake__cuts" onClick={() => openLinerNotes()}>
-                {deepCuts.length} deep cuts inside <span aria-hidden="true">→</span>
-              </button>
-            </div>
+        <div ref={wrapRef} className="hero__arch-wrap">
+          <div className="hero__arch">
+            <div className="hero__sky" />
+            <div className="tx tx-mandala hero__mandala" />
+            <div className="tx tx-halftone hero__halftone" />
+            <div className="hero__sun" />
+            <Cloud className="hero__cloud hero__cloud--a loop" />
+            <Cloud className="hero__cloud hero__cloud--b loop" />
+            <Kites ready={introDone} />
+            <Skyline />
           </div>
-        </div>
+          <svg className="hero__frame" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <path className="hero__frame-outer" d={FRAME} />
+            <path className="hero__frame-inner" d={FRAME_IN} />
+          </svg>
 
-        <div className="lake__margin lake__margin--bottom">
-          <p className="lake__places">Delhi × Daegu × Palo Alto</p>
-          <button className="lake__cue" type="button" onClick={() => scrollToSection('about')} aria-label="Scroll to About">
-            <span className="loop" aria-hidden="true">
-              ↓
+          <h1 className="hero__name" aria-label={`${profile.first} ${profile.last}`}>
+            <span className="hero__first-cell">
+              <span className="hero__first" aria-hidden="true" onClick={name.toggle} {...name.pointer}>
+                {profile.first}
+              </span>
+              <span className="hero__deva" aria-hidden="true" lang="sa">
+                {mind.lines[0].text}
+              </span>
             </span>
+            <span className="hero__last" aria-hidden="true">
+              {profile.last}
+            </span>
+          </h1>
+          <button type="button" className="hero__name-btn" aria-expanded={name.open} aria-controls="hero-name-tag" onClick={name.toggle}>
+            What does “{profile.first}” mean?
           </button>
-          <p className="lake__time">
-            <time aria-label={`${time} India Standard Time`}>
-              {hh}
-              <b className="lake__colon loop" aria-hidden="true">
-                :
-              </b>
-              {mm}
-            </time>{' '}
-            IST
+          <p
+            id="hero-name-tag"
+            className={`hero__name-tag ${tagPos ? '' : 'is-unplaced'}`}
+            aria-hidden={!name.open}
+            style={
+              tagPos
+                ? ({ ['--tag-x' as string]: `${tagPos.x}px`, ['--tag-y' as string]: `${tagPos.y}px`, ['--thread-x' as string]: `${tagPos.threadX}px` } as CSSProperties)
+                : undefined
+            }
+          >
+            <span className="hero__name-tag-thread" aria-hidden="true" />
+            <span className="hero__name-tag-card">
+              <span className="hero__name-tag-hole" aria-hidden="true" />
+              <span className="hero__name-tag-deva" lang="sa">
+                {mind.lines[0].text}
+              </span>
+              <span className="hero__name-tag-line">{mind.lines[1].text}</span>
+              <span className="hero__name-tag-line hero__name-tag-line--b">{mind.lines[2].text}</span>
+            </span>
+          </p>
+          <p className="hero__stamp">
+            <span className="hero__stamp-small">The portfolio · Vol. 26</span>
+            <strong className="hero__stamp-big">{profile.role}</strong>
           </p>
         </div>
+
+        <Ticket />
+        <Dial />
+
+        <button className="hero__cue" type="button" onClick={() => scrollToSection('about')} aria-label="Scroll to About">
+          <span className="loop" aria-hidden="true">
+            ↓
+          </span>
+        </button>
       </div>
     </Drawer>
   );
 }
-

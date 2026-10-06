@@ -3,16 +3,15 @@
  * observed-fonts: Barlow Condensed + Dela Gothic One (+ Rye, Bree Serif, Share Tech Mono, Noto Sans Devanagari)
  * this build: Barlow Condensed · Dela Gothic One · Pirata One (wordmark/masthead) · Rye (signage) · Newsreader (body)
  *             · Share Tech Mono (labels) · Yatra One + Black Han Sans (Devanagari / Hangul accents)
- *             · Cormorant Garamond + Tiro Devanagari Sanskrit (the cover: मानसरोवर, the lake of the mind)
  * observed-paper: #fad68e → oklch(89.1% 0.099 84) · observed-accent: #ff2238 → oklch(64% 0.245 24.2)
  * rhythm: full-viewport sticky drawers, each its own colour world, ascending z, heavy upward shadow
  * enrichment: tier A/B — hand-built CSS + SVG art only; no reference assets reused
  * photography: Manas's own (@menace_thakur), a 36-frame roll in the Darkroom: line · contact sheet + loupe · colour wheel
  * photo palettes in data/photos.ts are content (sampled from the frames), not design tokens
  * deep cuts: nine messages bound into objects (data/deep.ts) · Side A is what I show, Side B is what I mean
- * cover: मानसरोवर, the lake of the mind — original, not studied: a canvas dawn over Kailash mirrored in still water
- *        (the reference's arch window is gone); the name stands on the lake and the lake answers in Devanagari
- * nav: N7 brutal slab + contents in the cover's margin · footer: Ft5 statement (Side B)
+ * saved, not shipped: मानसरोवर, the lake of the mind (sections/Lake, viewable at /?only=lake) — an original cover,
+ *        kept whole; its Cormorant Garamond + Tiro Devanagari Sanskrit load only on that page
+ * nav: N7 brutal slab + record-dial nav · footer: Ft5 statement (Side B)
  * contrast: pass (axe-core 0 violations) · honest: pass (every figure sourced) · chrome: pass
  * tokens: pass (#000 appears only as mask alpha) · responsive + mobile: pass 320–2560, no x-overflow
  * Hallmark · pre-emit critique: P5 H4 E4 S5 R4 V5
@@ -78,7 +77,7 @@
   --color-leaf-deep: oklch(42% 0.11 150);
   --color-auto-yellow: oklch(83.7% 0.166 88.4);
 
-  /* ── Lake of the mind (hero): dawn, snow, water, lotus ── */
+  /* ── Lake of the mind (the saved cover, /?only=lake): dawn, snow, water, lotus ── */
   --color-dawn-rose: oklch(62% 0.12 22);
   --color-dawn-gold: oklch(86% 0.11 78);
   --color-snow: oklch(95% 0.012 255);
@@ -104,7 +103,7 @@
   --font-serif: 'Newsreader', Georgia, serif;
   --font-mono: 'Share Tech Mono', ui-monospace, Consolas, monospace;
   --font-deva: 'Yatra One', 'Noto Sans Devanagari', sans-serif;
-  /* the cover: the name as the title of a painting, and Sanskrit set as Sanskrit */
+  /* the saved lake cover: the name as the title of a painting, and Sanskrit set as Sanskrit */
   --font-display: 'Cormorant Garamond', 'Newsreader', Georgia, serif;
   --font-sanskrit: 'Tiro Devanagari Sanskrit', 'Yatra One', 'Noto Sans Devanagari', serif;
   --font-hangul: 'Black Han Sans', 'Malgun Gothic', sans-serif;
