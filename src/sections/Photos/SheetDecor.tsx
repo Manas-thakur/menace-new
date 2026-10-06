@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react';
 import { photos, photoSrc } from '../../data/photos';
 import { B, PICKS, noise, type Rect, type SheetLayout, type Target } from './geometry';
+import { EDGE_LH, type EdgePrint } from './edgePrint';
 
 /** The light table: a cool diffuser in a dark bezel. */
 export function LightTable({ rect, flicker }: { rect: Rect; flicker?: number }) {
@@ -11,48 +12,76 @@ export function LightTable({ rect, flicker }: { rect: Rect; flicker?: number }) 
   );
 }
 
+/** The latent line in a strip's rebate. Under the loupe it also carries a warm copy
+ *  that the safelight brings up while the lens rests on it. */
+function Latent({ e, lens }: { e: EdgePrint; lens: boolean }) {
+  const rows = e.rows.map((r) => (
+    <span key={r} className="dr-latent__row">
+      {r}
+    </span>
+  ));
+  return (
+    <span className="dr-latent" style={{ left: e.x, top: e.y, width: e.w, height: e.h, fontSize: e.fs, lineHeight: EDGE_LH }}>
+      <span className="dr-latent__ink">{rows}</span>
+      {lens && <span className="dr-latent__glow">{rows}</span>}
+    </span>
+  );
+}
+
+type StripsProps = {
+  layout: SheetLayout;
+  /** Edge printing carried by some strips (the same on the sheet and in the loupe). */
+  edges?: EdgePrint[];
+  /** The loupe's copy: the line gets its warm double. */
+  lens?: boolean;
+};
+
 /** Six cut strips of colour-negative film: orange base, sprockets, edge printing. */
-export function Strips({ layout }: { layout: SheetLayout }) {
+export function Strips({ layout, edges = [], lens = false }: StripsProps) {
   const { f } = layout;
   return (
     <div className="dr-strips" style={{ '--f': `${f}px` } as CSSProperties} aria-hidden="true">
-      {layout.strips.map((s, k) => (
-        <div
-          key={k}
-          className="dr-strip"
-          style={
-            {
-              width: s.len,
-              height: s.h,
-              transform: `translate(${(s.cx - s.len / 2).toFixed(2)}px, ${(s.cy - s.h / 2).toFixed(2)}px) rotate(${s.rot.toFixed(3)}deg)`,
-              '--k': k,
-            } as CSSProperties
-          }
-        >
-          <span className="dr-strip__edge dr-strip__edge--top">
-            {[1, 4].map((j) => (
-              <span key={j} className="dr-strip__brand" style={{ left: `${(0.3 + j * 1.1) * f}px` }}>
-                MENACE 400
-              </span>
-            ))}
-          </span>
-          <span className="dr-strip__edge dr-strip__edge--bottom">
-            {Array.from({ length: 6 }, (_, j) => {
-              const n = s.first + j + 1;
-              return (
-                <span key={j}>
-                  <span className="dr-strip__num" style={{ left: `${(0.3 + j * 1.1 + 0.08) * f}px` }}>
-                    ▸ {n}
-                  </span>
-                  <span className="dr-strip__num" style={{ left: `${(0.3 + j * 1.1 + 0.68) * f}px` }}>
-                    {n}A
-                  </span>
+      {layout.strips.map((s, k) => {
+        const edge = edges.find((e) => e.strip === k);
+        return (
+          <div
+            key={k}
+            className="dr-strip"
+            style={
+              {
+                width: s.len,
+                height: s.h,
+                transform: `translate(${(s.cx - s.len / 2).toFixed(2)}px, ${(s.cy - s.h / 2).toFixed(2)}px) rotate(${s.rot.toFixed(3)}deg)`,
+                '--k': k,
+              } as CSSProperties
+            }
+          >
+            <span className="dr-strip__edge dr-strip__edge--top">
+              {(edge?.dropsBrand ? [1] : [1, 4]).map((j) => (
+                <span key={j} className="dr-strip__brand" style={{ left: `${(0.3 + j * 1.1) * f}px` }}>
+                  MENACE 400
                 </span>
-              );
-            })}
-          </span>
-        </div>
-      ))}
+              ))}
+            </span>
+            {edge && <Latent e={edge} lens={lens} />}
+            <span className="dr-strip__edge dr-strip__edge--bottom">
+              {Array.from({ length: 6 }, (_, j) => {
+                const n = s.first + j + 1;
+                return (
+                  <span key={j}>
+                    <span className="dr-strip__num" style={{ left: `${(0.3 + j * 1.1 + 0.08) * f}px` }}>
+                      ▸ {n}
+                    </span>
+                    <span className="dr-strip__num" style={{ left: `${(0.3 + j * 1.1 + 0.68) * f}px` }}>
+                      {n}A
+                    </span>
+                  </span>
+                );
+              })}
+            </span>
+          </div>
+        );
+      })}
     </div>
   );
 }

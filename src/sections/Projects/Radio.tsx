@@ -16,6 +16,8 @@ export const scaleX = (f: number) => SX0 + ((f - FMIN) / (FMAX - FMIN)) * (SX1 -
 
 const KNOB = { cx: 540, cy: 300, r: 46 };
 const DIAL = { x: 64, y: 132, w: 512, h: 92 };
+/* hit area for the end of the band: right of the last station's mark to the bevel */
+const END_HIT = { x: 549, w: 40 };
 
 const pct = (v: number, of: number) => `${((v / of) * 100).toFixed(3)}%`;
 
@@ -46,13 +48,17 @@ type RadioProps = {
   readoutRef: RefObject<SVGTextElement | null>;
   /** Locked on a station: lamp glows, EQ dances. */
   live: boolean;
+  /** Locked on the hidden end-of-band station: gold lamp, EQ silent. */
+  quiet: boolean;
   onMark: (i: number) => void;
+  /** Clicking the very end of the scale. */
+  onEnd: () => void;
   onKnobKey: (e: KeyboardEvent<HTMLDivElement>) => void;
 };
 
-export function Radio({ stations, current, valueNow, valueText, knobRef, needleRef, grilleRef, readoutRef, live, onMark, onKnobKey }: RadioProps) {
+export function Radio({ stations, current, valueNow, valueText, knobRef, needleRef, grilleRef, readoutRef, live, quiet, onMark, onEnd, onKnobKey }: RadioProps) {
   return (
-    <div className={`radio ${live ? 'is-live' : ''}`}>
+    <div className={`radio ${live ? 'is-live' : ''} ${quiet ? 'is-quiet' : ''}`}>
       <svg className="radio__svg" viewBox={`0 0 ${VB_W} ${VB_H}`} aria-hidden="true">
         {/* antenna + handle */}
         <path className="radio__line draw" pathLength={1} d="M552 98 584 38" strokeWidth="3.5" />
@@ -165,6 +171,16 @@ export function Radio({ stations, current, valueNow, valueText, knobRef, needleR
           />
         ))}
       </div>
+
+      {/* the very end of the band: no mark, no label, just the edge of the scale */}
+      <button
+        type="button"
+        tabIndex={-1}
+        className="radio__hit radio__hit--end"
+        style={{ left: pct(END_HIT.x, VB_W), top: pct(DIAL.y, VB_H), width: pct(END_HIT.w, VB_W), height: pct(DIAL.h, VB_H) }}
+        aria-label="Tune to the end of the band"
+        onClick={onEnd}
+      />
 
       <div
         ref={knobRef}

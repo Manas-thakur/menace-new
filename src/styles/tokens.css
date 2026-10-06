@@ -8,6 +8,7 @@
  * enrichment: tier A/B — hand-built CSS + SVG art only; no reference assets reused
  * photography: Manas's own (@menace_thakur), a 36-frame roll in the Darkroom: line · contact sheet + loupe · colour wheel
  * photo palettes in data/photos.ts are content (sampled from the frames), not design tokens
+ * deep cuts: nine messages bound into objects (data/deep.ts) · Side A is what I show, Side B is what I mean
  * nav: N7 brutal slab + record-dial nav · footer: Ft5 statement (Side B)
  * contrast: pass (axe-core 0 violations) · honest: pass (every figure sourced) · chrome: pass
  * tokens: pass (#000 appears only as mask alpha) · responsive + mobile: pass 320–2560, no x-overflow

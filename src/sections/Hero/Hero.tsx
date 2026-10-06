@@ -1,10 +1,13 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import type { SectionProps } from '../../App';
 import { Drawer } from '../../components/primitives/Drawer';
 import { gsap, SplitText, useGSAP } from '../../lib/gsap';
 import { flags, prefersReducedMotion } from '../../lib/motion';
 import { scrollToSection } from '../../lib/scroll';
 import { profile } from '../../data/profile';
+import { deepCut, deepCuts } from '../../data/deep';
+import { discover, openLinerNotes } from '../../lib/deep';
+import { useReveal } from './useReveal';
 import { Skyline } from './Skyline';
 import { Cloud, Kites } from './Sky';
 import { Dial } from './Dial';
@@ -57,15 +60,98 @@ function Ticket() {
               IST
             </span>
           </p>
+          <button type="button" className="ticket__cuts" onClick={() => openLinerNotes()}>
+            {deepCuts.length} deep cuts inside <span aria-hidden="true">→</span>
+          </button>
         </div>
       </div>
     </aside>
   );
 }
 
+/** Where the name tag hangs: from the top of the name's last letter, kept on screen. */
+type TagPos = { x: number; y: number; threadX: number };
+
 export function Hero({ index }: SectionProps) {
   const rootRef = useRef<HTMLDivElement>(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
   const [intro] = useState(() => !flags.noIntro && !prefersReducedMotion());
+  // the hidden messages wait until the intro has landed, so a reveal never fights it
+  const [introDone, setIntroDone] = useState(() => !intro);
+
+  /* Deep cut 01 — "मानस". Rest on the name, tap it or use the keyboard button: the
+   * gothic letters flip away, the name rises in its own script, and a paper tag
+   * swings down from the last letter with what it means. */
+  const mind = deepCut('mind');
+  const name = useReveal(() => discover('mind'), { linger: 3200, enabled: introDone });
+  const [tagPos, setTagPos] = useState<TagPos | null>(null);
+
+  useLayoutEffect(() => {
+    if (!name.open) return;
+    // Hang from beneath the first letter, into the open sky under the name — never
+    // over the name itself, and stepping left of "Thakur" if the two would touch.
+    const place = () => {
+      const wrap = wrapRef.current;
+      const first = wrap?.querySelector<HTMLElement>('.hero__first');
+      const last = wrap?.querySelector<HTMLElement>('.hero__last');
+      const card = wrap?.querySelector<HTMLElement>('.hero__name-tag');
+      if (!wrap || !first) return;
+      const w = wrap.getBoundingClientRect();
+      const r = first.getBoundingClientRect();
+      const cardW = card?.offsetWidth ?? 240;
+      const cardH = card?.offsetHeight ?? 140;
+      const anchorX = r.left - w.left + r.width * 0.14;
+      const anchorY = r.bottom - w.top - r.height * 0.1;
+      let x = Math.max(8, Math.min(anchorX - cardW * 0.3, w.width - cardW - 8));
+      const t = last?.getBoundingClientRect();
+      if (t) {
+        const tLeft = t.left - w.left;
+        const tTop = t.top - w.top;
+        const tBottom = t.bottom - w.top;
+        const overlapsY = anchorY < tBottom && anchorY + cardH > tTop;
+        if (overlapsY && x + cardW > tLeft - 8) x = Math.max(8, tLeft - 8 - cardW);
+      }
+      const threadX = Math.max(16, Math.min(anchorX - x, cardW - 16));
+      setTagPos({ x, y: anchorY, threadX });
+    };
+    place();
+    window.addEventListener('resize', place);
+    return () => window.removeEventListener('resize', place);
+  }, [name.open]);
+
+  const settled = useRef(false);
+  useGSAP(
+    () => {
+      if (!settled.current) {
+        settled.current = true;
+        return;
+      }
+      const q = gsap.utils.selector(rootRef);
+      const chars = q('.hero__first .hero__char').length ? q('.hero__first .hero__char') : q('.hero__first');
+      const deva = q('.hero__deva');
+      const tag = q('.hero__name-tag');
+      if (prefersReducedMotion()) {
+        gsap.set(chars, { opacity: name.open ? 0 : 1, rotateX: 0 });
+        gsap.set(deva, { opacity: name.open ? 1 : 0, rotateX: 0 });
+        gsap.set(tag, { opacity: name.open ? 1 : 0, rotate: 0, y: 0 });
+        return;
+      }
+      if (name.open) {
+        gsap
+          .timeline()
+          .to(chars, { rotateX: 90, opacity: 0, transformPerspective: 600, duration: 0.3, ease: 'power2.in', stagger: 0.035, overwrite: 'auto' })
+          .fromTo(deva, { rotateX: -90, opacity: 0, transformPerspective: 600 }, { rotateX: 0, opacity: 1, duration: 0.65, ease: 'expoOut' }, '-=0.08')
+          .fromTo(tag, { rotate: -18, opacity: 0, y: -14 }, { rotate: 0, opacity: 1, y: 0, duration: 1.2, ease: 'elastic.out(1, 0.45)' }, '-=0.5');
+      } else {
+        gsap
+          .timeline()
+          .to(tag, { opacity: 0, y: -10, rotate: 8, duration: 0.3, ease: 'power2.in', overwrite: 'auto' })
+          .to(deva, { rotateX: 90, opacity: 0, transformPerspective: 600, duration: 0.3, ease: 'power2.in', overwrite: 'auto' }, 0)
+          .to(chars, { rotateX: 0, opacity: 1, transformPerspective: 600, duration: 0.55, ease: 'expoOut', stagger: 0.035, overwrite: 'auto' }, 0.22);
+      }
+    },
+    { dependencies: [name.open], scope: rootRef }
+  );
 
   useGSAP(
     (_ctx, contextSafe) => {
@@ -83,7 +169,7 @@ export function Hero({ index }: SectionProps) {
         gsap.set(stage, { visibility: 'visible' });
 
         gsap
-          .timeline({ defaults: { ease: 'expoOut' } })
+          .timeline({ defaults: { ease: 'expoOut' }, onComplete: () => setIntroDone(true) })
           .from('.hero__arch', { scaleY: 0, transformOrigin: '50% 100%', duration: 1.15 }, 0.05)
           .from('.hero__frame', { opacity: 0, duration: 0.6 }, 0.55)
           .from('.hero__sun', { yPercent: 45, duration: 1.7 }, 0.1)
@@ -131,7 +217,7 @@ export function Hero({ index }: SectionProps) {
           </filter>
         </svg>
 
-        <div className="hero__arch-wrap">
+        <div ref={wrapRef} className="hero__arch-wrap">
           <div className="hero__arch">
             <div className="hero__sky" />
             <div className="tx tx-mandala hero__mandala" />
@@ -139,7 +225,7 @@ export function Hero({ index }: SectionProps) {
             <div className="hero__sun" />
             <Cloud className="hero__cloud hero__cloud--a loop" />
             <Cloud className="hero__cloud hero__cloud--b loop" />
-            <Kites />
+            <Kites ready={introDone} />
             <Skyline />
           </div>
           <svg className="hero__frame" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
@@ -148,13 +234,41 @@ export function Hero({ index }: SectionProps) {
           </svg>
 
           <h1 className="hero__name" aria-label={`${profile.first} ${profile.last}`}>
-            <span className="hero__first" aria-hidden="true">
-              {profile.first}
+            <span className="hero__first-cell">
+              <span className="hero__first" aria-hidden="true" onClick={name.toggle} {...name.pointer}>
+                {profile.first}
+              </span>
+              <span className="hero__deva" aria-hidden="true" lang="sa">
+                {mind.lines[0].text}
+              </span>
             </span>
             <span className="hero__last" aria-hidden="true">
               {profile.last}
             </span>
           </h1>
+          <button type="button" className="hero__name-btn" aria-expanded={name.open} aria-controls="hero-name-tag" onClick={name.toggle}>
+            What does “{profile.first}” mean?
+          </button>
+          <p
+            id="hero-name-tag"
+            className={`hero__name-tag ${tagPos ? '' : 'is-unplaced'}`}
+            aria-hidden={!name.open}
+            style={
+              tagPos
+                ? ({ ['--tag-x' as string]: `${tagPos.x}px`, ['--tag-y' as string]: `${tagPos.y}px`, ['--thread-x' as string]: `${tagPos.threadX}px` } as CSSProperties)
+                : undefined
+            }
+          >
+            <span className="hero__name-tag-thread" aria-hidden="true" />
+            <span className="hero__name-tag-card">
+              <span className="hero__name-tag-hole" aria-hidden="true" />
+              <span className="hero__name-tag-deva" lang="sa">
+                {mind.lines[0].text}
+              </span>
+              <span className="hero__name-tag-line">{mind.lines[1].text}</span>
+              <span className="hero__name-tag-line hero__name-tag-line--b">{mind.lines[2].text}</span>
+            </span>
+          </p>
           <p className="hero__stamp">
             <span className="hero__stamp-small">The portfolio · Vol. 26</span>
             <strong className="hero__stamp-big">{profile.role}</strong>

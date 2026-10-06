@@ -1,6 +1,9 @@
 import { memo } from 'react';
+import { deepCut } from '../../data/deep';
 
-/* Side B — an original vinyl record, drawn on a 1000-unit board centred at 500,500. */
+/* Side B — an original vinyl record, drawn on a 1000-unit board centred at 500,500.
+ * From the rim in: music grooves, then the smooth dead wax (the run-out groove,
+ * where an etched message turns with the disc), the lock groove, and the label. */
 
 const C = 500;
 
@@ -13,12 +16,14 @@ function lcg(seed: number) {
   };
 }
 
+const LAST_GROOVE = 240;
+const LOCK_GROOVE = 182;
 const TRACK_GAPS = [292, 364, 430];
 
 const grooves = (() => {
   const rand = lcg(42);
   const rings: { r: number; o: number; w: number }[] = [];
-  for (let r = 186; r < 482; r += 4.4) {
+  for (let r = LAST_GROOVE; r < 482; r += 4.4) {
     if (TRACK_GAPS.some((g) => Math.abs(r - g) < 5.5)) continue;
     rings.push({ r: +r.toFixed(1), o: +(0.45 + rand() * 0.55).toFixed(2), w: +(0.7 + rand() * 1.1).toFixed(2) });
   }
@@ -27,8 +32,8 @@ const grooves = (() => {
 
 // Light catching the grooves; these arcs travel with the disc so the spin reads.
 const glints = [
-  { r: 214, a0: 196, a1: 248, w: 2.4 },
-  { r: 262, a0: 18, a1: 64, w: 1.8 },
+  { r: 256, a0: 196, a1: 248, w: 2.4 },
+  { r: 268, a0: 18, a1: 64, w: 1.8 },
   { r: 318, a0: 228, a1: 300, w: 2.6 },
   { r: 344, a0: 96, a1: 132, w: 1.6 },
   { r: 398, a0: 300, a1: 352, w: 2.2 },
@@ -36,15 +41,42 @@ const glints = [
   { r: 470, a0: 24, a1: 52, w: 1.6 },
 ];
 
+const pt = (r: number, deg: number) => {
+  const t = (deg * Math.PI) / 180;
+  return `${(C + r * Math.cos(t)).toFixed(1)} ${(C + r * Math.sin(t)).toFixed(1)}`;
+};
+
 function arc(r: number, a0: number, a1: number) {
-  const p = (a: number) => {
-    const t = (a * Math.PI) / 180;
-    return `${(C + r * Math.cos(t)).toFixed(1)} ${(C + r * Math.sin(t)).toFixed(1)}`;
-  };
-  return `M${p(a0)}A${r} ${r} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${p(a1)}`;
+  return `M${pt(r, a0)}A${r} ${r} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${pt(r, a1)}`;
 }
 
+// The lead-out: the stylus' last spiral from the music into the lock groove.
+const leadOut = (() => {
+  const steps = 72;
+  let d = '';
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps;
+    d += `${i ? 'L' : 'M'}${pt(LAST_GROOVE - 3 - t * (LAST_GROOVE - 3 - LOCK_GROOVE), -30 + t * 400)}`;
+  }
+  return d;
+})();
+
+/**
+ * The run-out etching: the message repeats around the dead wax so that wherever
+ * the disc comes to rest, one copy sits within half a slot of the top.
+ * Angles are SVG degrees (clockwise from +x); copy 0 is centred at the top at rest.
+ */
+export const ETCH = { copies: 6, r: 204, slot: 60, fill: 0.88 } as const;
+const ETCH_START = -90 - (ETCH.fill / 2) * ETCH.slot;
+export const etchMid = (k: number) => ETCH_START + (k + ETCH.fill / 2) * ETCH.slot;
+export const ETCH_HALF = (ETCH.fill / 2) * ETCH.slot;
+const ETCH_SLOT_LEN = (2 * Math.PI * ETCH.r) / ETCH.copies;
+const etchRing = `M${pt(ETCH.r, ETCH_START)}A${ETCH.r} ${ETCH.r} 0 1 1 ${pt(ETCH.r, ETCH_START + 180)}A${ETCH.r} ${ETCH.r} 0 1 1 ${pt(ETCH.r, ETCH_START + 360)}`;
+
 export const Record = memo(function Record({ className = '' }: { className?: string }) {
+  const etching = deepCut('deadwax').lines[0].text;
+  const copies = Array.from({ length: ETCH.copies }, (_, k) => k);
+
   return (
     <svg className={`record ${className}`} viewBox="0 0 1000 1000" aria-hidden="true" focusable="false">
       <defs>
@@ -52,6 +84,11 @@ export const Record = memo(function Record({ className = '' }: { className?: str
         <path id="record-arc-top" d={`M${C - 138} ${C}A138 138 0 0 1 ${C + 138} ${C}`} />
         {/* …and upright along the bottom. */}
         <path id="record-arc-bottom" d={`M${C - 146} ${C}A146 146 0 0 0 ${C + 146} ${C}`} />
+        <path id="record-etch-ring" d={etchRing} />
+        <radialGradient id="record-etch-light">
+          <stop offset="0" className="record__light-core" />
+          <stop offset="1" className="record__light-edge" />
+        </radialGradient>
       </defs>
 
       <circle className="record__vinyl" cx={C} cy={C} r={498} />
@@ -70,7 +107,33 @@ export const Record = memo(function Record({ className = '' }: { className?: str
           <path key={`${g.r}-${g.a0}`} d={arc(g.r, g.a0, g.a1)} strokeWidth={g.w} />
         ))}
       </g>
-      <circle className="record__runout" cx={C} cy={C} r={182} />
+
+      {/* Dead wax: smooth, glossier vinyl between the last groove and the label */}
+      <circle className="record__deadwax" cx={C} cy={C} r={(LAST_GROOVE + LOCK_GROOVE) / 2} strokeWidth={LAST_GROOVE - LOCK_GROOVE - 4} />
+      <path className="record__leadout" d={leadOut} />
+      <circle className="record__lock" cx={C} cy={C} r={LOCK_GROOVE} />
+
+      {/* The etching, incised: a dark lip under a pale scratch */}
+      <g className="record__etching">
+        {copies.map((k) => (
+          <text key={`s${k}`} className="record__etch-lip" dx="0.7" dy="0.7">
+            <textPath href="#record-etch-ring" startOffset={`${(k / ETCH.copies) * 100}%`} textLength={ETCH_SLOT_LEN * ETCH.fill} lengthAdjust="spacing">
+              {etching}
+            </textPath>
+          </text>
+        ))}
+        {copies.map((k) => (
+          <text key={k} className="record__etch" data-etch={k}>
+            <textPath href="#record-etch-ring" startOffset={`${(k / ETCH.copies) * 100}%`} textLength={ETCH_SLOT_LEN * ETCH.fill} lengthAdjust="spacing">
+              {etching}
+            </textPath>
+          </text>
+        ))}
+      </g>
+      {/* A small light that travels along the etching while it is being read */}
+      <g className="record__etch-glint">
+        <ellipse cx={C + ETCH.r + 4} cy={C} rx={11} ry={30} fill="url(#record-etch-light)" />
+      </g>
 
       <g className="record__label">
         <circle className="record__label-disc" cx={C} cy={C} r={172} />

@@ -43,6 +43,43 @@
   pointer-events: none;
 }
 
+/* ── The clock as a control ────────────────────────────────
+ * An empty circular button laid exactly over the dial (the face centre sits at
+ * 59.26% of the drawing's height; the case is 200/220 of its width). The drawing
+ * itself stays inert, so the rod and the space around the dial never catch a click. */
+.clock__ask {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  top: 59.26%;
+  width: 93%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+}
+.clock__ask:focus-visible {
+  border-radius: 50%;
+}
+.clock__swing {
+  display: block;
+  pointer-events: none;
+  transform-origin: 50% 0;
+  transition: rotate var(--dur-long) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .clock__ask:hover + .clock__swing {
+    rotate: 0.9deg;
+  }
+}
+
+/* Asked: the halftone sun warms up behind the stopped clock */
+.clock__sun {
+  transition: opacity var(--dur-long) var(--ease-out);
+}
+.clock.is-asked .clock__sun {
+  opacity: 1;
+}
+
 /* ── Drawing ───────────────────────────────────────────── */
 .clock__bracket rect {
   fill: var(--clock-bezel);
@@ -158,5 +195,8 @@
 @media (prefers-reduced-motion: reduce) {
   .clock__hand--second {
     display: none;
+  }
+  .clock__ask:hover + .clock__swing {
+    rotate: none;
   }
 }

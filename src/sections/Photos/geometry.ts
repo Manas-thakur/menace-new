@@ -183,6 +183,8 @@ export type SheetLayout = {
   strips: Strip[];
   targets: Target[];
   note: { x: number; y: number; h: number; rot: number };
+  /** Phones: one strip per row, the loupe dragged by a finger. */
+  compact: boolean;
 };
 
 const FRAME_PITCH = 1.1;
@@ -262,6 +264,7 @@ export function sheetLayout(W: number, H: number | null, loupeR = 0): SheetLayou
     strips,
     targets,
     note: { x: first.cx + Math.max(0.85 * f, loupeR + 6), y: table.y + 0.08 * f, h: 0.62 * f, rot: -4 },
+    compact: !fixed,
   };
 }
 

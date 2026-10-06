@@ -30,7 +30,7 @@
 /* Torn gold strip hanging from the top edge; sits above the pour so the chai
  * appears to come from behind the paper. */
 .press__torn {
-  z-index: 3;
+  z-index: 4;
   color: var(--color-gold);
   height: calc(var(--nav-h) + clamp(1.1rem, 2.1vw, 3.25rem));
 }
@@ -121,13 +121,15 @@
 }
 
 /* ── Illustration ────────────────────────────────────── */
+/* Above the clippings (z 2) so the doha scrap can lie over them; below the torn strip. */
 .press__art {
   position: relative;
-  z-index: 1;
+  z-index: 3;
 }
 .press__art-figure {
   --kulhad-fade: 24%;
   position: relative;
+  container-type: size;
   width: min(80%, 25rem);
   aspect-ratio: 4 / 5;
   margin-inline: auto;

@@ -1,0 +1,160 @@
+/* Deep cut · "Slowly" — Kabir's doha, pressed into the kulhad.
+ *
+ * Everything is placed in units of the 600 × 1000 kulhad board. The art uses
+ * `xMidYMax slice`, so one board unit is --s = max(W/600, H/1000) px of the
+ * figure (a size container), centred horizontally and anchored to the bottom. */
+
+.doha {
+  --s: max(100cqw / 600, 100cqh / 1000);
+  position: absolute;
+  inset: 0;
+  isolation: isolate;
+}
+.doha > .kulhad {
+  z-index: 2;
+}
+
+/* ── The cup is the control ──────────────────────────── */
+.doha__cup {
+  position: absolute;
+  z-index: 4;
+  /* board x 138–462, y 646–986: the cup, its rim and the splash */
+  left: calc(50% - 162 * var(--s));
+  bottom: calc(14 * var(--s));
+  width: calc(324 * var(--s));
+  height: calc(340 * var(--s));
+  border-radius: 48% 48% 40% 40% / 18% 18% 14% 14%;
+  pointer-events: auto;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.doha__cup:focus-visible {
+  border-radius: 48% 48% 40% 40% / 18% 18% 14% 14%;
+}
+
+/* ── धीरे, written in steam ──────────────────────────── */
+.doha__steam {
+  position: absolute;
+  z-index: 3;
+  left: calc(50% + 156 * var(--s));
+  top: calc(100% - 440 * var(--s));
+  translate: -50% -50%;
+  font-family: var(--font-deva);
+  font-size: calc(104 * var(--s));
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--color-cream);
+  text-shadow: 0 0 calc(16 * var(--s)) color-mix(in oklch, var(--color-cream) 75%, transparent);
+  /* a constant softness; only opacity, transform and clip-path ever animate */
+  filter: blur(calc(1.4 * var(--s)));
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* ── The pencilled scrap ─────────────────────────────── */
+.doha__note {
+  --note-pad: 1.15em;
+  --note-margin: 1.55em;
+  --note-rule: 1.6em;
+  position: absolute;
+  z-index: 1;
+  /* phones and tablets: tucked under the cup's base, centred on it */
+  top: calc(100% - 62 * var(--s));
+  left: 50%;
+  translate: -50% 0;
+  width: min(calc(100vw - 2 * var(--gutter)), 23rem);
+  margin: 0;
+  padding: 1.25em var(--note-pad) 1.6em calc(var(--note-margin) + 0.75em);
+  font-size: clamp(0.9rem, 0.78vw, 1.22rem);
+  color: var(--color-ink-soft);
+  rotate: -1.5deg;
+  filter: var(--drop-sticker);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: auto;
+}
+
+/* Notebook paper with a torn bottom edge; the shadow sits on the parent so the
+ * clip-path cannot cut it off. */
+.doha__paper {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(
+      90deg,
+      transparent calc(var(--note-margin) - 1px),
+      color-mix(in oklch, var(--color-crimson) 40%, transparent) calc(var(--note-margin) - 1px) var(--note-margin),
+      transparent var(--note-margin)
+    ),
+    repeating-linear-gradient(
+      180deg,
+      transparent 0 calc(var(--note-rule) - 1px),
+      color-mix(in oklch, var(--color-royal-2) 20%, transparent) calc(var(--note-rule) - 1px) var(--note-rule)
+    ),
+    var(--color-paper);
+  clip-path: polygon(
+    0 2%, 34% 0, 100% 1.5%, 99.4% 93%, 95% 97%, 90% 93.5%, 85% 98.5%, 79% 94.5%, 73% 99%, 67% 95%, 61% 98.5%,
+    55% 94%, 49% 98%, 43% 94.5%, 37% 99%, 31% 95%, 25% 98.5%, 19% 94%, 13% 98%, 7% 94.5%, 0 97.5%
+  );
+}
+
+.doha__tape {
+  top: calc(-1 * clamp(0.55rem, 0.7vw, 1rem));
+  left: calc(50% - clamp(2rem, 3vw, 4rem));
+}
+
+.doha__verse {
+  margin: 0;
+  font-family: var(--font-deva);
+  font-size: 1.12em;
+  line-height: 1.5;
+}
+/* Each line breaks only at its caesura; the second half indents when it does. */
+.doha__verse p {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 0.3em;
+}
+.doha__verse span {
+  white-space: nowrap;
+}
+.doha__verse span + span {
+  padding-inline-start: 0.9em;
+}
+
+.doha__translation {
+  margin-top: 0.65em;
+  font-family: var(--font-serif);
+  font-style: italic;
+  line-height: 1.4;
+  color: var(--color-ink-2);
+}
+
+.doha__source {
+  margin-top: 0.85em;
+  font-family: var(--font-mono);
+  font-size: 0.7em;
+  line-height: 1.35;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-khaki);
+}
+
+/* Desktop: the scrap leans against the cup's left side, its edge tucked behind it. */
+@media (min-width: 64rem) {
+  .doha__note {
+    /* clears the cup's rim (its widest part, beside the note's first line), not just
+     * the tapered body lower down — no word ever runs under the cup */
+    --note-tuck: calc(80 * var(--s));
+    top: auto;
+    left: auto;
+    translate: none;
+    right: calc(50% + 90 * var(--s));
+    bottom: calc(52 * var(--s));
+    width: clamp(17rem, 19vw, 30rem);
+    padding-inline-end: calc(var(--note-pad) + var(--note-tuck));
+    rotate: -2.5deg;
+  }
+}

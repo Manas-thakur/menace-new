@@ -1,0 +1,126 @@
+/* top-right, under the nav: most reveals happen in the middle and lower half of a
+ * drawer, so the notice never sits on top of the thing that was just found */
+.deep-toast-region {
+  position: fixed;
+  right: var(--gutter);
+  top: calc(var(--nav-h) + var(--space-sm));
+  z-index: var(--z-modal);
+  pointer-events: none;
+}
+
+.deep-toast {
+  position: relative;
+  display: flex;
+  align-items: center;
+  pointer-events: auto;
+  animation: deep-toast-in var(--dur-long) var(--ease-out) both;
+}
+.deep-toast.is-leaving {
+  animation: deep-toast-out 300ms var(--ease-in) both;
+}
+@keyframes deep-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-1rem);
+  }
+}
+@keyframes deep-toast-out {
+  to {
+    opacity: 0;
+    transform: translateY(-0.75rem);
+  }
+}
+
+/* the record, sliding half out of the left edge of its sleeve */
+.deep-toast__disc {
+  --disc: clamp(3.4rem, 4vw, 5rem);
+  position: absolute;
+  left: calc(var(--disc) * -0.55);
+  top: 50%;
+  z-index: 0;
+  width: var(--disc);
+  height: var(--disc);
+  margin-top: calc(var(--disc) / -2);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, var(--color-mustard) 0 6%, var(--color-crimson) 7% 30%, transparent 31%),
+    repeating-radial-gradient(circle, var(--color-night) 0 2px, var(--color-ink-2) 2px 3px);
+  box-shadow: 0 0 0 1px color-mix(in oklch, var(--color-groove) 70%, transparent);
+  animation:
+    deep-toast-slide var(--dur-epic) var(--ease-out) 120ms both,
+    deep-toast-spin 1.8s linear infinite;
+}
+@keyframes deep-toast-slide {
+  from {
+    translate: calc(var(--disc) * 0.6) 0;
+  }
+}
+@keyframes deep-toast-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+.deep-toast__sleeve {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 0.15rem;
+  min-width: min(19rem, calc(100vw - 2 * var(--gutter) - 3rem));
+  padding: var(--space-xs) var(--space-sm) var(--space-xs) calc(var(--space-sm) + 0.25rem);
+  border-radius: var(--radius-sm);
+  background: var(--color-mustard);
+  color: var(--color-ink);
+  box-shadow: var(--shadow-paper);
+}
+.deep-toast__kicker {
+  font: 400 var(--text-xs) / 1.2 var(--font-mono);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-maroon);
+}
+.deep-toast__kicker span {
+  color: var(--color-ink-soft);
+}
+.deep-toast__title {
+  font: 800 var(--text-lg) / 1 var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.deep-toast__title:lang(hi),
+.deep-toast__title:lang(sa) {
+  font-family: var(--font-deva);
+  font-weight: 400;
+  text-transform: none;
+}
+.deep-toast__title:lang(ko) {
+  font-family: var(--font-hangul);
+  font-weight: 400;
+}
+.deep-toast__open {
+  justify-self: start;
+  margin-top: 0.2rem;
+  padding: 0.15rem 0;
+  font: 700 var(--text-sm) / 1 var(--font-condensed);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-crimson-deep);
+  border-bottom: 2px solid currentColor;
+  transition: color var(--dur-short) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .deep-toast__open:hover {
+    color: var(--color-ink);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .deep-toast,
+  .deep-toast.is-leaving {
+    animation-name: none;
+  }
+  .deep-toast__disc {
+    animation: none;
+  }
+}

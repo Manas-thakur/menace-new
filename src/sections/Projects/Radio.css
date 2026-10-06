@@ -290,3 +290,30 @@
     transform: none;
   }
 }
+
+/* ── The end of the band ────────────────────────────── */
+.radio__hit--end {
+  translate: none;
+  min-width: 0;
+  bottom: auto;
+}
+
+/* 108.0: on air, but silent — the lamp holds a steady gold and the meter lies flat */
+.radio.is-live.is-quiet .radio__live-dot {
+  fill: var(--color-gold);
+  opacity: 1;
+  animation: none;
+}
+.radio.is-live.is-quiet .radio__live-glow {
+  fill: var(--color-gold);
+  opacity: 0.32;
+  transform: scale(1.3);
+  animation: none;
+}
+.radio.is-live.is-quiet .radio__eq-bar {
+  animation: none;
+  transform: scaleY(0.12);
+}
+.radio.is-quiet .radio__readout {
+  fill: var(--color-gold);
+}

@@ -3,6 +3,8 @@ import type { SectionProps } from '../../App';
 import { Drawer } from '../../components/primitives/Drawer';
 import { Marquee } from '../../components/primitives/Marquee';
 import { stack, stations } from '../../data/profile';
+import { deepCut } from '../../data/deep';
+import { discover } from '../../lib/deep';
 import { gsap, useGSAP, SplitText } from '../../lib/gsap';
 import { Draggable } from '../../lib/drag';
 import { drawerOf, onDrawerEnter } from '../../lib/enter';
@@ -18,10 +20,20 @@ const rotToFreq = (r: number) => FMIN + (r / TURN) * (FMAX - FMIN);
 const freqToRot = (f: number) => ((f - FMIN) / (FMAX - FMIN)) * TURN;
 const needleX = (f: number) => scaleX(f) - scaleX(FMIN);
 const LAST = stations.length - 1;
-const clampIndex = (i: number) => Math.max(0, Math.min(LAST, i));
 const pad = (n: number) => String(n).padStart(2, '0');
 const WORDS = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve'];
 const countWord = WORDS[stations.length] ?? String(stations.length);
+
+/* Deep cut: a hidden station at 108.0, the very end of the band (and the number
+ * of beads on a mala). It has no mark, no label and no place in the prev/next
+ * cycle; it answers to the knob turned all the way, End, ArrowRight past the last
+ * station, or a click on the very end of the scale. */
+const SECRET = stations.length;
+const SECRET_FREQ = FMAX;
+/** Released past this point, the knob settles on the hidden station. */
+const SECRET_ZONE = 107.6;
+const quietCut = deepCut('frequency');
+const freqOf = (i: number) => (i === SECRET ? SECRET_FREQ : stations[i].freq);
 
 const nearest = (f: number) => {
   let best = 0;
@@ -31,7 +43,7 @@ const nearest = (f: number) => {
   return { index: best, distance: Math.abs(stations[best].freq - f) };
 };
 
-const valueTextFor = (i: number) => `${stations[i].freq.toFixed(1)} FM — ${stations[i].name}`;
+const valueTextFor = (i: number) => `${freqOf(i).toFixed(1)} FM — ${i === SECRET ? quietCut.title : stations[i].name}`;
 
 export function Projects({ index }: SectionProps) {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -86,6 +98,9 @@ export function Projects({ index }: SectionProps) {
         type: 'rotation',
         bounds: { minRotation: 0, maxRotation: TURN },
         onPress() {
+          // Draggable cancels the pointer's default, which would otherwise focus the
+          // knob; focus it ourselves so the arrow, Home and End keys work after a click.
+          knobRef.current?.focus({ preventScroll: true });
           tuneTl.current?.kill();
           setTuning(true);
           setLive(false);
@@ -100,7 +115,8 @@ export function Projects({ index }: SectionProps) {
           gsap.set(staticRef.current, { opacity: noise * 0.9 });
         },
         onRelease() {
-          settle(nearest(freqRef.current).index);
+          const f = freqRef.current;
+          settle(f > SECRET_ZONE ? SECRET : nearest(f).index);
         },
       });
       dragRef.current = drag;
@@ -148,11 +164,32 @@ export function Projects({ index }: SectionProps) {
     { scope: rootRef }
   );
 
-  /** Glide needle + knob to station `n`; static flickers while the card swaps. */
+  /** The hidden station's cover counts its 108 beads in from the guru bead; the verse writes itself in. */
+  const revealQuiet = contextSafe(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const beads = root.querySelectorAll('.mala__bead');
+    gsap.fromTo(beads, { scale: 0, opacity: 0, transformOrigin: '50% 50%' }, { scale: 1, opacity: 1, duration: 0.24, ease: 'expoOut', stagger: 0.005 });
+    gsap.fromTo(root.querySelector('.mala__guru'), { scale: 0, opacity: 0, transformOrigin: '50% 50%' }, { scale: 1, opacity: 1, duration: 0.4, ease: 'riot', delay: 0.52 });
+    gsap.fromTo(
+      root.querySelectorAll('.station__verse-orig'),
+      { clipPath: 'inset(0% 100% 0% 0%)' },
+      { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.7, ease: 'riot', delay: 0.16, clearProps: 'clipPath' }
+    );
+    gsap.fromTo(
+      root.querySelectorAll('.station__verse-trans, .station__verse .station__foot'),
+      { opacity: 0, y: 8 },
+      { opacity: 1, y: 0, duration: 0.5, ease: 'expoOut', stagger: 0.06, delay: 0.4, clearProps: 'transform,opacity' }
+    );
+  });
+
+  /** Glide needle + knob to station `n`; static flickers while the card swaps.
+   * Tuned to the hidden station, the static clears into silence instead. */
   const settle = contextSafe((n: number) => {
     const reduced = prefersReducedMotion();
+    const secret = n === SECRET;
     const from = freqRef.current;
-    const to = stations[n].freq;
+    const to = freqOf(n);
     const swap = n !== currentRef.current || gsap.getProperty(staticRef.current, 'opacity') !== 0;
     tuneTl.current?.kill();
 
@@ -163,6 +200,7 @@ export function Projects({ index }: SectionProps) {
       dragRef.current?.update();
       setTuning(false);
       setLive(true);
+      if (secret) discover(quietCut.id);
       return;
     }
 
@@ -174,11 +212,24 @@ export function Projects({ index }: SectionProps) {
         dragRef.current?.update();
         setTuning(false);
         setLive(true);
-        pump();
+        // found only once it locks on — never on load, never mid-drag
+        if (secret) discover(quietCut.id);
+        else pump();
       },
     });
     tl.to(proxy, { f: to, duration: 0.7, ease: 'expoOut', onUpdate: () => paint(proxy.f, true) }, 0);
-    if (swap) {
+    if (secret && swap) {
+      tl.to(staticRef.current, { opacity: 1, duration: 0.08, ease: 'none' }, 0)
+        .add(() => show(n), 0.12)
+        .add(revealQuiet, 0.2)
+        .fromTo(
+          [artRef.current, bodyRef.current],
+          { clipPath: 'inset(0% 0% 100% 0%)' },
+          { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.6, ease: 'expoOut', stagger: 0.06, clearProps: 'clipPath' },
+          0.24
+        )
+        .to(staticRef.current, { opacity: 0, duration: 0.7, ease: 'power1.out' }, 0.24);
+    } else if (swap) {
       tl.to(staticRef.current, { opacity: 1, duration: 0.08, ease: 'none' }, 0)
         .add(() => show(n), 0.12)
         .fromTo(
@@ -192,27 +243,36 @@ export function Projects({ index }: SectionProps) {
     tuneTl.current = tl;
   });
 
-  const step = (dir: 1 | -1) => settle((currentRef.current + dir + stations.length) % stations.length);
+  /** Prev/next cycle the seven public stations only; from the hidden one they step back into the cycle. */
+  const step = (dir: 1 | -1) => {
+    const i = currentRef.current;
+    if (i === SECRET) return settle(dir > 0 ? 0 : LAST);
+    settle((i + dir + stations.length) % stations.length);
+  };
 
+  /** Slider keys. Past the last station lies the end of the band. */
   const onKnobKey = (e: KeyboardEvent<HTMLDivElement>) => {
     const i = currentRef.current;
+    const up = i >= LAST ? SECRET : i + 1;
+    const down = i === SECRET ? LAST : Math.max(0, i - 1);
     const map: Record<string, number> = {
-      ArrowRight: i + 1,
-      ArrowUp: i + 1,
-      PageUp: i + 1,
-      ArrowLeft: i - 1,
-      ArrowDown: i - 1,
-      PageDown: i - 1,
+      ArrowRight: up,
+      ArrowUp: up,
+      PageUp: up,
+      ArrowLeft: down,
+      ArrowDown: down,
+      PageDown: down,
       Home: 0,
-      End: LAST,
+      End: SECRET,
     };
     if (!(e.key in map)) return;
     e.preventDefault();
-    const n = clampIndex(map[e.key]);
+    const n = map[e.key];
     if (n !== i) settle(n);
   };
 
-  const station = stations[current];
+  const onAir = current === SECRET;
+  const station = onAir ? null : stations[current];
   const tickerItems = stack.flatMap((g) => g.items);
 
   return (
@@ -245,28 +305,43 @@ export function Projects({ index }: SectionProps) {
             <Radio
               stations={stations}
               current={current}
-              valueNow={station.freq}
+              valueNow={freqOf(current)}
               valueText={valueTextFor(current)}
               knobRef={knobRef}
               needleRef={needleRef}
               grilleRef={grilleRef}
               readoutRef={readoutRef}
               live={live}
+              quiet={onAir}
               onMark={(i) => settle(i)}
+              onEnd={() => settle(SECRET)}
               onKnobKey={onKnobKey}
             />
           </div>
 
           <div className="station-wrap">
-            <StationCard station={station} tuning={tuning} artRef={artRef} bodyRef={bodyRef} staticRef={staticRef} />
+            <StationCard
+              station={station}
+              secret={onAir ? { cut: quietCut, freq: SECRET_FREQ } : null}
+              tuning={tuning}
+              artRef={artRef}
+              bodyRef={bodyRef}
+              staticRef={staticRef}
+            />
             <div className="projects__controls">
               <button type="button" className="projects__step" aria-label="Previous station" aria-controls="projects-station" onClick={() => step(-1)}>
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M15 5 8 12l7 7" />
                 </svg>
               </button>
-              <p className="projects__count" aria-hidden="true">
-                <span>{pad(current + 1)}</span> / {pad(stations.length)}
+              <p className={`projects__count ${onAir ? 'is-off-air' : ''}`} aria-hidden="true">
+                {onAir ? (
+                  <span>Off air</span>
+                ) : (
+                  <>
+                    <span>{pad(current + 1)}</span> / {pad(stations.length)}
+                  </>
+                )}
               </p>
               <button type="button" className="projects__step" aria-label="Next station" aria-controls="projects-station" onClick={() => step(1)}>
                 <svg viewBox="0 0 24 24" aria-hidden="true">

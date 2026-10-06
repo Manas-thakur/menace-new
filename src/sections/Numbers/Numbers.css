@@ -13,8 +13,8 @@
     'board'
     'clock';
   align-content: start;
-  row-gap: var(--space-lg);
-  padding: calc(var(--nav-h) + var(--space-md)) var(--gutter) var(--space-xl);
+  row-gap: var(--space-md);
+  padding: calc(var(--nav-h) + var(--space-md)) var(--gutter) var(--space-lg);
 }
 
 /* ── Heading ─────────────────────────────────────────── */
@@ -40,6 +40,7 @@
 
 .numbers__board {
   grid-area: board;
+  position: relative;
   min-width: 0;
 }
 

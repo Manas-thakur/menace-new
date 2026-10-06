@@ -3,6 +3,7 @@ import { gsap, useGSAP } from '../../lib/gsap';
 import { drawerOf, onDrawerEnter } from '../../lib/enter';
 import { prefersReducedMotion } from '../../lib/motion';
 import type { Figure } from '../../data/profile';
+import type { DeepLine } from '../../data/deep';
 import './FlapBoard.css';
 
 const POOL = {
@@ -28,6 +29,9 @@ function randomFor(target: string) {
 const glyph = (part: Element, ch: string) => {
   (part.firstElementChild as HTMLElement).textContent = ch === ' ' ? '' : ch;
 };
+
+/** Set every layer of a cell at once (no flip). */
+const setCell = (cell: Element, ch: string) => Array.from(cell.children).forEach((part) => glyph(part, ch));
 
 /**
  * Append one mechanical flip of `cell` from `from` to `to` at time `at`.
@@ -97,13 +101,31 @@ function Flap({ ch }: { ch: string }) {
   );
 }
 
+/** The hidden platform-0 row, revealed by asking the station clock. */
+export type StepRow = {
+  open: boolean;
+  /** Text stays mounted while the row folds away, then this goes false. */
+  visible: boolean;
+  value: string;
+  line: DeepLine;
+  translation: string;
+  source: string;
+  onLanded: () => void;
+  onHidden: () => void;
+};
+
 type FlapBoardProps = {
   rows: Figure[];
   station: string;
+  step: StepRow;
 };
 
-export function FlapBoard({ rows, station }: FlapBoardProps) {
+export function FlapBoard({ rows, station, step }: FlapBoardProps) {
   const rootRef = useRef<HTMLDivElement>(null);
+  const stepRef = useRef<HTMLDivElement>(null);
+  const sourceRef = useRef<HTMLParagraphElement>(null);
+  const stepTl = useRef<gsap.core.Timeline | null>(null);
+  const stepWas = useRef(step.open);
   const count = Math.max(...rows.map((r) => r.value.length));
   const finals = rows.map((r) => cellsFor(r.value, count));
 
@@ -113,7 +135,7 @@ export function FlapBoard({ rows, station }: FlapBoardProps) {
       const drawer = drawerOf(root);
       if (!root || !drawer || prefersReducedMotion()) return;
 
-      const rowEls = Array.from(root.querySelectorAll('.board__row'));
+      const rowEls = Array.from(root.querySelectorAll('.board__rows > .board__row'));
       const plates = rowEls.map((r) => Array.from(r.querySelectorAll('.board__what, .board__where')));
 
       // The board waits blank, name plates folded up, until the drawer arrives.
@@ -150,46 +172,110 @@ export function FlapBoard({ rows, station }: FlapBoardProps) {
     addRowFlips(tl, row, finals[r], 0, [2, 4]);
   });
 
+  // Platform 0: flaps into place when the clock is asked, folds away when asked again.
+  useGSAP(
+    () => {
+      if (stepWas.current === step.open) return; // mount, and StrictMode's re-run
+      stepWas.current = step.open;
+      const row = stepRef.current;
+      if (!row) return;
+      const cells = Array.from(row.querySelectorAll('.flap'));
+      const plates = Array.from(row.querySelectorAll('.board__what, .board__where'));
+      const source = sourceRef.current;
+      const extras = source ? [source] : [];
+      const target = cellsFor(step.open ? step.value : '', count);
+
+      stepTl.current?.kill();
+      gsap.set(row.querySelectorAll('.flap__leaf'), { autoAlpha: 0 });
+
+      if (prefersReducedMotion()) {
+        cells.forEach((cell, c) => setCell(cell, target[c]));
+        gsap.set([...plates, ...extras], { opacity: step.open ? 1 : 0, rotationX: 0, y: 0 });
+        if (step.open) step.onLanded();
+        else step.onHidden();
+        return;
+      }
+
+      const tl = gsap.timeline({ onComplete: step.open ? step.onLanded : step.onHidden });
+      if (step.open) {
+        gsap.set(plates, { rotationX: -90, opacity: 0, transformOrigin: '50% 0%', transformPerspective: 600 });
+        gsap.set(extras, { opacity: 0, y: 6 });
+        addRowFlips(tl, row, target, 0.08, [2, 4]);
+        tl.to(plates, { rotationX: 0, opacity: 1, duration: 0.6, ease: 'expoOut', stagger: 0.08 }, 0.3);
+        tl.to(extras, { opacity: 1, y: 0, duration: 0.5, ease: 'expoOut' }, 0.5);
+      } else {
+        tl.to(extras, { opacity: 0, y: 6, duration: 0.25, ease: 'riot' }, 0);
+        tl.to(plates, { rotationX: -90, opacity: 0, duration: 0.3, ease: 'riot', stagger: 0.05 }, 0);
+        addRowFlips(tl, row, target, 0.06, [1, 2]);
+      }
+      stepTl.current = tl;
+    },
+    { dependencies: [step.open], scope: rootRef }
+  );
+
   return (
-    <div className="board" ref={rootRef} style={{ ['--cells' as string]: count }}>
-      <div className="board__rivets" aria-hidden="true" />
-      <div className="board__head">
-        <p className="board__title">
-          Departures <span className="board__dot" aria-hidden="true">·</span>{' '}
-          <span className="board__hi" lang="hi">
-            प्रस्थान
-          </span>
-        </p>
-        <p className="board__station">{station}</p>
-      </div>
-
-      <div className="board__labels" aria-hidden="true">
-        <span>Figure</span>
-        <span>What</span>
-        <span>Where</span>
-      </div>
-
-      <ol className="board__rows">
-        {rows.map((row, r) => (
-          <li
-            key={row.value + row.what}
-            className="board__row"
-            tabIndex={0}
-            onPointerEnter={(e) => e.pointerType === 'mouse' && reflip(e.currentTarget, r)}
-            onFocus={(e) => reflip(e.currentTarget, r)}
-            onClick={(e) => reflip(e.currentTarget, r)}
-          >
-            <span className="board__cells">
-              {finals[r].map((ch, c) => (
-                <Flap key={c} ch={ch} />
-              ))}
-              <span className="visually-hidden">{row.value}</span>
+    <>
+      <div className="board" ref={rootRef} style={{ ['--cells' as string]: count }}>
+        <div className="board__rivets" aria-hidden="true" />
+        <div className="board__head">
+          <p className="board__title">
+            Departures <span className="board__dot" aria-hidden="true">·</span>{' '}
+            <span className="board__hi" lang="hi">
+              प्रस्थान
+            </span>{' '}
+            <span className="board__dot" aria-hidden="true">·</span>{' '}
+            <span className="board__ko" lang="ko">
+              출발
             </span>
-            <span className="board__what">{row.what}</span>
-            <span className="board__where">{row.where}</span>
-          </li>
-        ))}
-      </ol>
-    </div>
+          </p>
+          <p className="board__station">{station}</p>
+        </div>
+
+        <div className="board__labels" aria-hidden="true">
+          <span>Figure</span>
+          <span>What</span>
+          <span>Where</span>
+        </div>
+
+        <ol className="board__rows">
+          {rows.map((row, r) => (
+            <li
+              key={row.value + row.what}
+              className="board__row"
+              tabIndex={0}
+              onPointerEnter={(e) => e.pointerType === 'mouse' && reflip(e.currentTarget, r)}
+              onFocus={(e) => reflip(e.currentTarget, r)}
+              onClick={(e) => reflip(e.currentTarget, r)}
+            >
+              <span className="board__cells">
+                {finals[r].map((ch, c) => (
+                  <Flap key={c} ch={ch} />
+                ))}
+                <span className="visually-hidden">{row.value}</span>
+              </span>
+              <span className="board__what">{row.what}</span>
+              <span className="board__where">{row.where}</span>
+            </li>
+          ))}
+        </ol>
+
+        {/* Platform 0 — blank until the station clock is asked. Real text once shown, announced politely. */}
+        <div id="board-step" ref={stepRef} className="board__row board__row--step" aria-live="polite" aria-atomic="true">
+          <span className="board__cells">
+            {cellsFor('', count).map((ch, c) => (
+              <Flap key={c} ch={ch} />
+            ))}
+            {step.visible && <span className="visually-hidden">Platform 0, {step.value.toLowerCase()}:</span>}
+          </span>
+          <span className="board__what board__what--ko" lang={step.line.lang}>
+            {step.visible ? step.line.text : ''}
+          </span>
+          <span className="board__where">{step.visible ? step.translation : ''}</span>
+        </div>
+      </div>
+      <p ref={sourceRef} className="board__source">
+        {step.visible ? step.source : ''}
+      </p>
+    </>
   );
 }

@@ -42,6 +42,24 @@ All facts live in **`src/data/profile.ts`** — roles, projects, press clippings
 | 7 | Photos — *Darkroom* | A 36-exposure roll of Manas's photographs, three ways: on the line, as a contact sheet under a loupe, and on a colour wheel | Prints fly between views; negatives turn positive under the loupe; brushing the line makes prints swing |
 | 8 | Contact — *Side B* | Greeting in नमस्ते / 안녕하세요 / Hello, live clocks | Record spins; greeting flips |
 
+## Deep cuts
+
+*Side A is what I show. Side B is what I mean.* Nine messages are pressed into the record, each bound to an object already in the design and revealed by looking closely (hover and rest, focus, or tap):
+
+| # | Cut | Where | What it says |
+|---|---|---|---|
+| 01 | मानस | the name in the hero | Manas is Sanskrit for *the mind* — he builds the other kind |
+| 02 | The string | the crimson kite | a kite climbs only because someone on the ground holds the string |
+| 03 | Slowly | the kulhad in The Kulhad Times | Kabir: धीरे धीरे रे मना… |
+| 04 | The quiet frequency | the radio, at 108.0 (the end of the dial) | Bhagavad Gita 2.47 |
+| 05 | One step | the station clock on the departures board | Korean proverb 천 리 길도 한 걸음부터 |
+| 06 | With love | the back of the auto-rickshaw | देखो मगर प्यार से — truck-art's "look, but with love" |
+| 07 | Becoming | the edge of the film, under the loupe | Manas's own caption |
+| 08 | Dead wax | Side B's run-out groove | etched like a mastering engineer's signature |
+| 09 | Hidden track | Side B's centre hole | Manas's own caption, as the closing words |
+
+Every line lives in **`src/data/deep.ts`** — originals in their own script with a free translation, and a source. Rewrite them there. A visitor's finds are remembered in their own browser (`localStorage`, key `tensorman:deep-cuts`); the **Liner notes** (from the ticket, the footer, or the "deep cut found" notice) list what they've found and hint at the rest. Developers get one more in the browser console.
+
 ## Structure
 
 ```

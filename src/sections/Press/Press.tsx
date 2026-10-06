@@ -6,7 +6,7 @@ import { briefs, clippings, type Clipping } from '../../data/profile';
 import { gsap, useGSAP } from '../../lib/gsap';
 import { drawerOf, onDrawerEnter } from '../../lib/enter';
 import { prefersReducedMotion } from '../../lib/motion';
-import { Kulhad } from './Kulhad';
+import { DohaCut } from './DohaCut';
 import './Press.css';
 
 // Hand-placed collage: each cut-out sits a little askew, tape laid at its own angle.
@@ -147,8 +147,9 @@ export function Press({ index }: SectionProps) {
         </header>
 
         <div className="press__art">
-          <div className="press__art-figure" aria-hidden="true">
-            <Kulhad />
+          {/* The kulhad's drawing is aria-hidden inside; the cup itself is a control (deep cut "Slowly"). */}
+          <div className="press__art-figure">
+            <DohaCut />
           </div>
           <BriefCard order={rest.length + 1} placement="pinned" />
         </div>

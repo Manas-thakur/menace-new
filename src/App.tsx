@@ -1,4 +1,4 @@
-import { useEffect, useState, type ComponentType } from 'react';
+import { Component, useEffect, useState, type ComponentType, type ReactNode } from 'react';
 import { gsap, ScrollTrigger, useGSAP } from './lib/gsap';
 import { flags, prefersReducedMotion } from './lib/motion';
 import { naturalTop, startSmoothScroll } from './lib/scroll';
@@ -6,6 +6,8 @@ import { SvgDefs } from './components/primitives/Print';
 import { Kit } from './components/primitives/Kit';
 import { Hero } from './sections/Hero/Hero';
 import { Navbar } from './sections/Navbar/Navbar';
+import { DeepToast } from './components/deep/DeepToast';
+import { LinerNotes } from './components/deep/LinerNotes';
 
 export type SectionProps = { index: number };
 type Section = ComponentType<SectionProps>;
@@ -23,6 +25,21 @@ const DRAWERS: { id: string; label: string; load: () => Promise<Section> }[] = [
   { id: 'photos', label: 'Photos', load: () => import('./sections/Photos/Photos').then((m) => m.Photos) },
   { id: 'contact', label: 'Contact', load: () => import('./sections/Contact/Contact').then((m) => m.Contact) },
 ];
+
+/** A drawer that throws while rendering is swapped for its placeholder, so one
+ * broken section never takes the rest of the record down with it. */
+class DrawerBoundary extends Component<{ id: string; label: string; children: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  componentDidCatch(error: unknown) {
+    console.error(`[drawer:${this.props.id}]`, error);
+  }
+  render() {
+    return this.state.failed ? <Unavailable id={this.props.id} label={this.props.label} /> : this.props.children;
+  }
+}
 
 function Unavailable({ id, label }: { id: string; label: string }) {
   return (
@@ -125,11 +142,19 @@ function FullPage() {
         <main id="main">
           {sections?.map((Section, i) => {
             const d = DRAWERS[i];
-            return Section ? <Section key={d.id} index={i + 1} /> : <Unavailable key={d.id} id={d.id} label={d.label} />;
+            return Section ? (
+              <DrawerBoundary key={d.id} id={d.id} label={d.label}>
+                <Section index={i + 1} />
+              </DrawerBoundary>
+            ) : (
+              <Unavailable key={d.id} id={d.id} label={d.label} />
+            );
           })}
         </main>
       </div>
       <div className="grain" aria-hidden="true" />
+      <DeepToast />
+      <LinerNotes />
     </>
   );
 }
@@ -146,9 +171,15 @@ function Preview({ id }: { id: string }) {
     <div className="is-preview">
       <SvgDefs />
       {isHero ? <Hero index={0} /> : <Navbar />}
-      {!isHero && Section && <Section index={index} />}
+      {!isHero && Section && (
+        <DrawerBoundary id={id} label={id}>
+          <Section index={index} />
+        </DrawerBoundary>
+      )}
       {!isHero && sections && !Section && <Unavailable id={id} label={id} />}
       <div className="grain" aria-hidden="true" />
+      <DeepToast />
+      <LinerNotes />
     </div>
   );
 }

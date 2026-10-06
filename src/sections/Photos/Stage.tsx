@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { gsap, ScrollTrigger } from '../../lib/gsap';
 import { Draggable } from '../../lib/drag';
+import { discover } from '../../lib/deep';
 import {
   B,
   N,
@@ -23,6 +24,9 @@ import { SnapPoints, Strings, TrayButton, TrayDish, stringPath } from './LineDec
 import { GreasePencil, LightTable, Strips } from './SheetDecor';
 import { WheelHub, WheelSpinner, WheelText, WheelTrack, createWheelStore } from './WheelDecor';
 import { Loupe, type LoupeApi } from './Loupe';
+import { EDGE_CUT, edgeCentre, edgePrints } from './edgePrint';
+import { EdgeButton } from './EdgeButton';
+import { swallowNextClick } from './tap';
 import { Swings } from './physics';
 
 type Layouts = { line: LineLayout; sheet: SheetLayout; wheel: WheelLayout };
@@ -93,6 +97,9 @@ export function Stage({ view, reduced, entered, onView, onOpen }: StageProps) {
     const desktop = window.matchMedia('(min-width: 64rem)');
     const measure = () => {
       const W = Math.round(el.clientWidth);
+      // a stage this narrow is a passing measurement (mid-resize, a capture), not a layout:
+      // the phone sheet keeps a loupe's width clear, so frames would come out negative
+      if (W < 240) return;
       const H = desktop.matches ? Math.round(el.clientHeight) : null;
       setSize((prev) => (prev && prev.W === W && prev.H === H ? prev : { W, H, vh: window.innerHeight }));
     };
@@ -123,6 +130,7 @@ export function Stage({ view, reduced, entered, onView, onOpen }: StageProps) {
   );
   const layoutsRef = useRef(layouts);
   layoutsRef.current = layouts;
+  const edges = useMemo(() => (layouts ? edgePrints(layouts.sheet) : []), [layouts]);
 
   /* ── physics ─────────────────────────────────────────── */
   const drawerVisible = useCallback(() => {
@@ -378,6 +386,7 @@ export function Stage({ view, reduced, entered, onView, onOpen }: StageProps) {
         wheelTapAt.current = performance.now();
         const i = Number(pr.dataset.index);
         onOpen(i, prints.current[i]);
+        swallowNextClick();
       },
     })[0];
   };
@@ -537,7 +546,7 @@ export function Stage({ view, reduced, entered, onView, onOpen }: StageProps) {
       });
       t2.to(paths.slice(0, -10), { strokeDashoffset: 0, duration: 0.42, ease: 'power1.inOut', stagger: 0.03 }, 0.82)
         .to(paths.slice(-10), { strokeDashoffset: 0, duration: 0.16, ease: 'none', stagger: 0.07 }, 1.2);
-      loupe.current?.moveTo(L.sheet.targets[0].cx, L.sheet.targets[0].cy, true);
+      loupe.current?.moveTo(L.sheet.targets[0].cx, L.sheet.targets[0].cy, { immediate: true });
     }
     tl.current = t2;
   };
@@ -619,13 +628,14 @@ export function Stage({ view, reduced, entered, onView, onOpen }: StageProps) {
 
   const lastXY = useRef({ x: -1, y: -1 });
   const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const moved = e.clientX !== lastXY.current.x || e.clientY !== lastXY.current.y;
     lastXY.current = { x: e.clientX, y: e.clientY };
     const all = layoutsRef.current;
     if (!all) return;
     const L = all.line;
     const pt = local(e);
     if (shown.current === 'sheet') {
-      if (e.pointerType !== 'touch' && landedRef.current) loupe.current?.moveTo(pt.x, pt.y);
+      if (e.pointerType !== 'touch' && landedRef.current) loupe.current?.moveTo(pt.x, pt.y, { user: moved });
       return;
     }
     if (shown.current !== 'line' || !landedRef.current || reducedRef.current) return;
@@ -701,7 +711,7 @@ export function Stage({ view, reduced, entered, onView, onOpen }: StageProps) {
     if (!L) return;
     if (loupe.current?.frame() !== i) {
       const t = L.sheet.targets[i];
-      loupe.current?.moveTo(t.cx, t.cy);
+      loupe.current?.moveTo(t.cx, t.cy, { user: true });
     } else onOpen(i, prints.current[i]);
   };
   // Touch taps on the sheet are read from pointer events: a quick second tap after
@@ -723,6 +733,7 @@ export function Stage({ view, reduced, entered, onView, onOpen }: StageProps) {
     if (Math.hypot(e.clientX - tp.x, e.clientY - tp.y) > 10 || e.timeStamp - tp.t > 600) return;
     tapHandledAt.current = performance.now();
     sheetTap(tp.i);
+    swallowNextClick();
   };
 
   const onActivate = (i: number, el: HTMLButtonElement) => {
@@ -772,8 +783,16 @@ export function Stage({ view, reduced, entered, onView, onOpen }: StageProps) {
     if (!L) return;
     if (shown.current === 'sheet') {
       const t = L.sheet.targets[i];
-      loupe.current?.moveTo(t.cx, t.cy);
+      loupe.current?.moveTo(t.cx, t.cy, { user: true });
     } else if (shown.current === 'wheel') previewPrint(i);
+  };
+  /** The edge printing, for keyboards and fingers: bring the loupe to rest on it. */
+  const toEdge = () => {
+    const L = layoutsRef.current;
+    const e = edges[0];
+    if (!L || !e || shown.current !== 'sheet') return;
+    const c = edgeCentre(L.sheet, e);
+    loupe.current?.moveTo(c.x, c.y, { user: true });
   };
 
   const cur = layouts?.[view];
@@ -807,7 +826,7 @@ export function Stage({ view, reduced, entered, onView, onOpen }: StageProps) {
           </div>
           <div className="dr-layer dr-layer--sheet" aria-hidden="true">
             <LightTable rect={L.sheet.table} flicker={flicker} />
-            <Strips layout={L.sheet} />
+            <Strips layout={L.sheet} edges={edges} />
           </div>
           <div className="dr-layer dr-layer--wheel">
             <WheelText layout={L.wheel} />
@@ -834,15 +853,18 @@ export function Stage({ view, reduced, entered, onView, onOpen }: StageProps) {
             <GreasePencil layout={L.sheet} setPath={(k, el) => (greasePaths.current[k] = el)} />
           </div>
           <TrayButton rect={L.line.tray} count={L.line.pile.length} onOpen={() => onView('sheet')} hidden={view !== 'line'} />
+          {edges[0] && <EdgeButton layout={L.sheet} edge={edges[0]} hidden={view !== 'sheet'} onReach={toEdge} />}
           <Loupe
             ref={loupe}
             layout={L.sheet}
+            edges={edges}
             diameter={loupeD}
             magnify={2.4}
             reduced={reduced}
             on={view === 'sheet' && landed}
             ready={sheetSeen || view === 'sheet'}
             onTap={(i) => onOpen(i, prints.current[i])}
+            onEdgePrint={() => discover(EDGE_CUT.id)}
           />
         </div>
       )}

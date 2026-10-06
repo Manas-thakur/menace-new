@@ -442,6 +442,83 @@
   top: calc(var(--f) * 0.012);
 }
 
+/* Edge printing (deep cut: becoming). On the sheet it is a latent line, faint and too
+ * small to read, beside the MENACE 400 marks. In the loupe it is developed: darker, and
+ * drawn at the lens's own magnification. While the lens rests on it, it warms under
+ * the safelight — an opacity crossfade to a warm copy, nothing moves. */
+.dr-latent {
+  position: absolute;
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  color: color-mix(in oklch, var(--film-ink) 28%, var(--film-base));
+  pointer-events: none;
+}
+.dr-latent__ink,
+.dr-latent__glow {
+  position: absolute;
+  inset: 0;
+  transition: opacity var(--dur-long) var(--ease-out);
+}
+.dr-latent__row {
+  display: block;
+}
+.dr-loupe__clone .dr-latent {
+  color: color-mix(in oklch, var(--film-ink) 92%, var(--film-base));
+}
+.dr-latent__glow {
+  isolation: isolate;
+  opacity: 0;
+  color: var(--color-crimson-deep);
+  text-shadow:
+    0 0 0.3em color-mix(in oklch, var(--color-signal) 70%, transparent),
+    0 0 0.8em color-mix(in oklch, var(--color-signal) 38%, transparent);
+}
+/* a faint pool of safelight on the film around the words */
+.dr-latent__glow::before {
+  content: '';
+  position: absolute;
+  inset: -70% -12%;
+  z-index: -1;
+  background: radial-gradient(closest-side, color-mix(in oklch, var(--color-signal) 32%, transparent), transparent);
+}
+.dr-loupe.is-edge .dr-latent__glow {
+  opacity: 1;
+}
+.dr-loupe.is-edge .dr-latent__ink {
+  opacity: 0.2;
+}
+@media (prefers-reduced-motion: reduce) {
+  .dr-latent__ink,
+  .dr-latent__glow {
+    transition-property: none;
+  }
+}
+/* A print's paper border shows only on the line and its chip border only on the
+ * wheel; faded out elsewhere, they must not catch taps meant for what lies beneath
+ * (on the contact sheet, the edge printing in the rebate above each frame). */
+.dr-stage:not([data-view='line']) .pr__paper,
+.dr-stage:not([data-view='wheel']) .pr__card {
+  pointer-events: none;
+}
+
+/* the way in without a steady hand: focus or tap the rebate */
+.dr-edge-btn {
+  position: absolute;
+  z-index: 2;
+  border-radius: var(--radius-sm);
+  cursor: zoom-in;
+}
+.dr-stage:not([data-view='sheet']) .dr-edge-btn {
+  display: none;
+}
+/* the lens sits over the button, so the chip under the lens carries its focus ring */
+.dr-edge-btn:focus-visible ~ .dr-loupe .dr-loupe__chip {
+  box-shadow:
+    var(--focus-ring),
+    0 6px 14px -6px color-mix(in oklch, var(--color-shadow) 80%, transparent);
+}
+
 .dr-grease {
   position: absolute;
   left: 0;

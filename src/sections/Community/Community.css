@@ -622,6 +622,29 @@
   height: 100%;
   overflow: visible;
 }
+/* Layers: the read button underneath, the art above it (pointer-transparent, so
+ * hovering the auto reaches the button), the pennant clickable on top of both,
+ * and the revealed plate + roof board above everything. */
+.auto__read {
+  position: absolute;
+  z-index: 1;
+  left: 4%;
+  top: 25%;
+  width: 93%;
+  height: 74%;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.auto__read:focus-visible {
+  border-radius: var(--radius-md);
+}
+.auto__turn {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
 .auto__body {
   position: absolute;
   inset: 0;
@@ -767,9 +790,144 @@
   fill: var(--color-ink-soft);
 }
 
+/* Truck-art plate on the rear panel, always there, small */
+.auto__art-plate {
+  fill: var(--color-paper);
+  stroke: var(--color-crimson);
+  stroke-width: 3;
+}
+.auto__art-rule {
+  fill: none;
+  stroke: var(--color-leaf);
+  stroke-width: 1.2;
+}
+.auto__art-dot {
+  fill: var(--color-crimson);
+}
+.auto__art-text {
+  font-family: var(--font-deva);
+  font-size: 10.5px;
+  fill: var(--color-crimson-deep);
+}
+.auto__art-curl,
+.auto__vine {
+  fill: none;
+  stroke: var(--color-paper);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.auto__vine {
+  stroke-width: 2.4;
+  opacity: 0.85;
+}
+.auto__art-bead {
+  fill: var(--color-royal-2);
+  stroke: var(--color-paper);
+  stroke-width: 1.4;
+}
+.auto__art-pupil {
+  fill: var(--color-ink);
+}
+
+/* Nimbu-mirchi, hung off the rear of the roof */
+.auto__thread {
+  fill: none;
+  stroke: var(--color-ink);
+  stroke-width: 1.4;
+}
+.auto__chilli {
+  fill: var(--color-leaf);
+  stroke: var(--color-leaf-deep);
+  stroke-width: 0.8;
+}
+.auto__lemon {
+  fill: var(--color-auto-yellow);
+  stroke: var(--color-ink);
+  stroke-width: 1.4;
+}
+
+/* ── Deep cut · the back of the auto, revealed ───────── */
+.auto__cut {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  margin: 0;
+  pointer-events: none;
+}
+.auto__plate,
+.auto__board {
+  position: absolute;
+  pointer-events: auto;
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* The plate's close-up grows out of the painted one (same centre) */
+.auto__plate {
+  left: 16.7%;
+  top: 45%;
+  translate: -50% -50%;
+  display: grid;
+  justify-items: center;
+  margin: 0;
+  padding: 0.3em 0.62em 0.42em;
+  border: 0.13em solid var(--color-crimson);
+  border-radius: 0.18em;
+  background: var(--color-paper);
+  box-shadow:
+    inset 0 0 0 0.1em var(--color-paper),
+    inset 0 0 0 0.17em var(--color-leaf);
+  color: var(--color-crimson-deep);
+  font-family: var(--font-deva);
+  font-size: max(1.05rem, 5.4cqi);
+  line-height: 1.12;
+  white-space: nowrap;
+  filter: var(--drop-sticker);
+}
+
+/* A painted board raised on the roof, right of the pennant */
+.auto__board {
+  right: 0;
+  bottom: 73.4%;
+  width: max(54cqi, 11.5rem);
+  padding: 0.7em 0.8em 0.75em;
+  border: 3px solid var(--color-ink);
+  border-radius: var(--radius-sm);
+  background: var(--color-paper);
+  box-shadow:
+    inset 0 0 0 4px var(--color-paper),
+    inset 0 0 0 6px var(--color-crimson);
+  text-align: center;
+  rotate: -1.2deg;
+  filter: var(--drop-sticker);
+}
+.auto__translation {
+  display: block;
+  font: 500 max(1rem, 3.4cqi) / 1.15 var(--font-serif);
+  color: var(--color-ink);
+  white-space: nowrap;
+}
+.auto__source {
+  display: block;
+  margin-top: 0.5em;
+  font: 400 max(0.68rem, 1.75cqi) / 1.35 var(--font-mono);
+  color: var(--color-ink-soft);
+}
+/* A small auto has no room on the roof beside the pennant: the board becomes a
+ * sticker slapped on the cabin side instead, clear of the pennant and the plate. */
+@container (max-width: 30rem) {
+  .auto__board {
+    top: 29%;
+    bottom: auto;
+    right: 1.5%;
+    rotate: 2deg;
+  }
+}
+
 /* Pennant: a real button riding on the auto's pole */
 .auto__pennant {
   position: absolute;
+  pointer-events: auto;
   top: 1.6%;
   left: 14.4%;
   padding-block: 0.5em;

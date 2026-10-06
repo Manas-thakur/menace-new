@@ -13,7 +13,7 @@
 .contact__wrap {
   position: relative;
   display: grid;
-  grid-template-rows: 1fr auto;
+  grid-template-rows: auto;
   min-height: 100svh;
   padding: calc(var(--nav-h) + var(--space-lg)) var(--gutter) var(--space-md);
 }
@@ -32,22 +32,25 @@
   --tx-size: 620px;
 }
 
-/* ── The record ─────────────────────────────────────── */
-/* Mobile: a giant disc rising out of the bottom-right corner, label in the corner. */
-.contact__record {
-  position: absolute;
-  z-index: 1;
-  right: 0;
-  bottom: 0;
-  width: 150vw;
+/* ── The platter ──────────────────────────────────────
+ * The record (under the content) and its controls (above it) share one box.
+ * It is placed with offsets, never transforms, so it makes no stacking context
+ * and its two layers can sit either side of the content.
+ * Mobile: in the flow between the clocks and the footer, centre hole on screen. */
+.contact__platter {
+  position: relative;
+  grid-row: 2;
+  justify-self: end;
+  width: 96vw;
   aspect-ratio: 1;
-  translate: 52% 50%;
+  margin-block: var(--space-sm) -22vw;
+  margin-inline-end: calc(var(--gutter) * -1 - 14vw);
   pointer-events: none;
 }
-.contact__record-move {
-  position: relative;
-  width: 100%;
-  height: 100%;
+.contact__record {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
 }
 .contact__spin {
   width: 100%;
@@ -102,10 +105,45 @@
   stroke: color-mix(in oklch, var(--color-cream) 20%, transparent);
   stroke-linecap: round;
 }
-.record__runout {
+.record__deadwax {
+  fill: none;
+  stroke: color-mix(in oklch, var(--color-ink) 93%, var(--color-cream));
+}
+.record__leadout {
   fill: none;
   stroke: var(--color-night);
-  stroke-width: 6;
+  stroke-width: 1.3;
+  opacity: 0.85;
+}
+.record__lock {
+  fill: none;
+  stroke: var(--color-night);
+  stroke-width: 2;
+}
+.record__etch,
+.record__etch-lip {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+.record__etch {
+  fill: var(--color-cream);
+  opacity: 0.16;
+}
+.record__etch-lip {
+  fill: var(--color-night);
+  opacity: 0.55;
+}
+.record__etch-glint {
+  opacity: 0;
+}
+.record__light-core {
+  stop-color: var(--color-sheen);
+  stop-opacity: 0.6;
+}
+.record__light-edge {
+  stop-color: var(--color-sheen);
+  stop-opacity: 0;
 }
 .record__label-disc {
   fill: var(--color-crimson);
@@ -151,10 +189,226 @@
   fill: var(--color-night);
 }
 
+/* ── The deck: controls laid over the record ──────────
+ * Geometry is in percent of the (square) platter, matching the SVG's 1000-unit
+ * board: dead wax r 238 → 47.6% across, label r 172 → 34.4%, the etching ~r 204. */
+.contact__deck {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+.contact__deck-hit {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 47.6%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  pointer-events: auto;
+}
+.contact__runout {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  cursor: zoom-in;
+}
+.contact__deck.is-reading .contact__runout {
+  cursor: zoom-out;
+}
+.contact__hole {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max(44px, 8.4%);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.contact__runout:focus-visible,
+.contact__hole:focus-visible {
+  border-radius: 50%;
+}
+/* The hole answers a hover with a small gold ring: something to press. */
+.contact__hole::after {
+  content: '';
+  position: absolute;
+  inset: 24%;
+  border: 2px solid var(--color-gold);
+  border-radius: 50%;
+  opacity: 0;
+  scale: 0.5;
+  transition:
+    opacity var(--dur-short) var(--ease-out),
+    scale var(--dur-short) var(--ease-out);
+}
+.contact__hole:focus-visible::after {
+  opacity: 0.95;
+  scale: 1;
+}
+@media (hover: hover) and (pointer: fine) {
+  .contact__hole:hover::after {
+    opacity: 0.95;
+    scale: 1;
+  }
+}
+/* A hairline of light at the edge of the dead wax while you linger */
+.contact__deck-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 47.6%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--color-gold) 55%, transparent);
+  opacity: 0;
+  transition: opacity var(--dur-long) var(--ease-out);
+}
+.contact__deck:has(.contact__deck-hit:hover) .contact__deck-ring,
+.contact__deck.is-reading .contact__deck-ring {
+  opacity: 1;
+}
+/* The ring of light the label throws when the hidden track starts */
+.contact__pulse {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 34.4%;
+  aspect-ratio: 1;
+  margin: -17.2% 0 0 -17.2%;
+  border: 3px solid var(--color-gold);
+  border-radius: 50%;
+  opacity: 0;
+}
+
+/* The run-out caption: the etching, readable at any size, revealed with the glint */
+.contact__etching-leader {
+  position: absolute;
+  left: 50%;
+  top: 21.5%;
+  width: 1px;
+  height: 7%;
+  background: color-mix(in oklch, var(--color-gold) 70%, transparent);
+  transform-origin: 50% 100%;
+  opacity: 0;
+  visibility: hidden;
+}
+.contact__etching {
+  position: absolute;
+  right: 47%;
+  bottom: 78.5%;
+  display: grid;
+  gap: 0.4em;
+  width: max-content;
+  max-width: 60vw;
+  padding: 0.65em 0.95em 0.75em;
+  border: var(--rule-hair) solid color-mix(in oklch, var(--color-gold) 40%, transparent);
+  border-radius: var(--radius-sm);
+  background: color-mix(in oklch, var(--color-night) 94%, transparent);
+  opacity: 0;
+  visibility: hidden;
+}
+.contact__etching-kicker {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: 1;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-gold-deep);
+}
+.contact__etching-text {
+  font-family: var(--font-serif);
+  font-size: var(--text-lg);
+  line-height: 1.25;
+  color: var(--color-cream);
+}
+
+/* ── The hidden track ─────────────────────────────────
+ * Laid over the content (which dims and goes inert), closing words of the site. */
+.contact__hidden {
+  position: relative;
+  z-index: 4;
+  grid-row: 1;
+  grid-column: 1;
+  align-self: end;
+  /* only as wide as its words, so a click beside them counts as a click away */
+  justify-self: start;
+  display: grid;
+  justify-items: start;
+  gap: var(--space-xs);
+  padding-block: var(--space-xs);
+  /* on phones it settles a little into the record's top grooves */
+  margin-bottom: -12vw;
+  opacity: 0;
+  visibility: hidden;
+}
+.contact__hidden[hidden] {
+  display: none;
+}
+.contact__hidden-lines {
+  max-width: 24ch;
+  font-family: var(--font-serif);
+  font-size: clamp(1.35rem, 6.4vw, 3rem);
+  line-height: 1.14;
+  color: var(--color-mustard);
+}
+.contact__hidden-credit {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.06em;
+  color: var(--contact-muted);
+}
+.contact__hidden-close {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  min-height: 44px;
+  padding: 0.5em 1.1em;
+  border: 2px solid var(--color-mustard);
+  border-radius: var(--radius-pill);
+  color: var(--color-mustard);
+  font-family: var(--font-condensed);
+  font-weight: 800;
+  font-size: var(--text-sm);
+  line-height: 1;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition:
+    background-color var(--dur-short) var(--ease-out),
+    color var(--dur-short) var(--ease-out);
+}
+.contact__hidden-close:focus-visible {
+  background: var(--color-mustard);
+  color: var(--color-ink);
+}
+@media (hover: hover) and (pointer: fine) {
+  .contact__hidden-close:hover {
+    background: var(--color-mustard);
+    color: var(--color-ink);
+  }
+}
+
+/* While it plays, everything else recedes into the dark */
+.contact__main,
+.contact__foot {
+  transition: opacity var(--dur-long) var(--ease-out);
+}
+.contact__wrap.is-track .contact__main,
+.contact__wrap.is-track .contact__foot {
+  opacity: 0.07;
+}
+
 /* ── Content ─────────────────────────────────────────── */
 .contact__main {
   position: relative;
   z-index: 2;
+  /* explicit cells: the hidden track overlays this same cell when it plays */
+  grid-row: 1;
+  grid-column: 1;
   display: grid;
   align-content: center;
   justify-items: start;
@@ -423,6 +677,8 @@
 .contact__foot {
   position: relative;
   z-index: 2;
+  grid-row: 3;
+  grid-column: 1;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -475,11 +731,95 @@
   }
 }
 
+/* Footer actions: the liner notes, and the way back up */
+.contact__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs) var(--space-xs);
+}
+.contact__notes {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  min-height: 44px;
+  padding: 0.5em 1.1em 0.5em 0.8em;
+  border: 2px solid var(--color-gold-deep);
+  border-radius: var(--radius-pill);
+  background: var(--color-night);
+  color: var(--color-gold);
+  font-family: var(--font-condensed);
+  font-weight: 700;
+  font-size: var(--text-sm);
+  line-height: 1;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition:
+    background-color var(--dur-short) var(--ease-out),
+    border-color var(--dur-short) var(--ease-out),
+    color var(--dur-short) var(--ease-out),
+    translate var(--dur-micro) var(--ease-out);
+}
+.contact__notes-disc {
+  flex: none;
+  width: 1.3em;
+  height: 1.3em;
+}
+.contact__notes-disc circle:first-child {
+  fill: var(--color-ink);
+  stroke: var(--color-gold-deep);
+  stroke-width: 1.4;
+}
+.contact__notes-label {
+  fill: var(--color-crimson);
+}
+.contact__notes-count {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  font-variant-numeric: tabular-nums;
+}
+.contact__notes:focus-visible {
+  background: var(--color-gold);
+  border-color: var(--color-gold);
+  color: var(--color-ink);
+}
+@media (hover: hover) and (pointer: fine) {
+  .contact__notes:hover {
+    background: var(--color-gold);
+    border-color: var(--color-gold);
+    color: var(--color-ink);
+  }
+}
+.contact__notes:active {
+  translate: 0 1px;
+}
+
 /* ── Tablet ─────────────────────────────────────────── */
 @media (min-width: 40rem) {
-  .contact__record {
-    width: 86vw;
-    translate: 40% 40%;
+  .contact__wrap {
+    grid-template-rows: 1fr auto;
+  }
+  .contact__foot {
+    grid-row: 2;
+  }
+  /* The platter leaves the flow for the bottom-right corner */
+  .contact__platter {
+    --platter-w: 86vw;
+    position: absolute;
+    grid-row: auto;
+    right: calc(var(--platter-w) * -0.4);
+    bottom: calc(var(--platter-w) * -0.4);
+    width: var(--platter-w);
+    margin: 0;
+  }
+  .contact__hidden {
+    align-self: center;
+    gap: var(--space-sm);
+    padding-block: var(--space-md);
+    margin-bottom: 0;
   }
 }
 
@@ -505,9 +845,10 @@
 
 /* ── Desktop poster: greeting block left, world-clock column top-right ── */
 @media (min-width: 64rem) {
-  .contact__record {
-    width: clamp(22rem, 58vw, 124svh);
-    translate: 31% 40%;
+  .contact__platter {
+    --platter-w: clamp(22rem, 58vw, 124svh);
+    right: calc(var(--platter-w) * -0.31);
+    bottom: calc(var(--platter-w) * -0.4);
   }
   .contact__main {
     grid-template-columns: minmax(0, 1fr) auto;
@@ -536,15 +877,21 @@
   .contact__clock-time {
     font-size: var(--text-xl);
   }
+  .contact__hidden {
+    max-width: 56vw;
+  }
+  .contact__hidden-lines {
+    font-size: min(3.4vw, 6.4svh);
+  }
 
-  /* Footer row: copyright + colophon left, button right. It stops short of the
-   * record, so the button never lands on the label. */
+  /* Footer: copyright + colophon left, actions right. It stops short of the
+   * record, so no button ever lands on the label. */
   .contact__foot {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas:
-      'copy top'
-      'colo top';
+      'copy actions'
+      'colo actions';
     align-items: center;
     column-gap: var(--space-lg);
     row-gap: var(--space-3xs);
@@ -556,18 +903,8 @@
   .contact__colophon {
     grid-area: colo;
   }
-  .contact__top {
-    grid-area: top;
-  }
-}
-
-/* ── Wide: the footer settles into one line ─────────── */
-@media (min-width: 100rem) {
-  .contact__foot {
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    grid-template-areas: 'copy colo top';
-  }
-  .contact__colophon {
-    text-align: center;
+  .contact__actions {
+    grid-area: actions;
+    flex-wrap: nowrap;
   }
 }
