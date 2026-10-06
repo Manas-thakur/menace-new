@@ -19,7 +19,27 @@
 }
 
 /* ── Arch window ─────────────────────────────────────── */
+/* The window looks out on Delhi as it is right now (data-sky, from the sun's real
+ * height over the city): dusk is the house look; dawn, day and night repaint it. */
 .hero__arch-wrap {
+  --sky-top: var(--color-sunset-top);
+  --sky-mid: color-mix(in oklch, var(--color-sunset-top) 50%, var(--color-orange));
+  --sky-bottom: var(--color-orange);
+  --sky-ink: var(--color-maroon-deep);
+  --sky-ink-o: 0.3;
+  --sun-a: var(--color-gold);
+  --sun-b: var(--color-saffron);
+  --sun-bottom: 13%;
+  --sun-size: 52%;
+  --glow: transparent;
+  --stars-o: 0;
+  --cloud-o: 0.94;
+  --far: var(--color-maroon);
+  --mid: var(--color-maroon-deep);
+  --recess: var(--color-sunset-top);
+  --glass: var(--color-ink-2);
+  --trees: var(--color-leaf-deep);
+  --lanterns: 0;
   position: absolute;
   z-index: 1;
   left: 4vw;
@@ -27,40 +47,113 @@
   top: 2svh;
   height: min(56svh, 150vw);
 }
+.hero__arch-wrap[data-sky='night'] {
+  --sky-top: var(--color-indigo-night);
+  --sky-mid: var(--color-indigo);
+  --sky-bottom: var(--color-violet);
+  --sky-ink: var(--color-indigo-night);
+  --sky-ink-o: 0.5;
+  --sun-a: transparent;
+  --sun-b: transparent;
+  --sun-bottom: 17%;
+  --sun-size: 40%;
+  --glow: color-mix(in oklch, var(--color-paper-2) 20%, transparent);
+  --stars-o: 1;
+  --cloud-o: 0.26;
+  --far: var(--color-indigo);
+  --mid: var(--color-indigo-night);
+  --recess: var(--color-gold);
+  --glass: var(--color-gold);
+  --trees: color-mix(in oklch, var(--color-leaf-deep) 45%, var(--color-indigo-night));
+  --lanterns: 1;
+}
+.hero__arch-wrap[data-sky='dawn'] {
+  --sky-top: var(--color-indigo);
+  --sky-mid: var(--color-dawn-rose);
+  --sky-bottom: var(--color-saffron);
+  --sky-ink: var(--color-indigo);
+  --sky-ink-o: 0.26;
+  --sun-bottom: 3%;
+  --glow: color-mix(in oklch, var(--color-dawn-gold) 38%, transparent);
+  --stars-o: 0.35;
+  --cloud-o: 0.86;
+  --far: var(--color-violet);
+  --recess: var(--color-dawn-rose);
+}
+.hero__arch-wrap[data-sky='day'] {
+  --sky-top: var(--color-royal);
+  --sky-mid: var(--color-royal-2);
+  --sky-bottom: var(--color-sky);
+  --sky-ink: var(--color-royal);
+  --sky-ink-o: 0.34;
+  --sun-a: var(--color-paper);
+  --sun-b: var(--color-gold);
+  --sun-bottom: 20%;
+  --sun-size: 42%;
+  --glow: color-mix(in oklch, var(--color-paper) 26%, transparent);
+  --cloud-o: 1;
+  --recess: var(--color-sky);
+}
 .hero__arch {
   position: absolute;
   inset: 0;
   clip-path: url(#hero-arch);
-  background: var(--color-sunset-top);
+  background: var(--sky-top);
 }
 .hero__sky {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, var(--color-sunset-top) 8%, var(--color-orange) 82%);
+  background: linear-gradient(180deg, var(--sky-top) 8%, var(--sky-mid) 50%, var(--sky-bottom) 82%);
+}
+/* stars, for the night (and the last of them at dawn) */
+.hero__stars {
+  position: absolute;
+  inset: 0 0 42%;
+  background-image:
+    radial-gradient(circle, var(--color-paper) 0 1.1px, transparent 1.7px),
+    radial-gradient(circle, color-mix(in oklch, var(--color-paper) 75%, transparent) 0 0.8px, transparent 1.3px),
+    radial-gradient(circle, color-mix(in oklch, var(--color-paper-3) 80%, transparent) 0 1.4px, transparent 2px);
+  background-size: 97px 83px, 61px 53px, 167px 131px;
+  background-position: 13px 21px, 37px 9px, 71px 47px;
+  -webkit-mask-image: linear-gradient(180deg, #000 35%, transparent);
+  mask-image: linear-gradient(180deg, #000 35%, transparent);
+  opacity: var(--stars-o);
+  pointer-events: none;
 }
 .hero__mandala {
-  --tx-color: var(--color-maroon-deep);
-  --tx-opacity: 0.3;
+  --tx-color: var(--sky-ink);
+  --tx-opacity: var(--sky-ink-o);
   --tx-size: clamp(300px, 30vw, 860px);
   -webkit-mask-position: 50% 12%;
   mask-position: 50% 12%;
 }
 .hero__halftone {
-  --tx-color: var(--color-maroon-deep);
+  --tx-color: var(--sky-ink);
   --tx-opacity: 0.6;
   --tx-size: clamp(6px, 0.5vw, 13px);
   --ht-angle: 180deg;
   bottom: 40%;
 }
-.hero__sun {
+.hero__glow {
   position: absolute;
   left: 50%;
-  bottom: 13%;
-  width: 52%;
+  bottom: calc(var(--sun-bottom) - var(--sun-size) * 0.3);
+  width: calc(var(--sun-size) * 1.6);
   aspect-ratio: 1;
   translate: -50% 0;
   border-radius: 50%;
-  background: linear-gradient(180deg, var(--color-gold), var(--color-saffron));
+  background: radial-gradient(closest-side, var(--glow), transparent);
+  pointer-events: none;
+}
+.hero__sun {
+  position: absolute;
+  left: 50%;
+  bottom: var(--sun-bottom);
+  width: var(--sun-size);
+  aspect-ratio: 1;
+  translate: -50% 0;
+  border-radius: 50%;
+  background: linear-gradient(180deg, var(--sun-a), var(--sun-b));
   -webkit-mask: linear-gradient(180deg, #000 0 50%, transparent 50% 54%, #000 54% 62%, transparent 62% 67%, #000 67% 74%, transparent 74% 80%, #000 80% 86%, transparent 86%);
   mask: linear-gradient(180deg, #000 0 50%, transparent 50% 54%, #000 54% 62%, transparent 62% 67%, #000 67% 74%, transparent 74% 80%, #000 80% 86%, transparent 86%);
 }
@@ -68,7 +161,20 @@
 .cloud {
   position: absolute;
   fill: var(--color-paper-3);
-  opacity: 0.94;
+  opacity: var(--cloud-o, 0.94);
+}
+/* tonight's moon, inside the sun's disc */
+.moon {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.moon__dark {
+  fill: color-mix(in oklch, var(--color-paper) 13%, transparent);
+}
+.moon__lit {
+  fill: var(--color-paper-2);
 }
 .hero__cloud--a {
   left: 2%;
@@ -138,6 +244,27 @@
   stroke-width: 1.8;
   stroke-linecap: round;
 }
+.kite__tukkal {
+  opacity: var(--lanterns, 0);
+}
+.kite__tukkal-glow {
+  fill: var(--color-saffron);
+  opacity: 0.32;
+  filter: blur(5px);
+}
+.kite__tukkal-paper {
+  fill: var(--color-dawn-gold);
+}
+.kite__tukkal-band {
+  fill: none;
+  stroke: var(--color-crimson);
+  stroke-width: 1.4;
+}
+.kite__tukkal-string {
+  fill: none;
+  stroke: var(--color-paper-3);
+  stroke-width: 1;
+}
 .kite__string {
   fill: none;
   stroke: var(--color-paper-3);
@@ -155,11 +282,11 @@
   height: auto;
 }
 .skyline__far {
-  fill: var(--color-maroon);
+  fill: var(--far);
   opacity: 0.6;
 }
 .skyline__mid {
-  fill: var(--color-maroon-deep);
+  fill: var(--mid);
 }
 .skyline__flute {
   fill: none;
@@ -168,7 +295,7 @@
   opacity: 0.7;
 }
 .skyline__recess {
-  fill: var(--color-sunset-top);
+  fill: var(--recess);
 }
 .skyline__petal {
   fill: var(--color-maroon);
@@ -194,7 +321,7 @@
   fill: var(--color-khaki);
 }
 .metro__glass {
-  fill: var(--color-ink-2);
+  fill: var(--glass);
 }
 .metro__stripe {
   fill: var(--color-crimson);
@@ -211,7 +338,7 @@
   fill: var(--color-electric);
 }
 .trees {
-  fill: var(--color-leaf-deep);
+  fill: var(--trees);
 }
 .trees__light {
   fill: var(--color-leaf);

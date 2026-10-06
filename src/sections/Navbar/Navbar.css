@@ -22,6 +22,9 @@
   margin-inline-end: auto;
   white-space: nowrap;
 }
+.navbar__turn {
+  display: inline-flex;
+}
 .navbar__mark {
   width: clamp(2.25rem, 2.6vw, 3.25rem);
   height: auto;

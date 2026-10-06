@@ -176,6 +176,9 @@
 .ticket__meta span {
   white-space: nowrap;
 }
+.ticket__sky {
+  color: var(--color-crimson);
+}
 .ticket__colon {
   font-weight: inherit;
   animation: ticket-colon 2s steps(1) infinite;

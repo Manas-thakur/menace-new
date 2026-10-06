@@ -34,6 +34,7 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
   const sheetRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
+  const turnRef = useRef<HTMLSpanElement>(null);
 
   // Track the drawer currently filling the viewport, from natural (unpinned) positions.
   useEffect(() => {
@@ -57,7 +58,19 @@ export function Navbar() {
       update(window.scrollY);
     };
     measure();
-    const st = ScrollTrigger.create({ start: 0, end: 'max', onUpdate: (self) => update(self.scroll()) });
+    // the record in the bar turns as the page plays: about a third of a turn per screen
+    const still = prefersReducedMotion();
+    const turn = (y: number) => {
+      if (!still && turnRef.current) turnRef.current.style.rotate = `${((y / window.innerHeight) * 120).toFixed(1)}deg`;
+    };
+    const st = ScrollTrigger.create({
+      start: 0,
+      end: 'max',
+      onUpdate: (self) => {
+        update(self.scroll());
+        turn(self.scroll());
+      },
+    });
     ScrollTrigger.addEventListener('refresh', remeasure);
     update(window.scrollY);
     return () => {
@@ -136,7 +149,9 @@ export function Navbar() {
   return (
     <header className="navbar">
       <a className="navbar__brand" href="#top" onClick={go('top')} aria-label={`${profile.first} ${profile.last} — back to top`} inert={open}>
-        <VinylMark className="navbar__mark" />
+        <span ref={turnRef} className="navbar__turn">
+          <VinylMark className="navbar__mark" />
+        </span>
         <span className="navbar__name">
           {profile.first} {profile.last}
         </span>

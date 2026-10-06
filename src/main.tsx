@@ -25,3 +25,6 @@ console.log(
   `font: 700 15px ${token('--font-serif')}; color: ${token('--color-signal')}`
 );
 console.log('Nine deep cuts are pressed into this record. You found the console — this one is on the house.\nThe source: https://github.com/Manas-thakur/menace-new');
+console.log(
+  'The arch is a window onto Delhi: its sky is the sky over the city right now — the sun where it really is, tonight’s moon in its real phase. (?sky=dawn, day, dusk or night to look at another hour.)'
+);

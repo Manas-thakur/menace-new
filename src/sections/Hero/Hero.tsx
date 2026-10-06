@@ -9,7 +9,8 @@ import { deepCut } from '../../data/deep';
 import { discover } from '../../lib/deep';
 import { useReveal } from './useReveal';
 import { Skyline } from './Skyline';
-import { Cloud, Kites } from './Sky';
+import { Cloud, Kites, Moon } from './Sky';
+import { describeSky, useDelhiSky } from '../../lib/delhiSky';
 import { Dial } from './Dial';
 import { Ticket } from './Ticket';
 import './Hero.css';
@@ -29,6 +30,8 @@ export function Hero({ index }: SectionProps) {
   const [intro] = useState(() => !flags.noIntro && !prefersReducedMotion());
   // the hidden messages wait until the intro has landed, so a reveal never fights it
   const [introDone, setIntroDone] = useState(() => !intro);
+  // the arch is a window onto Delhi: its sky is the sky over the city at this moment
+  const { sky, moon } = useDelhiSky();
 
   /* Deep cut 01 — "मानस". Rest on the name, tap it or use the keyboard button: the
    * gothic letters flip away, the name rises in its own script, and a paper tag
@@ -172,12 +175,15 @@ export function Hero({ index }: SectionProps) {
           </filter>
         </svg>
 
-        <div ref={wrapRef} className="hero__arch-wrap">
+        <p className="visually-hidden">Through the arch, the sky over Delhi right now: {describeSky(sky, moon)}.</p>
+        <div ref={wrapRef} className="hero__arch-wrap" data-sky={sky}>
           <div className="hero__arch">
             <div className="hero__sky" />
+            <div className="hero__stars" />
             <div className="tx tx-mandala hero__mandala" />
             <div className="tx tx-halftone hero__halftone" />
-            <div className="hero__sun" />
+            <div className="hero__glow" />
+            <div className="hero__sun">{sky === 'night' && <Moon phase={moon} />}</div>
             <Cloud className="hero__cloud hero__cloud--a loop" />
             <Cloud className="hero__cloud hero__cloud--b loop" />
             <Kites ready={introDone} />

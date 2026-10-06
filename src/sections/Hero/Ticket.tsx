@@ -4,6 +4,7 @@ import { prefersReducedMotion } from '../../lib/motion';
 import { profile } from '../../data/profile';
 import { deepCuts } from '../../data/deep';
 import { onDiscover, openLinerNotes, useDeepCuts } from '../../lib/deep';
+import { describeSky, useDelhiSky, type Sky } from '../../lib/delhiSky';
 import './Ticket.css';
 
 /* The ticket: admit one to Side A. Printed like an old cinema stub — crimson tear-off,
@@ -50,8 +51,11 @@ function paper(W: number, H: number, tear: number, holes: { x: number; y: number
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><path fill-rule="evenodd" d="${d}"/></svg>`;
 }
 
+const SKY_MARK: Record<Sky, string> = { night: '☾', dawn: '◐', day: '☀', dusk: '◑' };
+
 export function Ticket() {
   const time = useLocalTime(profile.timeZone);
+  const { sky, moon } = useDelhiSky();
   const [hh, mm] = time.split(':');
   const found = useDeepCuts();
   const wrapRef = useRef<HTMLElement>(null);
@@ -136,7 +140,10 @@ export function Ticket() {
           <p className="ticket__meta">
             <span>Delhi × Daegu × Palo Alto</span>
             <span>
-              <time aria-label={`${time} India Standard Time`}>
+              <span className="ticket__sky" aria-hidden="true">
+                {SKY_MARK[sky]}
+              </span>{' '}
+              <time aria-label={`${time} India Standard Time — ${describeSky(sky, moon)} in Delhi`}>
                 {hh}
                 <b className="ticket__colon loop" aria-hidden="true">
                   :

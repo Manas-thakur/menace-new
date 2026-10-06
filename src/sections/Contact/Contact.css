@@ -640,6 +640,19 @@
 .contact__clock.is-here .contact__clock-time {
   color: var(--color-mustard);
 }
+.contact__clock.is-here {
+  grid-template-areas:
+    'zone time'
+    'meta time'
+    'here here'
+    'mood mood';
+}
+.contact__mood {
+  grid-area: mood;
+  margin-top: 0.15em;
+  color: var(--contact-muted);
+  font: italic 400 var(--text-sm) / 1.35 var(--font-serif);
+}
 .contact__clock-meta {
   grid-area: meta;
   font-family: var(--font-mono);

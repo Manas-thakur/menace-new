@@ -9,6 +9,13 @@ function KiteArt() {
   return (
     <svg className="kite__svg loop" viewBox="0 0 100 520" aria-hidden="true">
       <path className="kite__string" d="M50 58C26 150 84 240 40 330S70 460 30 520" />
+      {/* after dark: a tukkal, the paper lantern tied to a kite's string on Uttarayan nights */}
+      <g className="kite__tukkal" transform="translate(47 184)">
+        <circle className="kite__tukkal-glow" r="26" />
+        <path className="kite__tukkal-string" d="M0 -14V-6" />
+        <rect className="kite__tukkal-paper" x="-7" y="-6" width="14" height="19" rx="5" />
+        <path className="kite__tukkal-band" d="M-7 0.5h14M-7 6.5h14" />
+      </g>
       <g className="kite__body">
         <path className="kite__a" d="M50 4L90 50 50 96z" />
         <path className="kite__b" d="M50 4L10 50 50 96z" />
@@ -75,6 +82,23 @@ export function Kites({ ready = true }: { ready?: boolean }) {
       <Kite left="45.5%" top="4%" size="clamp(1.6rem, 2.4vw, 4rem)" tone="teal" delay={-2.2} tilt={6} />
       <Kite left="84%" top="22%" size="clamp(1.8rem, 2.6vw, 4.5rem)" tone="gold" delay={-4.1} tilt={4} />
     </>
+  );
+}
+
+/** Tonight's moon over Delhi, lit on the sun's side: the right while it waxes, the left as it wanes. */
+export function Moon({ phase }: { phase: number }) {
+  const r = 50;
+  const c = Math.cos(2 * Math.PI * phase); // 1 at new moon, -1 at full
+  const waxing = phase < 0.5;
+  const rx = (Math.abs(c) * r).toFixed(2);
+  // the limb is half the disc; the terminator is half an ellipse, bulging into the dark while
+  // it is a crescent and into the light once it is gibbous
+  const d = `M0 ${-r}A${r} ${r} 0 0 ${waxing ? 1 : 0} 0 ${r}A${rx} ${r} 0 0 ${waxing === c > 0 ? 0 : 1} 0 ${-r}Z`;
+  return (
+    <svg className="moon" viewBox="-50 -50 100 100" aria-hidden="true">
+      <circle className="moon__dark" r="49.5" />
+      <path className="moon__lit" d={d} />
+    </svg>
   );
 }
 

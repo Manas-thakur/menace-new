@@ -1,5 +1,14 @@
 import { useEffect, useState } from 'react';
 import { zones } from '../../data/profile';
+import { useDelhiSky, type Sky } from '../../lib/delhiSky';
+
+/** A line for whoever is about to write: what hour it is where he is. */
+const MOOD: Record<Sky, string> = {
+  night: 'Night in Delhi. Your note will be there with his morning chai.',
+  dawn: 'First light in Delhi. Chai’s on.',
+  day: 'Daytime in Delhi.',
+  dusk: 'Dusk in Delhi. The kites are coming down.',
+};
 
 /** Re-renders on every minute boundary. */
 function useMinute() {
@@ -35,6 +44,7 @@ function formatFor(timeZone: string) {
 
 export function Clocks() {
   const now = useMinute();
+  const { sky } = useDelhiSky();
   return (
     <ul className="contact__clocks" aria-label="Local times" data-rise>
       {zones.map((z) => {
@@ -58,6 +68,7 @@ export function Clocks() {
                 Manas is here
               </span>
             )}
+            {here && <span className="contact__mood">{MOOD[sky]}</span>}
           </li>
         );
       })}
