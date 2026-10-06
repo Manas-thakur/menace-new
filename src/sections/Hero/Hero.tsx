@@ -189,7 +189,8 @@ export function Hero({ index }: SectionProps) {
   const swanOpen = useRef(false);
   const arm = useCallback(() => {
     window.clearTimeout(stillTimer.current);
-    if (!armedRef.current) return;
+    // stillness only counts while someone can see the lake (not in a background tab)
+    if (!armedRef.current || document.hidden) return;
     stillTimer.current = window.setTimeout(
       () => becomeStill(!dismissed.current && !swanOpen.current && !verseRef.current, true),
       STILL_MS
@@ -216,9 +217,20 @@ export function Hero({ index }: SectionProps) {
     }
     arm();
     const onScroll = () => unsettle();
+    // a tab sent to the background stops counting; a pending reveal waits for the visitor
+    const onVisibility = () => {
+      if (!document.hidden) return arm();
+      window.clearTimeout(stillTimer.current);
+      if (settleTimer.current !== undefined && autoSettle.current) {
+        window.clearTimeout(settleTimer.current);
+        settleTimer.current = undefined;
+      }
+    };
     window.addEventListener('scroll', onScroll, { passive: true });
+    document.addEventListener('visibilitychange', onVisibility);
     return () => {
       window.removeEventListener('scroll', onScroll);
+      document.removeEventListener('visibilitychange', onVisibility);
       window.clearTimeout(stillTimer.current);
     };
   }, [introDone, visible, arm, unsettle]);
@@ -379,11 +391,21 @@ export function Hero({ index }: SectionProps) {
           .from('.lake__hint', { opacity: 0, duration: 1.4, ease: 'power1.out' }, 3.1);
       });
 
-      document.fonts.ready.then(play);
-      const fallback = window.setTimeout(play, 1800);
+      // First light waits for someone to see it: a tab opened in the background keeps its
+      // night until it is brought forward.
+      let ready = false; // fonts are in, or we've waited long enough for them
+      const start = () => {
+        ready = true;
+        if (!document.hidden) play();
+      };
+      const onVisible = () => ready && !document.hidden && play();
+      document.addEventListener('visibilitychange', onVisible);
+      document.fonts.ready.then(start);
+      const fallback = window.setTimeout(start, 1800);
       return () => {
         cancelled = true;
         window.clearTimeout(fallback);
+        document.removeEventListener('visibilitychange', onVisible);
       };
     },
     { scope: stageRef }
