@@ -1,0 +1,136 @@
+/* WORK — "On Tour". Indigo night, gig-poster wall, outlined cream title. */
+.work {
+  --work-outline: var(--color-night);
+  background: var(--color-indigo-night);
+  color: var(--color-cream);
+}
+
+/* ── Stage: one viewport of wall + headline ─────────────── */
+.work__stage {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  place-items: center;
+  min-height: 100svh;
+  padding: calc(var(--nav-h) + var(--space-lg)) var(--gutter) var(--space-xl);
+  overflow: clip;
+}
+
+/* Dims the wall where the headline sits and fades it into the night at both ends. */
+.work__vignette {
+  --pool: 46% 42%;
+  --dim: 38%;
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(to bottom, var(--color-indigo-night), transparent 22%),
+    linear-gradient(to top, var(--color-indigo-night), transparent 32%),
+    radial-gradient(
+      ellipse var(--pool) at 50% 57%,
+      color-mix(in oklch, var(--color-indigo-night) 96%, transparent) 30%,
+      transparent
+    ),
+    color-mix(in oklch, var(--color-indigo-night) var(--dim), transparent);
+}
+/* Narrow screens: the headline covers more of the wall, so the wall steps back further. */
+@media (max-width: 40rem) {
+  .work__vignette {
+    --pool: 78% 34%;
+    --dim: 56%;
+  }
+}
+
+.work__headline {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-md);
+  text-align: center;
+}
+
+/* Cream letters with a heavy ink outline and a hard drop, like a gig poster headline */
+.work__title {
+  font-family: var(--font-condensed);
+  font-weight: 900;
+  font-size: var(--text-mega);
+  line-height: 0.8;
+  letter-spacing: -0.012em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-cream);
+  text-shadow:
+    0.022em 0 0 var(--work-outline),
+    -0.022em 0 0 var(--work-outline),
+    0 0.022em 0 var(--work-outline),
+    0 -0.022em 0 var(--work-outline),
+    0.016em 0.016em 0 var(--work-outline),
+    -0.016em -0.016em 0 var(--work-outline),
+    0.016em -0.016em 0 var(--work-outline),
+    -0.016em 0.016em 0 var(--work-outline),
+    0.045em 0.055em 0 var(--work-outline);
+}
+
+.work__sub {
+  display: grid;
+  justify-items: center;
+  font-family: var(--font-condensed);
+  font-weight: 900;
+  font-size: var(--text-xxl);
+  line-height: 0.92;
+  letter-spacing: 0.005em;
+  text-transform: uppercase;
+}
+.work__line {
+  display: block;
+  color: var(--color-cream);
+  text-shadow:
+    0.03em 0 0 var(--work-outline),
+    -0.03em 0 0 var(--work-outline),
+    0 0.03em 0 var(--work-outline),
+    0 -0.03em 0 var(--work-outline),
+    0.022em 0.022em 0 var(--work-outline),
+    -0.022em -0.022em 0 var(--work-outline),
+    0.022em -0.022em 0 var(--work-outline),
+    -0.022em 0.022em 0 var(--work-outline),
+    0.05em 0.065em 0 var(--work-outline);
+}
+.work__line--gold {
+  color: var(--color-gold);
+}
+
+.work__cue {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  margin-top: var(--space-2xs);
+  padding: 0.7em 1.25em 0.62em;
+  border: 2px solid currentColor;
+  color: var(--color-cream);
+  background: color-mix(in oklch, var(--color-indigo-night) 55%, transparent);
+  font-family: var(--font-condensed);
+  font-weight: 700;
+  font-size: var(--text-sm);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition:
+    background-color var(--dur-short) var(--ease-out),
+    color var(--dur-short) var(--ease-out),
+    translate var(--dur-micro) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .work__cue:hover {
+    background: var(--color-cream);
+    color: var(--color-indigo-night);
+  }
+}
+.work__cue:active {
+  translate: 0 1px;
+}
+
+@media (max-width: 30rem) {
+  .work__title {
+    font-size: clamp(4rem, 26vw, 7rem);
+  }
+}

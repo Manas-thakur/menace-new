@@ -1,0 +1,96 @@
+/* ── Torn paper strip ─────────────────────────────────── */
+.torn {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: clamp(2.25rem, 4.5vw, 6rem);
+  pointer-events: none;
+  overflow: visible;
+}
+.torn--top {
+  top: 0;
+}
+.torn--bottom {
+  bottom: 0;
+  transform: scaleY(-1);
+}
+.torn__paper {
+  fill: currentColor;
+}
+.torn__shadow {
+  fill: var(--color-night);
+  opacity: 0.35;
+  transform: translateY(5%);
+}
+
+/* ── Tape ─────────────────────────────────────────────── */
+.tape {
+  --tape-color: var(--color-tape-paper);
+  position: absolute;
+  display: block;
+  width: clamp(4rem, 6vw, 8rem);
+  height: clamp(1.1rem, 1.5vw, 2rem);
+  background:
+    linear-gradient(90deg, color-mix(in oklch, var(--color-sheen) 18%, transparent), transparent 30% 70%, color-mix(in oklch, var(--color-sheen) 12%, transparent)),
+    var(--tape-color);
+  rotate: var(--tape-rot, -3deg);
+  clip-path: polygon(
+    0 8%, 4% 0, 8% 10%, 12% 0, 96% 0, 100% 12%, 96% 24%, 100% 36%, 96% 50%, 100% 64%, 96% 76%, 100% 88%, 96% 100%,
+    10% 100%, 6% 90%, 2% 100%, 0 92%, 4% 78%, 0 64%, 4% 50%, 0 36%, 4% 22%
+  );
+  box-shadow: var(--shadow-tape);
+}
+
+/* ── Postage stamp ────────────────────────────────────────
+ * Four mask layers, one per edge, each opaque except for semicircle bites
+ * centred on its edge; intersecting them perforates all four sides while the
+ * paper margin inside stays solid. */
+.stamp-wrap {
+  --hole: 7px;
+  --stamp-paper: var(--color-paper);
+  filter: var(--drop-stamp);
+}
+.stamp {
+  --perf: calc(var(--hole) * 2.75);
+  --bite: transparent var(--hole), #000 calc(var(--hole) + 0.5px);
+  height: 100%;
+  padding: calc(var(--hole) * 2.3);
+  background: var(--stamp-paper);
+  -webkit-mask:
+    radial-gradient(circle at 50% 0, var(--bite)) 0 0 / var(--perf) 100% round,
+    radial-gradient(circle at 50% 100%, var(--bite)) 0 0 / var(--perf) 100% round,
+    radial-gradient(circle at 0 50%, var(--bite)) 0 0 / 100% var(--perf) round,
+    radial-gradient(circle at 100% 50%, var(--bite)) 0 0 / 100% var(--perf) round;
+  -webkit-mask-composite: source-in;
+  mask:
+    radial-gradient(circle at 50% 0, var(--bite)) 0 0 / var(--perf) 100% round,
+    radial-gradient(circle at 50% 100%, var(--bite)) 0 0 / var(--perf) 100% round,
+    radial-gradient(circle at 0 50%, var(--bite)) 0 0 / 100% var(--perf) round,
+    radial-gradient(circle at 100% 50%, var(--bite)) 0 0 / 100% var(--perf) round;
+  mask-composite: intersect;
+}
+.stamp__face {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ── Die-cut sticker ──────────────────────────────────── */
+.sticker-flood {
+  flood-color: var(--color-sticker);
+}
+.sticker {
+  display: inline-block;
+  rotate: var(--rot, 0deg);
+  filter: url(#sticker-md) var(--drop-sticker);
+  transition:
+    translate var(--dur-short) var(--ease-out),
+    rotate var(--dur-short) var(--ease-out),
+    filter var(--dur-short) var(--ease-out);
+}
+.sticker--sm {
+  filter: url(#sticker-sm) var(--drop-sticker-sm);
+}
+.sticker--lg {
+  filter: url(#sticker-lg) var(--drop-sticker-lg);
+}

@@ -1,0 +1,291 @@
+/* Darkroom — Manas's photographs under a red safelight.
+ * Section-scoped colours alias tokens only (the photographs' own palettes are content). */
+.photos {
+  --room: color-mix(in oklch, var(--color-maroon-deep) 42%, var(--color-night));
+  --room-glow: color-mix(in oklch, var(--color-crimson) 48%, transparent);
+  --room-ink: var(--color-paper-2);
+  --room-dim: color-mix(in oklch, var(--color-paper-2) 68%, var(--room));
+  --table-light: color-mix(in oklch, var(--color-sky) 28%, var(--color-sticker));
+  --table-glow: color-mix(in oklch, var(--color-sky) 30%, transparent);
+  background: var(--room);
+  color: var(--room-ink);
+}
+
+.photos__room {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  padding-top: calc(var(--nav-h) + clamp(1.25rem, 2.4vw, 3.5rem));
+}
+
+.photos__safelight {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 72% 58% at 50% -8%, var(--room-glow), transparent 74%);
+  transition: opacity 0.35s var(--ease-out);
+}
+.photos__room[data-view='sheet'] .photos__safelight {
+  opacity: 0.2;
+}
+.photos__room[data-view='wheel'] .photos__safelight {
+  opacity: 0.55;
+}
+.photos__grain {
+  --tx-opacity: 0.18;
+}
+
+/* ── Header ─────────────────────────────────────────── */
+.photos__head {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  gap: var(--space-sm) var(--space-xl);
+  padding-inline: var(--gutter);
+}
+.photos__title-block {
+  display: grid;
+  gap: var(--space-2xs);
+  justify-items: start;
+}
+.photos__lamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65em;
+  font: 400 var(--text-xs) / 1 var(--font-mono);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: color-mix(in oklch, var(--color-signal) 62%, var(--color-paper));
+  transition: color var(--dur-long) var(--ease-out);
+}
+.photos__bulb {
+  width: 0.8em;
+  height: 0.8em;
+  border-radius: 50%;
+  background: var(--color-signal);
+  box-shadow: 0 0 0 0.28em color-mix(in oklch, var(--color-signal) 22%, transparent);
+  animation: photos-bulb 3.4s var(--ease-in-out) infinite alternate;
+  transition:
+    background-color var(--dur-long) var(--ease-out),
+    box-shadow var(--dur-long) var(--ease-out);
+}
+.photos__room[data-view='sheet'] .photos__lamp {
+  color: var(--table-light);
+}
+.photos__room[data-view='sheet'] .photos__bulb {
+  background: var(--table-light);
+  box-shadow: 0 0 0 0.28em var(--table-glow);
+}
+@keyframes photos-bulb {
+  from {
+    opacity: 0.5;
+    transform: scale(0.82);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.photos__title {
+  font-family: var(--font-gothic);
+  font-weight: 400;
+  font-size: clamp(3.4rem, 5.6vw, 10rem);
+  line-height: 0.82;
+  letter-spacing: 0.01em;
+  color: var(--color-paper-2);
+  text-shadow:
+    0.025em 0.025em 0 var(--color-crimson),
+    0.05em 0.05em 0 var(--color-maroon-deep);
+}
+.photos__meta {
+  font: 400 var(--text-xs) / 1.2 var(--font-mono);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--room-dim);
+}
+
+.photos__intro {
+  display: grid;
+  gap: var(--space-xs);
+  justify-items: start;
+  min-width: 0;
+}
+.photos__lede {
+  max-width: 40rem;
+  font-family: var(--font-serif);
+  font-size: var(--text-lg);
+  line-height: 1.3;
+  color: var(--room-ink);
+  text-wrap: pretty;
+}
+.photos__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-xs) var(--space-sm);
+}
+.photos__insta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.5em 1.05em;
+  border: 1.5px solid color-mix(in oklch, var(--color-paper-2) 55%, transparent);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-condensed);
+  font-weight: 800;
+  font-size: var(--text-sm);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-paper-2);
+  transition:
+    background-color var(--dur-short) var(--ease-out),
+    color var(--dur-short) var(--ease-out),
+    border-color var(--dur-short) var(--ease-out);
+}
+.photos__handle {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  color: color-mix(in oklch, var(--color-signal) 55%, var(--color-paper));
+  transition: color var(--dur-short) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .photos__insta:hover {
+    background: var(--color-paper-2);
+    border-color: var(--color-paper-2);
+    color: var(--color-ink);
+  }
+  .photos__insta:hover .photos__handle {
+    color: var(--color-crimson);
+  }
+}
+.photos__insta:active {
+  translate: 0 1px;
+}
+
+/* ── The view switch: a bakelite enlarger-timer plate ── */
+.vs {
+  --plate: color-mix(in oklch, var(--color-ink) 86%, var(--color-chai));
+  --plate-hi: color-mix(in oklch, var(--color-ink-soft) 55%, var(--color-ink));
+  --engrave: color-mix(in oklch, var(--color-paper-3) 86%, var(--color-chai-light));
+  position: relative;
+  display: inline-flex;
+  align-items: stretch;
+  gap: 0.2rem;
+  padding: 0.32rem 1.2rem;
+  border-radius: 0.55rem;
+  background: linear-gradient(180deg, var(--plate-hi), var(--plate) 52%, color-mix(in oklch, var(--plate) 78%, var(--color-night)));
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklch, var(--color-paper) 14%, transparent),
+    inset 0 -2px 0 color-mix(in oklch, var(--color-night) 70%, transparent),
+    0 12px 18px -12px color-mix(in oklch, var(--color-shadow) 85%, transparent);
+}
+.vs__screw {
+  position: absolute;
+  top: 50%;
+  width: 0.5rem;
+  height: 0.5rem;
+  translate: 0 -50%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--color-paper-3), var(--color-khaki) 55%, var(--color-ink-2));
+}
+.vs__screw::after {
+  content: '';
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  top: calc(50% - 0.5px);
+  height: 1px;
+  background: var(--color-ink);
+  rotate: 35deg;
+}
+.vs__screw--l {
+  left: 0.42rem;
+}
+.vs__screw--r {
+  right: 0.42rem;
+}
+.vs__screw--r::after {
+  rotate: -20deg;
+}
+.vs__btn {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 0.32rem;
+  min-height: 2.75rem;
+  padding: 0.3rem 0.7rem 0.38rem;
+  border-radius: 0.38rem;
+  font: 800 var(--text-xs) / 1 var(--font-condensed);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--engrave);
+  text-shadow:
+    0 1px 0 color-mix(in oklch, var(--color-night) 85%, transparent),
+    0 -1px 0 color-mix(in oklch, var(--color-paper) 10%, transparent);
+  transition:
+    background-color var(--dur-short) var(--ease-out),
+    color var(--dur-short) var(--ease-out);
+}
+.vs__btn[aria-pressed='true'] {
+  background: color-mix(in oklch, var(--color-night) 55%, transparent);
+  box-shadow: inset 0 2px 5px color-mix(in oklch, var(--color-night) 90%, transparent);
+  color: var(--color-paper);
+}
+@media (hover: hover) and (pointer: fine) {
+  .vs__btn:not([aria-pressed='true']):hover {
+    background: color-mix(in oklch, var(--color-paper) 7%, transparent);
+    color: var(--color-paper);
+  }
+}
+.vs__btn:active {
+  translate: 0 1px;
+}
+.vs__lamp {
+  width: 0.48rem;
+  height: 0.48rem;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, color-mix(in oklch, var(--color-maroon) 70%, var(--color-ink)), var(--color-maroon-deep));
+  box-shadow: inset 0 0 0 1px var(--color-night);
+  transition:
+    background-color var(--dur-short) var(--ease-out),
+    box-shadow var(--dur-short) var(--ease-out);
+}
+.vs__btn[aria-pressed='true'] .vs__lamp {
+  background: radial-gradient(circle at 40% 35%, var(--color-paper), var(--color-signal) 45%, var(--color-crimson));
+  box-shadow: 0 0 0.55rem 0.12rem color-mix(in oklch, var(--color-signal) 55%, transparent);
+}
+.vs__long {
+  display: none;
+}
+
+@media (min-width: 40rem) {
+  .vs__long {
+    display: inline;
+  }
+  .vs__short {
+    display: none;
+  }
+}
+
+@media (min-width: 64rem) {
+  .photos__room {
+    padding-top: calc(var(--nav-h) + clamp(1rem, 1.6vw, 2.75rem));
+  }
+  .photos__head {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: end;
+  }
+  .photos__intro {
+    justify-self: end;
+    justify-items: end;
+    text-align: right;
+  }
+  .photos__controls {
+    justify-content: flex-end;
+  }
+}

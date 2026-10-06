@@ -1,0 +1,249 @@
+/* Split-flap departures board. Every value cell is a real four-leaf flap:
+ * two static halves plus two leaves that fall across the split during a flip. */
+.board {
+  --cells: 7;
+  --frame: clamp(6px, 0.5vw, 13px);
+  --flap-size: clamp(1.45rem, min(3vw, 4.4svh), 5rem);
+  --flap-gap: calc(var(--flap-size) * 0.07);
+  --value-col: calc(var(--cells) * var(--flap-size) * 0.74 + (var(--cells) - 1) * var(--flap-gap));
+  --col-gap: clamp(0.85rem, 2.2vw, 3.5rem);
+  --board-bg: var(--color-night);
+  --board-frame: var(--color-ink-2);
+  --board-rule: var(--color-groove);
+  --flap-top: color-mix(in oklch, var(--color-groove) 78%, var(--color-night));
+  --flap-bottom: color-mix(in oklch, var(--color-groove) 46%, var(--color-night));
+  --flap-ink: var(--color-gold);
+  --flap-split: var(--color-night);
+  --rivet: color-mix(in oklch, var(--color-gold-deep) 65%, var(--color-khaki));
+  --rivet-hi: color-mix(in oklch, var(--color-gold) 55%, var(--color-sheen));
+  --what-ink: var(--color-cream);
+  --where-ink: color-mix(in oklch, var(--color-saffron) 82%, var(--color-cream));
+  --label-ink: color-mix(in oklch, var(--color-khaki) 45%, var(--color-cream));
+
+  position: relative;
+  padding: calc(var(--frame) + clamp(0.55rem, 1.05vw, 1.9rem));
+  background: var(--board-bg);
+  border-radius: var(--radius-md);
+  box-shadow:
+    inset 0 0 0 var(--frame) var(--board-frame),
+    inset 0 0 0 calc(var(--frame) + 1px) var(--board-rule),
+    var(--shadow-paper-lift);
+}
+
+/* Four brass rivets, one in each corner of the frame */
+.board__rivets {
+  --r: calc(var(--frame) * 0.36 + 1.5px);
+  --at: calc(var(--frame) * 0.5);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at calc(var(--at) + 0.6rem) calc(var(--at) + 0.6rem), var(--rivet-hi) 0 calc(var(--r) * 0.35), var(--rivet) calc(var(--r) * 0.45) var(--r), transparent calc(var(--r) + 0.5px)),
+    radial-gradient(circle at calc(100% - var(--at) - 0.6rem) calc(var(--at) + 0.6rem), var(--rivet-hi) 0 calc(var(--r) * 0.35), var(--rivet) calc(var(--r) * 0.45) var(--r), transparent calc(var(--r) + 0.5px)),
+    radial-gradient(circle at calc(var(--at) + 0.6rem) calc(100% - var(--at) - 0.6rem), var(--rivet-hi) 0 calc(var(--r) * 0.35), var(--rivet) calc(var(--r) * 0.45) var(--r), transparent calc(var(--r) + 0.5px)),
+    radial-gradient(circle at calc(100% - var(--at) - 0.6rem) calc(100% - var(--at) - 0.6rem), var(--rivet-hi) 0 calc(var(--r) * 0.35), var(--rivet) calc(var(--r) * 0.45) var(--r), transparent calc(var(--r) + 0.5px));
+}
+
+/* ── Enamel header strip ──────────────────────────────── */
+.board__head {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.25em 1.5em;
+  padding: 0.42em 0.75em 0.36em;
+  border-radius: var(--radius-sm);
+  background: var(--color-gold);
+  color: var(--color-night);
+  font-family: var(--font-condensed);
+  font-size: clamp(0.95rem, 1.2vw, 2.2rem);
+  line-height: 1;
+}
+.board__title {
+  font-weight: 900;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+.board__dot {
+  margin-inline: 0.15em;
+}
+.board__hi {
+  font-family: var(--font-deva);
+  font-weight: 400;
+  letter-spacing: 0;
+  font-size: 1.08em;
+}
+.board__station {
+  font-family: var(--font-mono);
+  font-size: 0.66em;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+/* ── Column labels ────────────────────────────────────── */
+.board__labels {
+  display: none;
+}
+
+/* ── Rows ─────────────────────────────────────────────── */
+.board__rows {
+  position: relative;
+  margin-top: clamp(0.35rem, 0.8vw, 1.2rem);
+}
+.board__row {
+  display: grid;
+  grid-template-columns: var(--value-col) minmax(0, 1fr);
+  grid-template-areas:
+    'cells what'
+    'cells where';
+  align-items: start;
+  column-gap: var(--col-gap);
+  row-gap: 0.3em;
+  padding: calc(var(--flap-size) * 0.13) calc(var(--flap-size) * 0.12);
+  border-top: 1px solid var(--board-rule);
+  border-radius: var(--radius-sm);
+  cursor: default;
+  transition: background-color var(--dur-short) var(--ease-out);
+}
+.board__row:first-child {
+  border-top-color: transparent;
+}
+@media (hover: hover) and (pointer: fine) {
+  .board__row:hover {
+    background-color: color-mix(in oklch, var(--color-night) 88%, var(--color-gold));
+  }
+}
+.board__row:focus-visible {
+  background-color: color-mix(in oklch, var(--color-night) 88%, var(--color-gold));
+}
+
+.board__cells {
+  grid-area: cells;
+  position: relative;
+  display: flex;
+  gap: var(--flap-gap);
+  font-size: var(--flap-size);
+}
+
+.board__what {
+  grid-area: what;
+  align-self: center;
+  color: var(--what-ink);
+  font: 700 clamp(1.02rem, 1.6vw, 2.9rem) / 1.02 var(--font-condensed);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.board__where {
+  grid-area: where;
+  color: var(--where-ink);
+  font: 400 clamp(0.74rem, 0.92vw, 1.55rem) / 1.3 var(--font-mono);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ── A single split-flap cell ─────────────────────────── */
+.flap {
+  position: relative;
+  flex: none;
+  width: 0.74em;
+  height: 1.12em;
+  border-radius: 0.08em;
+  perspective: 3.4em;
+  color: var(--flap-ink);
+  font-family: var(--font-condensed);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 0.05em 0.08em color-mix(in oklch, var(--color-shadow) 80%, transparent);
+}
+.flap__half,
+.flap__leaf {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  overflow: hidden;
+}
+.flap__half--top,
+.flap__leaf--top {
+  top: 0;
+  border-radius: 0.08em 0.08em 0 0;
+  background: linear-gradient(var(--flap-top), color-mix(in oklch, var(--flap-top) 80%, var(--flap-bottom)));
+  transform-origin: 50% 100%;
+}
+.flap__half--bottom,
+.flap__leaf--bottom {
+  top: 50%;
+  border-radius: 0 0 0.08em 0.08em;
+  background: linear-gradient(color-mix(in oklch, var(--flap-bottom) 70%, var(--flap-top)), var(--flap-bottom));
+  transform-origin: 50% 0%;
+}
+.flap__leaf {
+  z-index: 1;
+  visibility: hidden;
+  backface-visibility: hidden;
+}
+.flap b {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 200%;
+  display: grid;
+  place-items: center;
+  font-weight: inherit;
+  line-height: 1;
+  padding-top: 0.04em;
+}
+.flap__half--top b,
+.flap__leaf--top b {
+  top: 0;
+}
+.flap__half--bottom b,
+.flap__leaf--bottom b {
+  top: -100%;
+}
+
+/* the split between the two halves */
+.flap::after {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  right: 0;
+  top: calc(50% - 0.025em);
+  height: 0.05em;
+  background: var(--flap-split);
+}
+
+/* ── Wide screens: three columns with labels ──────────── */
+@media (min-width: 48rem) {
+  .board__labels {
+    display: grid;
+    grid-template-columns: var(--value-col) minmax(0, 1.15fr) minmax(0, 1fr);
+    column-gap: var(--col-gap);
+    padding: 0.85em calc(var(--flap-size) * 0.12) 0.2em;
+    color: var(--label-ink);
+    font: 400 var(--text-xs) / 1 var(--font-mono);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+  }
+  .board__row {
+    grid-template-columns: var(--value-col) minmax(0, 1.15fr) minmax(0, 1fr);
+    grid-template-areas: 'cells what where';
+    align-items: center;
+  }
+  .board__rows {
+    margin-top: 0;
+  }
+}
+
+/* ── The narrowest phones: value above its labels ─────── */
+@media (max-width: 23rem) {
+  .board__row {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'cells'
+      'what'
+      'where';
+  }
+}

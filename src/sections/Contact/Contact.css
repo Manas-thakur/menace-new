@@ -1,0 +1,573 @@
+/* Side B — contact + page footer. Colour world: night, with a crimson-labelled record. */
+.contact {
+  --contact-ink: var(--color-cream);
+  --contact-muted: color-mix(in oklch, var(--color-cream) 72%, var(--color-night));
+  --contact-rule: color-mix(in oklch, var(--color-cream) 16%, transparent);
+  --contact-rule-strong: color-mix(in oklch, var(--color-cream) 42%, transparent);
+  --contact-sheen: color-mix(in oklch, var(--color-sheen) 11%, transparent);
+  --contact-sheen-soft: color-mix(in oklch, var(--color-sheen) 6%, transparent);
+  background: var(--color-night);
+  color: var(--contact-ink);
+}
+
+.contact__wrap {
+  position: relative;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  min-height: 100svh;
+  padding: calc(var(--nav-h) + var(--space-lg)) var(--gutter) var(--space-md);
+}
+
+/* Faint mandala in the top-left, fading out before it reaches the record */
+.contact__pattern {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  -webkit-mask-image: radial-gradient(ellipse 75% 85% at 0% 0%, var(--color-ink), transparent 72%);
+  mask-image: radial-gradient(ellipse 75% 85% at 0% 0%, var(--color-ink), transparent 72%);
+}
+.contact__pattern .tx-mandala {
+  --tx-color: var(--color-groove);
+  --tx-opacity: 0.6;
+  --tx-size: 620px;
+}
+
+/* ── The record ─────────────────────────────────────── */
+/* Mobile: a giant disc rising out of the bottom-right corner, label in the corner. */
+.contact__record {
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  bottom: 0;
+  width: 150vw;
+  aspect-ratio: 1;
+  translate: 52% 50%;
+  pointer-events: none;
+}
+.contact__record-move {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.contact__spin {
+  width: 100%;
+  height: 100%;
+  animation: contact-spin 9s linear infinite;
+}
+@keyframes contact-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Light stays put while the disc turns beneath it; masked off the label.
+ * Plain alpha (no blend mode), so the spinning layer never forces a re-blend. */
+.contact__sheen {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 262deg,
+    transparent 0deg,
+    var(--contact-sheen) 26deg,
+    transparent 54deg,
+    transparent 180deg,
+    var(--contact-sheen-soft) 206deg,
+    transparent 234deg
+  );
+  -webkit-mask-image: radial-gradient(circle closest-side, transparent 36%, var(--color-ink) 37.5%, var(--color-ink) 97%, transparent 97.8%);
+  mask-image: radial-gradient(circle closest-side, transparent 36%, var(--color-ink) 37.5%, var(--color-ink) 97%, transparent 97.8%);
+}
+
+.record__vinyl {
+  fill: var(--color-ink);
+}
+.record__lead {
+  fill: none;
+  stroke: color-mix(in oklch, var(--color-cream) 10%, transparent);
+  stroke-width: 3;
+}
+.record__grooves circle {
+  fill: none;
+  stroke: var(--color-night);
+}
+.record__gap {
+  fill: none;
+  stroke: color-mix(in oklch, var(--color-ink) 80%, var(--color-cream));
+  stroke-width: 5;
+  opacity: 0.55;
+}
+.record__glints path {
+  fill: none;
+  stroke: color-mix(in oklch, var(--color-cream) 20%, transparent);
+  stroke-linecap: round;
+}
+.record__runout {
+  fill: none;
+  stroke: var(--color-night);
+  stroke-width: 6;
+}
+.record__label-disc {
+  fill: var(--color-crimson);
+}
+.record__label-ring {
+  fill: none;
+  stroke: var(--color-gold);
+  stroke-width: 2;
+  opacity: 0.8;
+}
+.record__label-ring--inner {
+  opacity: 0.55;
+}
+.record__arc {
+  fill: var(--color-gold);
+  font-family: var(--font-condensed);
+  font-weight: 800;
+  font-size: 23px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.record__arc--small {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: 15px;
+  letter-spacing: 0.08em;
+  fill: var(--color-paper-3);
+}
+.record__side {
+  fill: var(--color-paper);
+  font-family: var(--font-gothic);
+  font-size: 50px;
+}
+.record__stereo {
+  fill: var(--color-gold);
+  font-family: var(--font-condensed);
+  font-weight: 800;
+  font-size: 19px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+}
+.record__hole {
+  fill: var(--color-night);
+}
+
+/* ── Content ─────────────────────────────────────────── */
+.contact__main {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  gap: var(--space-md);
+  min-width: 0;
+}
+
+.contact__hello {
+  font-size: clamp(3.75rem, 24vw, 19rem);
+  line-height: 1;
+  color: var(--color-cream);
+  margin-inline-start: -0.03em;
+}
+.contact__slot {
+  display: grid;
+  overflow-x: visible;
+  overflow-y: clip;
+  padding-block: 0.14em 0.05em;
+}
+.contact__word {
+  grid-area: 1 / 1;
+  align-self: end;
+  white-space: nowrap;
+  /* the same crimson extrude the hero wordmark wears */
+  text-shadow: 0.035em 0.035em 0 var(--color-crimson-deep);
+}
+.contact__word--deva {
+  font-family: var(--font-deva);
+  font-size: 0.88em;
+  line-height: 1.08;
+}
+.contact__word--hangul {
+  font-family: var(--font-hangul);
+  font-size: 0.72em;
+  line-height: 1.15;
+}
+.contact__word--latin {
+  font-family: var(--font-condensed);
+  font-weight: 900;
+  font-size: 1.1em;
+  line-height: 0.95;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+}
+.contact__hello.is-static .contact__word:not(:first-child) {
+  display: none;
+}
+
+.contact__lede {
+  max-width: 28ch;
+  font-family: var(--font-serif);
+  font-size: var(--text-xl);
+  line-height: 1.2;
+  color: var(--contact-muted);
+}
+
+/* Email + copy */
+.contact__email {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm) var(--space-md);
+  margin-top: var(--space-2xs);
+}
+.contact__mail {
+  font-family: var(--font-condensed);
+  font-weight: 800;
+  font-size: clamp(1.45rem, 7.4vw, 3.25rem);
+  line-height: 1.05;
+  color: var(--color-mustard);
+  white-space: nowrap;
+  text-decoration: underline;
+  text-decoration-thickness: 0.06em;
+  text-underline-offset: 0.16em;
+  text-decoration-color: color-mix(in oklch, var(--color-mustard) 35%, transparent);
+  transition:
+    color var(--dur-short) var(--ease-out),
+    text-decoration-color var(--dur-short) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .contact__mail:hover {
+    color: var(--color-gold);
+    text-decoration-color: var(--color-gold);
+  }
+}
+
+.contact__copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  min-height: 44px;
+  padding: 0.55em 1.05em;
+  border: 2px solid var(--color-mustard);
+  border-radius: var(--radius-pill);
+  color: var(--color-mustard);
+  font-family: var(--font-condensed);
+  font-weight: 800;
+  font-size: var(--text-sm);
+  line-height: 1;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition:
+    background-color var(--dur-short) var(--ease-out),
+    color var(--dur-short) var(--ease-out),
+    translate var(--dur-micro) var(--ease-out);
+}
+.contact__copy-icon {
+  width: 1.15em;
+  height: 1.15em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+@media (hover: hover) and (pointer: fine) {
+  .contact__copy:hover {
+    background: color-mix(in oklch, var(--color-mustard) 16%, transparent);
+  }
+}
+.contact__copy:active {
+  translate: 0 1px;
+}
+.contact__copy[data-copied='true'] {
+  background: var(--color-mustard);
+  color: var(--color-ink);
+}
+
+/* Link pills */
+.contact__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+.contact__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  min-height: 44px;
+  padding: 0.5em 1.15em;
+  border: 2px solid var(--contact-rule-strong);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-condensed);
+  font-weight: 700;
+  font-size: var(--text-md);
+  line-height: 1;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition:
+    background-color var(--dur-short) var(--ease-out),
+    border-color var(--dur-short) var(--ease-out),
+    color var(--dur-short) var(--ease-out),
+    translate var(--dur-micro) var(--ease-out);
+}
+.contact__pill-note {
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+.contact__pill:focus-visible {
+  background: var(--color-cream);
+  border-color: var(--color-cream);
+  color: var(--color-ink);
+}
+@media (hover: hover) and (pointer: fine) {
+  .contact__pill:hover {
+    background: var(--color-cream);
+    border-color: var(--color-cream);
+    color: var(--color-ink);
+  }
+}
+.contact__pill:active {
+  translate: 0 1px;
+}
+.contact__pill--primary {
+  background: var(--color-mustard);
+  border-color: var(--color-mustard);
+  color: var(--color-ink);
+}
+.contact__pill--primary:focus-visible {
+  background: var(--color-gold);
+  border-color: var(--color-gold);
+}
+@media (hover: hover) and (pointer: fine) {
+  .contact__pill--primary:hover {
+    background: var(--color-gold);
+    border-color: var(--color-gold);
+  }
+}
+
+/* Clocks */
+.contact__clocks {
+  display: grid;
+  width: min(100%, 30rem);
+  margin-top: var(--space-xs);
+  border-top: var(--rule-hair) solid var(--contact-rule);
+}
+.contact__clock {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'zone time'
+    'meta time'
+    'here here';
+  align-items: center;
+  column-gap: var(--space-sm);
+  row-gap: 0.15em;
+  padding-block: var(--space-xs);
+  border-bottom: var(--rule-hair) solid var(--contact-rule);
+}
+.contact__clock-zone {
+  grid-area: zone;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--contact-muted);
+}
+.contact__clock-time {
+  grid-area: time;
+  font-family: var(--font-condensed);
+  font-weight: 800;
+  font-size: var(--text-xxl);
+  line-height: 0.9;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-cream);
+}
+.contact__clock.is-here .contact__clock-time {
+  color: var(--color-mustard);
+}
+.contact__clock-meta {
+  grid-area: meta;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--contact-muted);
+}
+.contact__here {
+  grid-area: here;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  margin-top: 0.25em;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-signal);
+}
+.contact__dot {
+  width: 0.6em;
+  height: 0.6em;
+  border-radius: 50%;
+  background: var(--color-signal);
+  box-shadow: 0 0 0.6em var(--color-signal);
+  animation: contact-live 1.8s var(--ease-in-out) infinite;
+}
+@keyframes contact-live {
+  50% {
+    opacity: 0.45;
+    transform: scale(0.8);
+  }
+}
+
+/* ── Footer row ─────────────────────────────────────── */
+.contact__foot {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  margin-top: var(--space-xl);
+  padding-top: var(--space-sm);
+  border-top: var(--rule-hair) solid var(--contact-rule);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+  color: var(--contact-muted);
+}
+.contact__colophon {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: var(--text-sm);
+  letter-spacing: 0;
+}
+.contact__top {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  min-height: 44px;
+  padding: 0.5em 1.1em;
+  border: 2px solid var(--contact-rule-strong);
+  border-radius: var(--radius-pill);
+  background: var(--color-night);
+  color: var(--color-cream);
+  font-family: var(--font-condensed);
+  font-weight: 700;
+  font-size: var(--text-sm);
+  line-height: 1;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition:
+    background-color var(--dur-short) var(--ease-out),
+    border-color var(--dur-short) var(--ease-out),
+    color var(--dur-short) var(--ease-out);
+}
+.contact__top:focus-visible {
+  background: var(--color-cream);
+  color: var(--color-ink);
+}
+@media (hover: hover) and (pointer: fine) {
+  .contact__top:hover {
+    background: var(--color-cream);
+    border-color: var(--color-cream);
+    color: var(--color-ink);
+  }
+}
+
+/* ── Tablet ─────────────────────────────────────────── */
+@media (min-width: 40rem) {
+  .contact__record {
+    width: 86vw;
+    translate: 40% 40%;
+  }
+}
+
+/* Tablet only: the three clocks read as one strip under the links */
+@media (min-width: 40rem) and (max-width: 63.99rem) {
+  .contact__clocks {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: min(100%, 44rem);
+    border-bottom: var(--rule-hair) solid var(--contact-rule);
+  }
+  .contact__clock {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: 'zone' 'time' 'meta' 'here';
+    align-content: start;
+    padding: var(--space-sm) var(--space-md) var(--space-sm) 0;
+    border-bottom: 0;
+  }
+  .contact__clock + .contact__clock {
+    padding-inline-start: var(--space-md);
+    border-inline-start: var(--rule-hair) solid var(--contact-rule);
+  }
+}
+
+/* ── Desktop poster: greeting block left, world-clock column top-right ── */
+@media (min-width: 64rem) {
+  .contact__record {
+    width: clamp(22rem, 58vw, 124svh);
+    translate: 31% 40%;
+  }
+  .contact__main {
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: var(--space-xl);
+    align-content: center;
+  }
+  .contact__main > * {
+    grid-column: 1;
+  }
+  .contact__hello {
+    font-size: min(12vw, 24svh);
+  }
+  .contact__mail {
+    font-size: 4.2vw;
+  }
+  .contact__copy {
+    font-size: var(--text-md);
+  }
+  .contact__clocks {
+    grid-column: 2;
+    grid-row: 1 / span 4;
+    align-self: start;
+    width: clamp(17rem, 21vw, 34rem);
+    margin-top: 0;
+  }
+  .contact__clock-time {
+    font-size: var(--text-xl);
+  }
+
+  /* Footer row: copyright + colophon left, button right. It stops short of the
+   * record, so the button never lands on the label. */
+  .contact__foot {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'copy top'
+      'colo top';
+    align-items: center;
+    column-gap: var(--space-lg);
+    row-gap: var(--space-3xs);
+    max-width: 56vw;
+  }
+  .contact__copyright {
+    grid-area: copy;
+  }
+  .contact__colophon {
+    grid-area: colo;
+  }
+  .contact__top {
+    grid-area: top;
+  }
+}
+
+/* ── Wide: the footer settles into one line ─────────── */
+@media (min-width: 100rem) {
+  .contact__foot {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas: 'copy colo top';
+  }
+  .contact__colophon {
+    text-align: center;
+  }
+}

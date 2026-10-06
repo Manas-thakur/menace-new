@@ -1,0 +1,45 @@
+.drawer {
+  position: sticky;
+  /* Viewport-height drawers pin at the top; taller ones pin by their bottom edge. */
+  top: min(0px, calc(100svh - var(--drawer-h, 100svh)));
+  z-index: calc(var(--z-raised) + var(--i, 0));
+  min-height: 100svh;
+  box-shadow: var(--shadow-drawer);
+  overflow: clip;
+  isolation: isolate;
+}
+
+.drawer__inner {
+  position: relative;
+  min-height: inherit;
+  transform-origin: 50% 0%;
+}
+
+/* Fully covered drawers sit invisibly under the next one — skip painting them. */
+.drawer[data-covered='true'] > .drawer__inner {
+  visibility: hidden;
+}
+
+/* Darkens as the next drawer slides over; driven by ScrollTrigger in App. */
+.drawer__shade {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-overlay);
+  pointer-events: none;
+  background: var(--color-night);
+  opacity: 0;
+}
+
+.drawer--unavailable {
+  display: grid;
+  place-items: center;
+  background: var(--color-night-2);
+  color: var(--color-khaki);
+  font: 600 var(--text-md) / 1 var(--font-mono);
+}
+
+/* In isolated previews (?only=…) there is no stack to slide over. */
+.is-preview .drawer {
+  position: relative;
+  top: auto;
+}

@@ -1,0 +1,88 @@
+.marquee {
+  --mq-bg: transparent;
+  --mq-fg: var(--color-ink);
+  --mq-size: var(--text-lg);
+  --mq-font: var(--font-condensed);
+  --mq-weight: 800;
+  --mq-pad: 0.35em;
+  --mq-gap: 0.55em;
+  position: relative;
+  overflow: hidden;
+  background: var(--mq-bg);
+  color: var(--mq-fg);
+  font-family: var(--mq-font);
+  font-weight: var(--mq-weight);
+  font-size: var(--mq-size);
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  rotate: var(--mq-tilt);
+}
+
+.marquee__track {
+  display: flex;
+  width: max-content;
+  animation: marquee-left var(--mq-speed) linear infinite;
+}
+.marquee__track.is-reverse {
+  animation-name: marquee-right;
+}
+
+.marquee__half {
+  display: flex;
+  flex-shrink: 0;
+  padding-block: var(--mq-pad);
+}
+
+.marquee__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mq-gap);
+  padding-inline-end: var(--mq-gap);
+}
+
+.marquee__sep {
+  opacity: 0.8;
+}
+
+@keyframes marquee-left {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes marquee-right {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Orange tape laid across a drawer */
+.marquee--tape {
+  --mq-bg: var(--color-tape);
+  --mq-fg: var(--color-ink);
+  --mq-weight: 900;
+  --mq-size: var(--text-xl);
+  --mq-pad: 0.28em;
+  box-shadow: var(--shadow-strip);
+  margin-inline: -4%;
+}
+
+/* Plain printed strip */
+.marquee--strip {
+  --mq-bg: var(--color-paper);
+  --mq-fg: var(--color-ink);
+  --mq-size: var(--text-md);
+  --mq-weight: 800;
+}
+
+/* Huge translucent ghost type behind content */
+.marquee--ghost {
+  --mq-fg: var(--color-paper);
+  --mq-size: var(--text-xxl);
+  --mq-weight: 900;
+  opacity: 0.08;
+}

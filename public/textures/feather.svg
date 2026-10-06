@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 240" width="180" height="240"><rect width="180" height="240" fill="#03222a"/><path d="M160 120L208 120M155.78 151.47L200.88 171.3M143.62 179.14L180.39 216.42M125 199.67L149 249.9M102.16 210.6L110.49 267.72M77.84 210.6L69.51 267.72M55 199.67L31 249.9M36.38 179.14L-0.39 216.42M24.22 151.47L-20.88 171.3M20 120L-28 120M24.22 88.53L-20.88 68.7M36.38 60.86L-0.39 23.58M55 40.33L31 -9.9M77.84 29.4L69.51 -27.72M102.16 29.4L110.49 -27.72M125 40.33L149 -9.9M143.62 60.86L180.39 23.58M155.78 88.53L200.88 68.7" stroke="#14564d" stroke-width="3" fill="none"/>
+    <g transform="translate(90 120)">
+      <ellipse rx="54" ry="72" fill="#0d3b3a"/>
+      <ellipse rx="44" ry="60" fill="#1d7a6b"/>
+      <ellipse rx="36" ry="49" fill="#c8a43a"/>
+      <ellipse rx="30" ry="41" fill="#2c8a4a"/>
+      <ellipse cy="4" rx="22" ry="30" fill="#164f9e"/>
+      <ellipse cy="8" rx="13" ry="18" fill="#0b1e46"/>
+    </g>
+    <g transform="translate(0 0)">
+      <ellipse rx="54" ry="72" fill="#0d3b3a"/>
+      <ellipse rx="44" ry="60" fill="#1d7a6b"/>
+      <ellipse rx="36" ry="49" fill="#c8a43a"/>
+      <ellipse rx="30" ry="41" fill="#2c8a4a"/>
+      <ellipse cy="4" rx="22" ry="30" fill="#164f9e"/>
+      <ellipse cy="8" rx="13" ry="18" fill="#0b1e46"/>
+    </g>
+    <g transform="translate(180 0)">
+      <ellipse rx="54" ry="72" fill="#0d3b3a"/>
+      <ellipse rx="44" ry="60" fill="#1d7a6b"/>
+      <ellipse rx="36" ry="49" fill="#c8a43a"/>
+      <ellipse rx="30" ry="41" fill="#2c8a4a"/>
+      <ellipse cy="4" rx="22" ry="30" fill="#164f9e"/>
+      <ellipse cy="8" rx="13" ry="18" fill="#0b1e46"/>
+    </g>
+    <g transform="translate(0 240)">
+      <ellipse rx="54" ry="72" fill="#0d3b3a"/>
+      <ellipse rx="44" ry="60" fill="#1d7a6b"/>
+      <ellipse rx="36" ry="49" fill="#c8a43a"/>
+      <ellipse rx="30" ry="41" fill="#2c8a4a"/>
+      <ellipse cy="4" rx="22" ry="30" fill="#164f9e"/>
+      <ellipse cy="8" rx="13" ry="18" fill="#0b1e46"/>
+    </g>
+    <g transform="translate(180 240)">
+      <ellipse rx="54" ry="72" fill="#0d3b3a"/>
+      <ellipse rx="44" ry="60" fill="#1d7a6b"/>
+      <ellipse rx="36" ry="49" fill="#c8a43a"/>
+      <ellipse rx="30" ry="41" fill="#2c8a4a"/>
+      <ellipse cy="4" rx="22" ry="30" fill="#164f9e"/>
+      <ellipse cy="8" rx="13" ry="18" fill="#0b1e46"/>
+    </g></svg>

@@ -1,0 +1,45 @@
+/* Print textures. Each is an absolutely-positioned layer; drop it as the first
+ * child of a positioned container. Colour comes from tokens via --tx-color. */
+
+.tx {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Stroke-only mandala tile, coloured through a mask */
+.tx-mandala {
+  background-color: var(--tx-color, var(--color-ink));
+  opacity: var(--tx-opacity, 0.22);
+  -webkit-mask: url('/textures/mandala.svg') 0 0 / var(--tx-size, 520px) var(--tx-size, 520px) repeat;
+  mask: url('/textures/mandala.svg') 0 0 / var(--tx-size, 520px) var(--tx-size, 520px) repeat;
+}
+
+/* Mughal jaali lattice */
+.tx-jaali {
+  background-color: var(--tx-color, var(--color-ink));
+  opacity: var(--tx-opacity, 0.18);
+  -webkit-mask: url('/textures/jaali.svg') 0 0 / var(--tx-size, 120px) var(--tx-size, 120px) repeat;
+  mask: url('/textures/jaali.svg') 0 0 / var(--tx-size, 120px) var(--tx-size, 120px) repeat;
+}
+
+/* Halftone dots, fading along --ht-angle */
+.tx-halftone {
+  background-image: radial-gradient(circle, var(--tx-color, var(--color-ink)) 34%, transparent 36%);
+  background-size: var(--tx-size, 7px) var(--tx-size, 7px);
+  opacity: var(--tx-opacity, 0.35);
+  -webkit-mask-image: linear-gradient(var(--ht-angle, 180deg), black, transparent 85%);
+  mask-image: linear-gradient(var(--ht-angle, 180deg), black, transparent 85%);
+}
+
+/* Peacock feather eyes (full colour) */
+.tx-feather {
+  background: url('/textures/feather.svg') 0 0 / var(--tx-size, 180px) auto repeat;
+  opacity: var(--tx-opacity, 0.5);
+}
+
+/* Local grain (in addition to the global one) for paper surfaces */
+.tx-grain {
+  background: url('/textures/grain.svg') 0 0 / 240px 240px;
+  opacity: var(--tx-opacity, 0.12);
+}

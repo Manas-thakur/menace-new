@@ -1,0 +1,109 @@
+.numbers {
+  background: var(--color-paper-2);
+  color: var(--color-ink);
+}
+
+.numbers__layout {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    'title'
+    'board'
+    'clock';
+  align-content: start;
+  row-gap: var(--space-lg);
+  padding: calc(var(--nav-h) + var(--space-md)) var(--gutter) var(--space-xl);
+}
+
+/* ── Heading ─────────────────────────────────────────── */
+.numbers__title {
+  grid-area: title;
+  display: grid;
+  justify-items: start;
+  font-family: var(--font-condensed);
+  font-weight: 900;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.012em;
+  text-transform: uppercase;
+}
+.numbers__title-a {
+  font-size: clamp(2.5rem, 4.7vw, 9rem);
+  color: var(--color-ink);
+}
+.numbers__title-b {
+  font-size: clamp(4.4rem, 9.4vw, 18rem);
+  color: var(--color-maroon);
+  margin-top: -0.02em;
+}
+
+.numbers__board {
+  grid-area: board;
+  min-width: 0;
+}
+
+/* ── Clock: after the board on phones, bracket hidden ── */
+.numbers__clock {
+  grid-area: clock;
+  min-width: 0;
+}
+.numbers .clock {
+  --clock-w: clamp(7.5rem, 36vw, 12rem);
+  grid-template-columns: auto minmax(0, 1fr);
+  justify-items: start;
+  align-items: center;
+  column-gap: var(--space-md);
+}
+.numbers .clock__bracket {
+  display: none;
+}
+.numbers .clock__dial {
+  /* crop the empty hanger area of the viewBox when the bracket is hidden */
+  margin-top: calc(var(--clock-w) * -0.26);
+}
+.numbers .clock__caption {
+  justify-items: start;
+  text-align: start;
+}
+
+/* ── Desktop: heading top-left, clock hanging top-right, board spanning below ── */
+@media (min-width: 48rem) {
+  .numbers__layout {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'title clock'
+      'board board';
+    align-content: center;
+    align-items: end;
+    column-gap: var(--space-lg);
+    row-gap: clamp(1.25rem, 3.2svh, 3.25rem);
+    padding-bottom: var(--space-lg);
+  }
+  .numbers__clock {
+    position: relative;
+    z-index: 2;
+    align-self: start;
+    /* the hanger tucks up under the nav, so only the dial claims row height */
+    margin-top: calc(-1 * (var(--nav-h) + var(--space-md)));
+    /* the face bottom dips over the board's header strip */
+    margin-bottom: calc(clamp(1.25rem, 3.2svh, 3.25rem) * -1 - 0.8vw);
+  }
+  .numbers .clock {
+    --clock-w: clamp(10rem, min(15vw, 31svh), 27rem);
+    grid-template-columns: auto auto;
+    justify-items: end;
+    align-items: end;
+  }
+  .numbers .clock__bracket {
+    display: inline;
+  }
+  .numbers .clock__dial {
+    margin-top: 0;
+  }
+  .numbers .clock__caption {
+    justify-items: end;
+    text-align: end;
+    padding-bottom: calc(var(--clock-w) * 0.18);
+  }
+}

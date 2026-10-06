@@ -1,0 +1,165 @@
+/* Hallmark · macrostructure: Stacked Drawers (studied) · tone: playful-riot · anchor hue: 84 mustard / 25 crimson
+ * theme: studied-DNA (source: https://rendezvous-iitd.org/) · studied: yes · DNA-source: url + live-browser study
+ * observed-fonts: Barlow Condensed + Dela Gothic One (+ Rye, Bree Serif, Share Tech Mono, Noto Sans Devanagari)
+ * this build: Barlow Condensed · Dela Gothic One · Pirata One (wordmark/masthead) · Rye (signage) · Newsreader (body)
+ *             · Share Tech Mono (labels) · Yatra One + Black Han Sans (Devanagari / Hangul accents)
+ * observed-paper: #fad68e → oklch(89.1% 0.099 84) · observed-accent: #ff2238 → oklch(64% 0.245 24.2)
+ * rhythm: full-viewport sticky drawers, each its own colour world, ascending z, heavy upward shadow
+ * enrichment: tier A/B — hand-built CSS + SVG art only; no reference assets reused
+ * photography: Manas's own (@menace_thakur), a 36-frame roll in the Darkroom: line · contact sheet + loupe · colour wheel
+ * photo palettes in data/photos.ts are content (sampled from the frames), not design tokens
+ * nav: N7 brutal slab + record-dial nav · footer: Ft5 statement (Side B)
+ * contrast: pass (axe-core 0 violations) · honest: pass (every figure sourced) · chrome: pass
+ * tokens: pass (#000 appears only as mask alpha) · responsive + mobile: pass 320–2560, no x-overflow
+ * Hallmark · pre-emit critique: P5 H4 E4 S5 R4 V5
+ */
+
+:root {
+  /* ── Ink & warm neutrals ─────────────────────────────── */
+  --color-ink: oklch(20.2% 0.018 86.7);
+  --color-ink-2: oklch(25% 0.021 54);
+  --color-ink-soft: oklch(39.7% 0.032 59.1);
+  --color-khaki: oklch(53.2% 0.047 82.1);
+  --color-night: oklch(15.2% 0.008 68.3);
+  --color-night-2: oklch(19% 0.01 68);
+  --color-groove: oklch(27% 0.012 70);
+
+  /* ── Papers ──────────────────────────────────────────── */
+  --color-mustard: oklch(89.1% 0.099 84);
+  --color-mustard-deep: oklch(82% 0.115 80);
+  --color-paper: oklch(98.3% 0.018 86.1);
+  --color-paper-2: oklch(94.7% 0.029 89.6);
+  --color-paper-3: oklch(89.8% 0.051 86.9);
+  --color-cream: oklch(94.9% 0.027 90.9);
+  --color-sticker: oklch(98.8% 0.008 90);
+
+  /* ── Reds ────────────────────────────────────────────── */
+  --color-signal: oklch(64% 0.245 24.2);
+  --color-crimson: oklch(51.7% 0.198 24.8);
+  --color-crimson-deep: oklch(44.7% 0.181 24.3);
+  --color-maroon: oklch(38.5% 0.129 25.6);
+  --color-maroon-deep: oklch(27% 0.093 18.2);
+  --color-sunset-top: oklch(30.7% 0.109 15.9);
+
+  /* ── Golds & oranges ─────────────────────────────────── */
+  --color-gold: oklch(85% 0.166 91.8);
+  --color-gold-deep: oklch(77.9% 0.145 81.1);
+  --color-saffron: oklch(80.4% 0.155 68.7);
+  --color-tape: oklch(72.4% 0.187 48.9);
+  --color-marigold: oklch(70.1% 0.201 44.8);
+  --color-orange: oklch(68.2% 0.188 46.2);
+  --color-orange-deep: oklch(59.1% 0.186 38.8);
+  --color-electric: oklch(96.5% 0.212 110.9);
+
+  /* ── Nights & blues ──────────────────────────────────── */
+  --color-indigo-night: oklch(14.9% 0.082 293.9);
+  --color-indigo: oklch(24.8% 0.107 291);
+  --color-violet: oklch(32.8% 0.148 291.6);
+  --color-lilac: oklch(78% 0.07 295);
+  --color-royal: oklch(30.9% 0.119 262.5);
+  --color-royal-2: oklch(49.9% 0.174 260.5);
+  --color-sky: oklch(86% 0.06 245);
+  --color-teal-night: oklch(21.4% 0.038 219.8);
+  --color-peacock: oklch(48% 0.078 194.9);
+  --color-peacock-green: oklch(56.9% 0.119 154.9);
+  --color-peacock-blue: oklch(44.9% 0.153 261.4);
+  --color-phosphor: oklch(86% 0.19 145);
+
+  /* ── Earth ───────────────────────────────────────────── */
+  --color-terracotta: oklch(55.9% 0.139 41.7);
+  --color-terracotta-deep: oklch(42.2% 0.111 41.3);
+  --color-chai: oklch(55.3% 0.107 58.6);
+  --color-chai-light: oklch(72% 0.09 65);
+  --color-leaf: oklch(57.5% 0.151 145.1);
+  --color-leaf-deep: oklch(42% 0.11 150);
+  --color-auto-yellow: oklch(83.7% 0.166 88.4);
+
+  /* ── Focus (double ring: reads on every drawer colour) ── */
+  --color-focus-inner: var(--color-ink);
+  --color-focus-outer: var(--color-electric);
+  --focus-ring: 0 0 0 2px var(--color-focus-inner), 0 0 0 5px var(--color-focus-outer);
+
+  /* ── Type families ───────────────────────────────────── */
+  --font-condensed: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --font-heavy: 'Dela Gothic One', 'Arial Black', sans-serif;
+  --font-gothic: 'Pirata One', 'Old English Text MT', serif;
+  --font-signage: 'Rye', Georgia, serif;
+  --font-serif: 'Newsreader', Georgia, serif;
+  --font-mono: 'Share Tech Mono', ui-monospace, Consolas, monospace;
+  --font-deva: 'Yatra One', 'Noto Sans Devanagari', sans-serif;
+  --font-hangul: 'Black Han Sans', 'Malgun Gothic', sans-serif;
+
+  /* ── Type scale (fluid; tuned for 320 → 2560 px) ─────── */
+  --text-mega: clamp(4.25rem, 15vw, 24rem);
+  --text-display: clamp(3rem, 9vw, 14rem);
+  --text-display-s: clamp(2.4rem, 5.6vw, 8.75rem);
+  --text-xxl: clamp(2rem, 3.8vw, 6rem);
+  --text-xl: clamp(1.55rem, 2.4vw, 3.75rem);
+  --text-lg: clamp(1.2rem, 1.45vw, 2.3rem);
+  --text-md: clamp(1.02rem, 1.05vw, 1.65rem);
+  --text-sm: clamp(0.9rem, 0.86vw, 1.3rem);
+  --text-xs: clamp(0.74rem, 0.7vw, 1.08rem);
+  --leading-tight: 0.86;
+  --leading-snug: 1.1;
+  --leading-body: 1.45;
+  --tracking-caps: 0.06em;
+  --tracking-wide: 0.14em;
+
+  /* ── Space (4 pt base, fluid at the top end) ─────────── */
+  --space-3xs: 0.25rem;
+  --space-2xs: 0.5rem;
+  --space-xs: 0.75rem;
+  --space-sm: 1rem;
+  --space-md: clamp(1.25rem, 1.6vw, 2.5rem);
+  --space-lg: clamp(2rem, 3vw, 4.5rem);
+  --space-xl: clamp(3rem, 5vw, 8rem);
+  --space-2xl: clamp(4rem, 8vw, 12rem);
+  --gutter: clamp(1rem, 4vw, 6.5rem);
+  --nav-h: clamp(3.5rem, 4.2vw, 5.25rem);
+
+  /* ── Radii & rules ───────────────────────────────────── */
+  --radius-sm: 0.35rem;
+  --radius-md: 0.8rem;
+  --radius-pill: 999px;
+  --rule-hair: 1px;
+  --rule-bold: 3px;
+
+  /* ── Motion ──────────────────────────────────────────── */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-riot: cubic-bezier(0.2, 0.8, 0.2, 1);
+  /* decorative only (stickers, stamps landing) — never on UI state */
+  --ease-slap: cubic-bezier(0.2, 0.9, 0.3, 1.2);
+  --dur-micro: 120ms;
+  --dur-short: 220ms;
+  --dur-long: 420ms;
+  --dur-epic: 1200ms;
+
+  /* ── Depth ───────────────────────────────────────────── */
+  --color-shadow: oklch(11% 0.02 60);
+  --color-shadow-warm: oklch(15% 0.04 30);
+  --color-sheen: oklch(100% 0.005 90);
+  --color-tape-paper: color-mix(in oklch, var(--color-paper-3) 82%, transparent);
+  --shadow-drawer: 0 -15px 40px color-mix(in oklch, var(--color-shadow) 55%, transparent);
+  --shadow-nav: 0 4px 25px color-mix(in oklch, var(--color-shadow) 60%, transparent);
+  --shadow-strip: 0 10px 22px -10px color-mix(in oklch, var(--color-shadow) 60%, transparent);
+  --shadow-tape: 0 1px 2px color-mix(in oklch, var(--color-shadow) 25%, transparent);
+  --shadow-paper: 0 14px 28px -12px color-mix(in oklch, var(--color-shadow-warm) 55%, transparent),
+    0 2px 5px color-mix(in oklch, var(--color-shadow-warm) 25%, transparent);
+  --shadow-paper-lift: 0 26px 40px -16px color-mix(in oklch, var(--color-shadow-warm) 60%, transparent),
+    0 4px 10px color-mix(in oklch, var(--color-shadow-warm) 30%, transparent);
+  --drop-sticker-sm: drop-shadow(0 4px 7px color-mix(in oklch, var(--color-shadow) 45%, transparent));
+  --drop-sticker: drop-shadow(0 6px 10px color-mix(in oklch, var(--color-shadow) 45%, transparent));
+  --drop-sticker-lg: drop-shadow(0 8px 14px color-mix(in oklch, var(--color-shadow) 50%, transparent));
+  --drop-sticker-lift: drop-shadow(0 18px 22px color-mix(in oklch, var(--color-shadow) 50%, transparent));
+  --drop-stamp: drop-shadow(0 18px 24px color-mix(in oklch, var(--color-shadow-warm) 45%, transparent));
+
+  /* ── Layers (named scale) ────────────────────────────── */
+  --z-base: 0;
+  --z-raised: 2;
+  --z-nav: 100;
+  --z-overlay: 200;
+  --z-modal: 300;
+  --z-grain: 400;
+}

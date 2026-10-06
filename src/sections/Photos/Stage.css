@@ -1,0 +1,780 @@
+/* The darkroom floor: one canvas, three decors, 36 prints that fly between them. */
+.dr-stage {
+  --film-base: color-mix(in oklch, var(--color-saffron) 60%, var(--color-tape));
+  --film-ink: color-mix(in oklch, var(--color-terracotta-deep) 78%, var(--color-night));
+  --neg-mask: color-mix(in oklch, var(--color-saffron) 72%, var(--color-paper));
+  --wax: color-mix(in oklch, var(--color-signal) 82%, var(--color-crimson));
+  position: relative;
+  z-index: 2;
+  margin-top: var(--space-md);
+  /* phones: the line is a wide canvas you pull sideways */
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+.dr-stage::-webkit-scrollbar {
+  display: none;
+}
+.dr-stage[data-view='line'] {
+  scroll-snap-type: x mandatory;
+}
+.dr-snap {
+  position: absolute;
+  top: 0;
+  width: 1px;
+  height: 1px;
+  scroll-snap-align: center;
+}
+.dr-canvas {
+  position: relative;
+}
+.dr-stage:not([data-ready]) .pr {
+  visibility: hidden;
+}
+
+/* decor layers: one per view, cross-faded by the stage's data-view */
+.dr-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 0.4s var(--ease-out),
+    visibility 0s linear 0.4s;
+}
+.dr-stage[data-view='line'] .dr-layer--line,
+.dr-stage[data-view='sheet'] .dr-layer--sheet,
+.dr-stage[data-view='wheel'] .dr-layer--wheel {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 0.5s var(--ease-out) 0.12s,
+    visibility 0s;
+}
+.dr-layer--grease {
+  z-index: 4;
+}
+.dr-stage[data-view='sheet'] .dr-layer--grease {
+  opacity: 1;
+  visibility: visible;
+  transition: visibility 0s;
+}
+
+/* Scripts move these every frame. With no transition of their own, a global
+ * reduced-motion rule that sets only transition-duration would make every one of
+ * them ease toward each new position and lag behind the hand. */
+.pr,
+.dr-track,
+.dr-track__label,
+.dr-spin,
+.dr-loupe__clone,
+.dr-loupe__chip,
+.dr-strip {
+  transition-property: none;
+}
+
+/* ── The prints ─────────────────────────────────────── */
+.dr-prints {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+}
+.pr {
+  --s: 1;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 260px;
+  height: 260px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+  transform-origin: 50% 50%;
+}
+/* Prints are 260px boxes scaled per view. They get their own compositor layer only
+ * while they move: a permanent will-change pins the layer to the resolution it was
+ * first drawn at, so a print that grows (hover, line view, the viewer) turns soft. */
+.dr-prints.is-moving .pr {
+  will-change: transform;
+}
+.pr:focus-visible {
+  box-shadow: none;
+}
+.pr__paper {
+  position: absolute;
+  left: -6.2%;
+  right: -6.2%;
+  top: -6.2%;
+  bottom: -21%;
+  background: var(--color-paper);
+  box-shadow:
+    0 calc(10px / var(--s)) calc(16px / var(--s)) calc(-7px / var(--s)) color-mix(in oklch, var(--color-shadow) 78%, transparent),
+    0 calc(1px / var(--s)) calc(3px / var(--s)) color-mix(in oklch, var(--color-shadow) 45%, transparent);
+}
+/* on the wheel: a chip with a thin, even border */
+.pr__card {
+  position: absolute;
+  inset: -4.5%;
+  background: var(--color-paper);
+  opacity: 0;
+  box-shadow: 0 calc(8px / var(--s)) calc(14px / var(--s)) calc(-6px / var(--s)) color-mix(in oklch, var(--color-shadow) 85%, transparent);
+}
+.pr__img {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--color-ink-2);
+}
+.pr__img img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* a colour negative: the image inverted, under the film's orange mask */
+.pr__neg {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  isolation: isolate;
+}
+.pr__neg img {
+  filter: invert(1);
+}
+.pr__neg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--neg-mask);
+  mix-blend-mode: multiply;
+}
+/* the developer: a warm paper veil the image comes up through */
+.pr__dev {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in oklch, var(--color-paper) 80%, var(--color-chai-light));
+  opacity: 0;
+}
+.pr__bits {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.pr__peg {
+  position: absolute;
+  top: -17%;
+  left: calc(50% + 100% * var(--shift, 0) - 4.5%);
+  width: 9%;
+  height: auto;
+  overflow: visible;
+}
+.peg__wood {
+  fill: var(--color-chai-light);
+  stroke: color-mix(in oklch, var(--color-chai) 70%, var(--color-ink));
+  stroke-width: 1;
+}
+.peg__wood--shade {
+  fill: color-mix(in oklch, var(--color-chai-light) 76%, var(--color-chai));
+}
+.peg__grain {
+  fill: none;
+  stroke: color-mix(in oklch, var(--color-chai) 55%, transparent);
+  stroke-width: 0.8;
+}
+.peg__spring {
+  fill: var(--color-paper-3);
+  stroke: var(--color-khaki);
+  stroke-width: 1;
+}
+.peg__coil {
+  fill: none;
+  stroke: var(--color-khaki);
+  stroke-width: 1;
+}
+/* pencilled date and place in the bottom border; never truncated */
+.pr__label {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 21%;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: space-between;
+  gap: 0.25em 0.9em;
+  font: 400 max(13px, calc(8.8px / var(--s))) / 1 var(--font-mono);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--color-khaki);
+}
+.pr__label > span {
+  white-space: nowrap;
+}
+.pr:focus-visible .pr__paper {
+  box-shadow:
+    0 0 0 calc(2px / var(--s)) var(--color-ink),
+    0 0 0 calc(5px / var(--s)) var(--color-electric),
+    0 calc(10px / var(--s)) calc(16px / var(--s)) calc(-7px / var(--s)) color-mix(in oklch, var(--color-shadow) 78%, transparent);
+}
+.dr-stage[data-view='sheet'] .pr:focus-visible .pr__img {
+  outline: calc(3px / var(--s)) solid var(--color-electric);
+  outline-offset: calc(2px / var(--s));
+}
+
+/* ── On the line: strings, tray, hint ───────────────── */
+.dr-strings {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: visible;
+}
+.dr-strings__line {
+  fill: none;
+  stroke: color-mix(in oklch, var(--color-paper-3) 62%, transparent);
+  stroke-width: 1.5;
+}
+.dr-tray {
+  position: absolute;
+  border-radius: 6% / 9%;
+  background: linear-gradient(170deg, color-mix(in oklch, var(--color-ink-soft) 65%, var(--color-ink)), var(--color-ink-2));
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklch, var(--color-paper) 12%, transparent),
+    0 18px 30px -16px color-mix(in oklch, var(--color-shadow) 85%, transparent);
+}
+.dr-tray__bath {
+  position: absolute;
+  inset: 5% 3.5%;
+  overflow: hidden;
+  border-radius: 4% / 7%;
+  background: radial-gradient(ellipse 80% 70% at 30% 20%, color-mix(in oklch, var(--color-crimson) 30%, var(--color-night)), var(--color-night) 70%);
+  box-shadow: inset 0 3px 8px color-mix(in oklch, var(--color-shadow) 80%, transparent);
+}
+.dr-tray__sheen {
+  position: absolute;
+  inset: -30% -60%;
+  background: linear-gradient(105deg, transparent 42%, color-mix(in oklch, var(--color-signal) 16%, transparent) 50%, transparent 58%);
+  animation: tray-sheen 7s var(--ease-in-out) infinite alternate;
+}
+@keyframes tray-sheen {
+  from {
+    transform: translateX(-12%);
+  }
+  to {
+    transform: translateX(12%);
+  }
+}
+.dr-tray__btn {
+  position: absolute;
+  z-index: 5;
+  border-radius: 6% / 9%;
+  cursor: pointer;
+}
+.dr-tray__btn[aria-hidden] {
+  display: none;
+}
+.dr-stage:not([data-view='line']) .dr-tray__btn {
+  display: none;
+}
+/* phones: the label sits above the tray at the end of the line;
+ * desktop: beside the tray, on the empty bench */
+.dr-tray__tag {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 0.55rem);
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.6em;
+  text-align: right;
+  font: 400 var(--text-xs) / 1 var(--font-mono);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--room-dim);
+}
+.dr-tray__cta {
+  font-family: var(--font-condensed);
+  font-weight: 800;
+  font-size: var(--text-sm);
+  color: var(--color-paper-2);
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.3em;
+  transition: color var(--dur-short) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .dr-tray__btn:hover .dr-tray__cta {
+    color: var(--color-paper);
+    text-decoration-color: var(--color-signal);
+  }
+}
+.dr-tray__btn:focus-visible {
+  box-shadow: var(--focus-ring);
+}
+.dr-hint {
+  position: absolute;
+  left: var(--gutter);
+  bottom: 0.5rem;
+  z-index: 2;
+  margin: 0;
+  font: 400 var(--text-xs) / 1 var(--font-mono);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--room-dim);
+  opacity: 0;
+  transition: opacity 0.4s var(--ease-out);
+}
+.dr-stage[data-view='line'][data-landed] .dr-hint {
+  opacity: 1;
+}
+@media (min-width: 64rem) and (not (hover: hover)) {
+  .dr-hint {
+    display: none;
+  }
+}
+
+/* ── Contact sheet: light table, film, grease pencil ── */
+.dr-table {
+  position: absolute;
+  border-radius: 1.4% / 2.2%;
+  background: linear-gradient(180deg, color-mix(in oklch, var(--color-ink-soft) 55%, var(--color-ink)), var(--color-ink-2));
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklch, var(--color-paper) 14%, transparent),
+    0 26px 44px -24px color-mix(in oklch, var(--color-shadow) 90%, transparent);
+}
+.dr-table::before {
+  /* the glow spilling into the dark room */
+  content: '';
+  position: absolute;
+  inset: -14% -8%;
+  z-index: -1;
+  background: radial-gradient(closest-side, var(--table-glow), transparent);
+  pointer-events: none;
+}
+.dr-table__light {
+  position: absolute;
+  inset: max(6px, 0.7%);
+  border-radius: 1% / 1.6%;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 22px, color-mix(in oklch, var(--color-sky) 10%, transparent) 22px 23px),
+    radial-gradient(ellipse 70% 80% at 50% 45%, var(--color-sticker), var(--table-light) 75%);
+}
+.dr-table__light.is-flicker {
+  animation: table-flicker 320ms steps(1, end) both;
+}
+@keyframes table-flicker {
+  0% {
+    opacity: 0.1;
+  }
+  14% {
+    opacity: 0.95;
+  }
+  30% {
+    opacity: 0.2;
+  }
+  48% {
+    opacity: 1;
+  }
+  64% {
+    opacity: 0.45;
+  }
+  78%,
+  100% {
+    opacity: 1;
+  }
+}
+
+.dr-strips {
+  position: absolute;
+  inset: 0;
+}
+.dr-strip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: var(--film-base);
+  box-shadow: 0 2px 6px color-mix(in oklch, var(--color-shadow) 25%, transparent);
+}
+.dr-stage[data-view='sheet'] .dr-layer--sheet .dr-strip {
+  animation: strip-in 0.5s var(--ease-out) both;
+  animation-delay: calc(80ms + var(--k) * 45ms);
+}
+@keyframes strip-in {
+  from {
+    opacity: 0;
+    translate: 0 calc(var(--f) * 0.25);
+  }
+}
+.dr-strip__edge {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: calc(var(--f) * 0.27);
+  background: linear-gradient(90deg, var(--table-light) 0 calc(var(--f) * 0.075), transparent 0) calc(var(--f) * 0.05) 0 / calc(var(--f) * 0.183)
+    calc(var(--f) * 0.105) repeat-x;
+}
+.dr-strip__edge--top {
+  top: 0;
+  background-position-y: calc(var(--f) * 0.03);
+}
+.dr-strip__edge--bottom {
+  bottom: 0;
+  background-position-y: calc(var(--f) * 0.135);
+}
+.dr-strip__num,
+.dr-strip__brand {
+  position: absolute;
+  font: 400 calc(var(--f) * 0.095) / 1 var(--font-mono);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  color: var(--film-ink);
+}
+.dr-strip__brand {
+  bottom: calc(var(--f) * 0.012);
+}
+.dr-strip__num {
+  top: calc(var(--f) * 0.012);
+}
+
+.dr-grease {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: visible;
+}
+.dr-grease__ink path {
+  fill: none;
+  stroke: var(--wax);
+  stroke-width: var(--wax-w, 3px);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.9;
+}
+.dr-grease__note {
+  stroke-width: 3.4px;
+}
+
+/* ── The loupe ──────────────────────────────────────── */
+.dr-loupe {
+  --metal-hi: var(--color-sticker);
+  --metal: var(--color-paper-3);
+  --metal-lo: color-mix(in oklch, var(--color-khaki) 70%, var(--color-night));
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 7;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform;
+  transition: opacity 0.3s var(--ease-out);
+}
+.dr-loupe.is-on {
+  opacity: 1;
+}
+@media (pointer: coarse) {
+  .dr-loupe.is-on {
+    pointer-events: auto;
+    touch-action: none;
+    cursor: grab;
+  }
+}
+.dr-loupe__shadow {
+  position: absolute;
+  inset: 0;
+  translate: 8% 12%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, color-mix(in oklch, var(--color-shadow) 50%, transparent) 70%, transparent);
+}
+.dr-loupe__glass {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--color-night);
+}
+/* No will-change here: the loupe itself is the layer, and this copy must redraw at
+ * its real 2.4× magnification, not be enlarged from a 1× render. */
+.dr-loupe__clone {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+}
+.dr-loupe__clone .dr-strip {
+  animation: none;
+}
+.dr-positives {
+  position: absolute;
+  inset: 0;
+}
+.dr-positive {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 260px;
+  height: 260px;
+  max-width: none;
+  object-fit: cover;
+  transform-origin: 50% 50%;
+}
+/* a glint at the rim, not a haze over the picture */
+.dr-loupe__glare {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 26% 18%, color-mix(in oklch, var(--color-sheen) 26%, transparent), transparent 18%);
+  box-shadow: inset 0 0 12px color-mix(in oklch, var(--color-shadow) 50%, transparent);
+}
+.dr-loupe__rim {
+  position: absolute;
+  inset: -6%;
+  border-radius: 50%;
+  background: conic-gradient(from 200deg, var(--metal-hi), var(--metal-lo) 22%, var(--metal) 40%, var(--metal-hi) 55%, var(--metal-lo) 75%, var(--metal-hi));
+  -webkit-mask: radial-gradient(closest-side, transparent 89%, var(--color-night) 89.6%);
+  mask: radial-gradient(closest-side, transparent 89%, var(--color-night) 89.6%);
+}
+.dr-loupe__chip {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 10%);
+  translate: -50% 0;
+  padding: 0.4em 0.8em;
+  border-radius: var(--radius-pill);
+  background: var(--color-ink);
+  font: 400 var(--text-xs) / 1 var(--font-mono);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-paper-2);
+  box-shadow: 0 6px 14px -6px color-mix(in oklch, var(--color-shadow) 80%, transparent);
+}
+
+/* ── Colour wheel: spin to browse ───────────────────── */
+/* chips are round on the wheel; the image window rounds off as it flies in */
+.pr__img {
+  transition: border-radius 0.45s var(--ease-out);
+}
+.dr-stage[data-view='wheel'] .pr__img,
+.pr__card {
+  border-radius: 50%;
+}
+.dr-stage[data-view='wheel'] .pr:focus-visible .pr__card {
+  box-shadow:
+    0 0 0 calc(2px / var(--s)) var(--color-ink),
+    0 0 0 calc(5px / var(--s)) var(--color-electric);
+}
+/* the frame under the pointer */
+.dr-stage[data-view='wheel'] .pr.is-active .pr__card {
+  box-shadow:
+    0 0 0 calc(2.5px / var(--s)) var(--color-signal),
+    0 calc(8px / var(--s)) calc(14px / var(--s)) calc(-6px / var(--s)) color-mix(in oklch, var(--color-shadow) 85%, transparent);
+}
+.dr-groove {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px dashed color-mix(in oklch, var(--color-paper-2) 12%, transparent);
+  pointer-events: none;
+}
+.dr-track {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  -webkit-mask: radial-gradient(closest-side, transparent var(--hole), var(--color-night) calc(var(--hole) + 0.6%));
+  mask: radial-gradient(closest-side, transparent var(--hole), var(--color-night) calc(var(--hole) + 0.6%));
+  will-change: transform;
+}
+.dr-track__label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 0.25em 0.55em;
+  border-radius: var(--radius-pill);
+  background: color-mix(in oklch, var(--room) 86%, transparent);
+  font: 400 var(--text-xs) / 1 var(--font-mono);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: color-mix(in oklch, var(--color-paper-2) 82%, var(--room));
+  pointer-events: none;
+}
+.dr-pointer {
+  position: absolute;
+  overflow: visible;
+  pointer-events: none;
+}
+.dr-pointer path {
+  fill: var(--color-signal);
+  stroke: var(--color-night);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+/* the spin surface: drag it, or arrow-key it */
+.dr-spin {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: auto;
+  cursor: grab;
+  touch-action: none;
+}
+.dr-spin:active {
+  cursor: grabbing;
+}
+.dr-spin:focus-visible {
+  box-shadow: var(--focus-ring);
+}
+.dr-prints {
+  pointer-events: none;
+}
+.pr {
+  pointer-events: auto;
+}
+/* the hub: a large preview of the active frame */
+.dr-hub {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+.dr-hub__btn {
+  position: absolute;
+  left: 0;
+  top: 0;
+  translate: -50% -50%;
+  border-radius: 50%;
+  pointer-events: auto;
+  cursor: zoom-in;
+}
+.dr-hub__btn:focus-visible {
+  box-shadow: var(--focus-ring);
+}
+.dr-hub__frame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--color-ink-2);
+  box-shadow:
+    0 0 0 max(3px, 0.5vw) var(--color-paper),
+    0 18px 34px -14px color-mix(in oklch, var(--color-shadow) 90%, transparent);
+}
+.dr-hub__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.dr-hub__img.is-new {
+  animation: hub-in 0.28s var(--ease-out) both;
+}
+@keyframes hub-in {
+  from {
+    opacity: 0;
+  }
+}
+.dr-hub__caption {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 0.7em);
+  translate: -50% 0;
+  font-family: var(--font-mono);
+  line-height: 1;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: color-mix(in oklch, var(--color-paper-2) 85%, var(--room));
+}
+.dr-hub__chips {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+}
+.dr-hub__chip {
+  position: absolute;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 1.5px var(--color-paper),
+    0 4px 8px -3px color-mix(in oklch, var(--color-shadow) 85%, transparent);
+  animation: chip-in 0.36s var(--ease-out) both;
+  animation-delay: var(--d);
+}
+@keyframes chip-in {
+  from {
+    opacity: 0;
+    scale: 0.3;
+  }
+}
+/* the words: beside the wheel on desktop, below it on phones */
+.dr-wheel__text {
+  position: absolute;
+  display: grid;
+  gap: var(--space-sm);
+  translate: 0 -50%;
+}
+.dr-wheel__text.is-compact {
+  translate: none;
+  text-align: center;
+  justify-items: center;
+}
+.dr-wheel__lede {
+  font-family: var(--font-serif);
+  font-size: clamp(1.1rem, 1.45vw, 2.4rem);
+  line-height: 1.28;
+  color: var(--room-ink);
+  text-wrap: pretty;
+}
+.dr-wheel__note {
+  font: 400 var(--text-xs) / 1.3 var(--font-mono);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--room-dim);
+}
+.dr-wheel__how--touch {
+  display: none;
+}
+@media (hover: none) and (pointer: coarse) {
+  .dr-wheel__how--mouse {
+    display: none;
+  }
+  .dr-wheel__how--touch {
+    display: inline;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dr-hub__img.is-new,
+  .dr-hub__chip {
+    animation: none;
+  }
+}
+
+/* ── Desktop: the stage fills the rest of the drawer ── */
+@media (min-width: 64rem) {
+  .dr-stage {
+    flex: 1 1 auto;
+    min-height: 0;
+    margin-top: var(--space-sm);
+    overflow: visible;
+  }
+  .dr-stage[data-view='line'] {
+    scroll-snap-type: none;
+  }
+  .dr-tray__tag {
+    left: auto;
+    right: calc(100% + var(--space-md));
+    top: 50%;
+    bottom: auto;
+    translate: 0 -50%;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.55em;
+  }
+  .dr-canvas {
+    height: 100%;
+  }
+}

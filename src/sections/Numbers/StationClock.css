@@ -1,0 +1,162 @@
+.clock {
+  --clock-w: clamp(8.5rem, min(14.5vw, 31svh), 27rem);
+  --clock-bezel: var(--color-ink);
+  --clock-brass: var(--color-gold-deep);
+  --clock-face-hi: var(--color-paper);
+  --clock-face-lo: var(--color-paper-3);
+  --clock-ink: var(--color-ink);
+  --clock-second: var(--color-crimson);
+  position: relative;
+  display: grid;
+  justify-items: end;
+  align-items: end;
+}
+
+.clock__svg {
+  position: relative;
+  z-index: 1;
+  width: var(--clock-w);
+  height: auto;
+  overflow: visible;
+  filter: var(--drop-sticker-lg);
+}
+
+.clock__dial {
+  position: relative;
+  line-height: 0;
+}
+
+/* Halftone sun, centred on the dial (the face centre sits at 59% of the drawing's height) */
+.clock__sun {
+  position: absolute;
+  z-index: 0;
+  left: 50%;
+  top: 59.3%;
+  width: calc(var(--clock-w) * 1.75);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  background-image: radial-gradient(circle, var(--color-saffron) 34%, transparent 37%);
+  background-size: clamp(7px, 0.55vw, 13px) clamp(7px, 0.55vw, 13px);
+  -webkit-mask-image: radial-gradient(closest-side, black 30%, transparent 100%);
+  mask-image: radial-gradient(closest-side, black 30%, transparent 100%);
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+/* ── Drawing ───────────────────────────────────────────── */
+.clock__bracket rect {
+  fill: var(--clock-bezel);
+}
+.clock__scroll {
+  fill: none;
+  stroke: var(--clock-bezel);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+.clock__bezel {
+  fill: var(--clock-bezel);
+}
+.clock__brass {
+  fill: var(--clock-brass);
+}
+.clock__stop-hi {
+  stop-color: var(--clock-face-hi);
+}
+.clock__stop-lo {
+  stop-color: var(--clock-face-lo);
+}
+.clock__chapter {
+  fill: none;
+  stroke: var(--clock-ink);
+  stroke-width: 0.6;
+  opacity: 0.35;
+}
+.clock__ticks line {
+  stroke: var(--clock-ink);
+  stroke-linecap: butt;
+}
+.clock__ticks .is-hour {
+  stroke-width: 4.2;
+}
+.clock__ticks .is-minute {
+  stroke-width: 1.2;
+}
+.clock__numerals text {
+  fill: var(--clock-ink);
+  font-family: var(--font-deva);
+  font-size: 19px;
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
+.clock__zone {
+  fill: var(--clock-ink);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-anchor: middle;
+  opacity: 0.7;
+}
+.clock__hand {
+  transform-box: view-box;
+  transform-origin: 110px 160px;
+}
+.clock__hand-ink {
+  fill: var(--clock-ink);
+}
+.clock__second-line {
+  stroke: var(--clock-second);
+  stroke-width: 1.7;
+  stroke-linecap: round;
+}
+.clock__second-fill {
+  fill: var(--clock-second);
+}
+.clock__cap {
+  fill: var(--clock-brass);
+}
+.clock__pin {
+  fill: var(--clock-bezel);
+}
+.clock__glare {
+  fill: none;
+  stroke: var(--color-sheen);
+  stroke-width: 7;
+  stroke-linecap: round;
+  opacity: 0.32;
+}
+
+/* The tick: a short mechanical snap with a hint of rebound (a mechanism, not UI). */
+.clock__svg.is-running .clock__hand--second {
+  transition: transform 260ms var(--ease-slap);
+}
+.clock__svg.is-running .clock__hand:not(.clock__hand--second) {
+  transition: transform 600ms var(--ease-out);
+}
+
+/* ── Caption ───────────────────────────────────────────── */
+.clock__caption {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 0.2em;
+  justify-items: end;
+  text-align: end;
+  color: var(--color-ink);
+}
+.clock__digital {
+  font: 400 clamp(1.4rem, 2vw, 3.4rem) / 1 var(--font-mono);
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+}
+.clock__note {
+  font: 400 var(--text-xs) / 1.3 var(--font-mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .clock__hand--second {
+    display: none;
+  }
+}

@@ -1,0 +1,505 @@
+/* Hero — "Side A". Mustard paper, a Mughal-arch window onto a fused sunset skyline,
+ * the gothic wordmark breaking the frame, and the record dial on the right edge. */
+
+.hero {
+  background: var(--color-mustard);
+  color: var(--color-ink);
+}
+
+.hero__stage {
+  position: relative;
+  min-height: 100svh;
+  overflow: clip;
+}
+.hero__stage.is-intro {
+  visibility: hidden;
+}
+.hero__defs {
+  position: absolute;
+}
+
+/* ── Arch window ─────────────────────────────────────── */
+.hero__arch-wrap {
+  position: absolute;
+  z-index: 1;
+  left: 4vw;
+  right: 4vw;
+  top: 2svh;
+  height: min(56svh, 150vw);
+}
+.hero__arch {
+  position: absolute;
+  inset: 0;
+  clip-path: url(#hero-arch);
+  background: var(--color-sunset-top);
+}
+.hero__sky {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, var(--color-sunset-top) 8%, var(--color-orange) 82%);
+}
+.hero__mandala {
+  --tx-color: var(--color-maroon-deep);
+  --tx-opacity: 0.3;
+  --tx-size: clamp(300px, 30vw, 860px);
+  -webkit-mask-position: 50% 12%;
+  mask-position: 50% 12%;
+}
+.hero__halftone {
+  --tx-color: var(--color-maroon-deep);
+  --tx-opacity: 0.6;
+  --tx-size: clamp(6px, 0.5vw, 13px);
+  --ht-angle: 180deg;
+  bottom: 40%;
+}
+.hero__sun {
+  position: absolute;
+  left: 50%;
+  bottom: 13%;
+  width: 52%;
+  aspect-ratio: 1;
+  translate: -50% 0;
+  border-radius: 50%;
+  background: linear-gradient(180deg, var(--color-gold), var(--color-saffron));
+  -webkit-mask: linear-gradient(180deg, #000 0 50%, transparent 50% 54%, #000 54% 62%, transparent 62% 67%, #000 67% 74%, transparent 74% 80%, #000 80% 86%, transparent 86%);
+  mask: linear-gradient(180deg, #000 0 50%, transparent 50% 54%, #000 54% 62%, transparent 62% 67%, #000 67% 74%, transparent 74% 80%, #000 80% 86%, transparent 86%);
+}
+
+.cloud {
+  position: absolute;
+  fill: var(--color-paper-3);
+  opacity: 0.94;
+}
+.hero__cloud--a {
+  left: 2%;
+  top: 55%;
+  width: 24%;
+  animation: cloud-drift 16s var(--ease-in-out) infinite alternate;
+}
+.hero__cloud--b {
+  right: 5%;
+  top: 38%;
+  width: 17%;
+  animation: cloud-drift 21s var(--ease-in-out) -7s infinite alternate-reverse;
+}
+@keyframes cloud-drift {
+  from {
+    transform: translateX(-4%);
+  }
+  to {
+    transform: translateX(5%);
+  }
+}
+
+/* Kites */
+.kite {
+  position: absolute;
+  rotate: var(--kite-tilt);
+}
+.kite__svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  transform-origin: 50% 8%;
+  animation: kite-sway 6.5s var(--ease-in-out) var(--kite-delay) infinite alternate;
+}
+@keyframes kite-sway {
+  from {
+    transform: translate(-7%, 1%) rotate(-6deg);
+  }
+  to {
+    transform: translate(7%, -3%) rotate(7deg);
+  }
+}
+.kite--crimson {
+  --k1: var(--color-crimson);
+  --k2: var(--color-gold);
+}
+.kite--teal {
+  --k1: var(--color-peacock);
+  --k2: var(--color-paper);
+}
+.kite--gold {
+  --k1: var(--color-gold);
+  --k2: var(--color-signal);
+}
+.kite__a {
+  fill: var(--k1);
+}
+.kite__b {
+  fill: var(--k2);
+}
+.kite__tail {
+  fill: var(--k1);
+}
+.kite__frame {
+  fill: none;
+  stroke: var(--color-ink);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+.kite__string {
+  fill: none;
+  stroke: var(--color-paper-3);
+  stroke-width: 1;
+  opacity: 0.55;
+  vector-effect: non-scaling-stroke;
+}
+
+/* Skyline */
+.skyline {
+  position: absolute;
+  left: -7.5%;
+  bottom: 0;
+  width: 115%;
+  height: auto;
+}
+.skyline__far {
+  fill: var(--color-maroon);
+  opacity: 0.6;
+}
+.skyline__mid {
+  fill: var(--color-maroon-deep);
+}
+.skyline__flute {
+  fill: none;
+  stroke: var(--color-maroon);
+  stroke-width: 1.5;
+  opacity: 0.7;
+}
+.skyline__recess {
+  fill: var(--color-sunset-top);
+}
+.skyline__petal {
+  fill: var(--color-maroon);
+}
+.skyline__bridge {
+  fill: var(--color-ink);
+}
+.metro {
+  animation: metro-drive 17s linear infinite;
+}
+@keyframes metro-drive {
+  from {
+    transform: translateX(-1150px);
+  }
+  to {
+    transform: translateX(1750px);
+  }
+}
+.metro__body {
+  fill: var(--color-paper-2);
+}
+.metro__roof {
+  fill: var(--color-khaki);
+}
+.metro__glass {
+  fill: var(--color-ink-2);
+}
+.metro__stripe {
+  fill: var(--color-crimson);
+}
+.metro__door {
+  fill: none;
+  stroke: var(--color-khaki);
+  stroke-width: 1.5;
+}
+.metro__bogie {
+  fill: var(--color-ink);
+}
+.metro__lamp {
+  fill: var(--color-electric);
+}
+.trees {
+  fill: var(--color-leaf-deep);
+}
+.trees__light {
+  fill: var(--color-leaf);
+  opacity: 0.4;
+}
+
+/* Arch frame */
+.hero__frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+.hero__frame path {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+.hero__frame-outer {
+  stroke: var(--color-maroon-deep);
+  stroke-width: 5px;
+}
+.hero__frame-inner {
+  stroke: var(--color-gold);
+  stroke-width: 1.5px;
+}
+
+/* ── Wordmark ────────────────────────────────────────── */
+.hero__name {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  right: 0;
+  top: 13%;
+  display: grid;
+  justify-items: center;
+  font-family: var(--font-gothic);
+  font-weight: 400;
+  line-height: 0.78;
+  pointer-events: none;
+}
+.hero__first {
+  display: block;
+  font-size: clamp(5.5rem, 27vw, 32rem);
+  color: var(--color-gold);
+  letter-spacing: 0.005em;
+  text-shadow:
+    0.012em 0.012em 0 var(--color-crimson),
+    0.024em 0.024em 0 var(--color-crimson),
+    0.036em 0.036em 0 var(--color-crimson-deep),
+    0.048em 0.048em 0 var(--color-maroon-deep),
+    0.06em 0.06em 0 var(--color-maroon-deep),
+    0.075em 0.09em 0.05em color-mix(in oklch, var(--color-shadow) 45%, transparent);
+}
+.hero__char {
+  will-change: transform;
+}
+.hero__last {
+  display: block;
+  justify-self: end;
+  margin-top: 0.02em;
+  margin-right: 9%;
+  font-size: clamp(2.6rem, 12vw, 14rem);
+  color: var(--color-cream);
+  text-shadow:
+    0.02em 0.02em 0 var(--color-maroon),
+    0.04em 0.04em 0 var(--color-maroon-deep),
+    0.06em 0.07em 0.04em color-mix(in oklch, var(--color-shadow) 40%, transparent);
+}
+
+/* Rubber stamp role label — inked onto the paper. Mobile: in the gap between the
+ * arch and the dial. Desktop: over the arch's right shoulder. */
+.hero__stamp {
+  position: absolute;
+  z-index: 2;
+  top: calc(100% + 1.4svh);
+  left: 50%;
+  translate: -50% 0;
+  display: grid;
+  justify-items: center;
+  gap: 0.15em;
+  padding: 0.45em 0.8em 0.5em;
+  border: 3px solid currentColor;
+  outline: 1.5px solid currentColor;
+  outline-offset: 3px;
+  color: var(--color-crimson);
+  rotate: -4deg;
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  white-space: nowrap;
+  mix-blend-mode: multiply;
+  filter: url(#hero-ink);
+}
+.hero__stamp-small {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+}
+.hero__stamp-big {
+  font-weight: 900;
+  font-size: var(--text-xl);
+  line-height: 0.9;
+  letter-spacing: 0.04em;
+}
+
+/* ── Ticket — a stub resting on the record ───────────── */
+.hero__ticket {
+  position: absolute;
+  z-index: 4;
+  left: 56vw;
+  bottom: 4svh;
+  display: none;
+  width: clamp(17rem, 21vw, 33rem);
+  rotate: -4deg;
+  filter: var(--drop-stamp);
+}
+.ticket {
+  --notch: clamp(0.7rem, 0.9vw, 1.2rem);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  background: var(--color-paper);
+  -webkit-mask:
+    radial-gradient(circle at 0 50%, transparent var(--notch), #000 calc(var(--notch) + 0.5px)) left / 51% 100% no-repeat,
+    radial-gradient(circle at 100% 50%, transparent var(--notch), #000 calc(var(--notch) + 0.5px)) right / 51% 100% no-repeat;
+  mask:
+    radial-gradient(circle at 0 50%, transparent var(--notch), #000 calc(var(--notch) + 0.5px)) left / 51% 100% no-repeat,
+    radial-gradient(circle at 100% 50%, transparent var(--notch), #000 calc(var(--notch) + 0.5px)) right / 51% 100% no-repeat;
+}
+.ticket__stub {
+  display: grid;
+  place-items: center;
+  padding: var(--space-sm) calc(var(--notch) + var(--space-2xs));
+  border-right: 2px dashed var(--color-paper-3);
+  background: var(--color-crimson);
+  color: var(--color-gold);
+}
+.ticket__stub span {
+  writing-mode: vertical-rl;
+  rotate: 180deg;
+  font-family: var(--font-condensed);
+  font-weight: 800;
+  font-size: var(--text-sm);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.ticket__body {
+  display: grid;
+  gap: var(--space-2xs);
+  padding: var(--space-md) calc(var(--notch) + var(--space-md)) var(--space-md) var(--space-md);
+}
+.ticket__now {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+}
+.ticket__dot {
+  width: 0.6em;
+  height: 0.6em;
+  border-radius: 50%;
+  background: var(--color-signal);
+  animation: live-dot 1.6s var(--ease-in-out) infinite;
+}
+@keyframes live-dot {
+  50% {
+    opacity: 0.35;
+    transform: scale(0.8);
+  }
+}
+.ticket__title {
+  font-family: var(--font-condensed);
+  font-weight: 800;
+  font-size: var(--text-xl);
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+.ticket__line {
+  font-family: var(--font-serif);
+  font-size: var(--text-sm);
+  line-height: 1.35;
+  color: var(--color-ink-2);
+}
+.ticket__meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-3xs) var(--space-sm);
+  margin-top: var(--space-3xs);
+  padding-top: var(--space-2xs);
+  border-top: 1px solid var(--color-paper-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+.ticket__meta span {
+  white-space: nowrap;
+}
+.ticket__colon {
+  font-weight: inherit;
+  animation: colon-blink 2s steps(1) infinite;
+}
+@keyframes colon-blink {
+  50% {
+    opacity: 0.2;
+  }
+}
+
+/* ── Scroll cue ──────────────────────────────────────── */
+.hero__cue {
+  position: absolute;
+  z-index: 5;
+  left: 31vw;
+  bottom: 2.5svh;
+  display: none;
+  place-items: center;
+  width: clamp(2.75rem, 2.8vw, 4rem);
+  aspect-ratio: 1;
+  translate: -50% 0;
+  border: 2px solid var(--color-ink);
+  border-radius: 50%;
+  background: var(--color-mustard);
+  color: var(--color-ink);
+  font: 900 var(--text-lg) / 1 var(--font-condensed);
+  transition: background-color var(--dur-short) var(--ease-out);
+}
+.hero__cue span {
+  animation: cue-bob 1.8s var(--ease-in-out) infinite;
+}
+@keyframes cue-bob {
+  50% {
+    transform: translateY(5px);
+  }
+}
+.hero__cue:focus-visible {
+  border-radius: 50%;
+}
+@media (hover: hover) and (pointer: fine) {
+  .hero__cue:hover {
+    background: var(--color-gold);
+  }
+}
+
+/* ── Desktop composition ─────────────────────────────── */
+@media (min-width: 64rem) {
+  .hero__arch-wrap {
+    left: 2.5vw;
+    right: auto;
+    width: 57vw;
+    top: 3svh;
+    height: auto;
+    bottom: 0;
+  }
+  .skyline {
+    left: 0;
+    width: 100%;
+  }
+  .hero__name {
+    top: 17%;
+  }
+  .hero__first {
+    font-size: clamp(6rem, 17.5vw, 30rem);
+  }
+  .hero__last {
+    font-size: clamp(3rem, 7.4vw, 13rem);
+  }
+  .hero__stamp {
+    top: 4%;
+    left: auto;
+    right: -1%;
+    translate: none;
+    rotate: 8deg;
+  }
+  .hero__cue {
+    display: grid;
+  }
+}
+
+@media (min-width: 80rem) {
+  .hero__ticket {
+    display: block;
+  }
+}

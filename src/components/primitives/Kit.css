@@ -1,0 +1,90 @@
+.kit__row {
+  position: relative;
+  min-height: 40vh;
+  padding: var(--space-xl) var(--gutter);
+  overflow: hidden;
+}
+.kit__row--crimson {
+  background: var(--color-crimson-deep);
+  color: var(--color-gold);
+}
+.kit__row--teal {
+  background: var(--color-teal-night);
+  color: var(--color-cream);
+}
+.kit__row--orange {
+  background: var(--color-orange);
+  color: var(--color-ink);
+  display: flex;
+  gap: var(--space-xl);
+  align-items: center;
+}
+.kit__row--blue {
+  background: var(--color-royal);
+  display: grid;
+  gap: var(--space-lg);
+  align-content: center;
+}
+.kit__torn {
+  color: var(--color-gold);
+}
+.kit__label {
+  position: relative;
+  font: 800 var(--text-xl) / 1 var(--font-condensed);
+  text-transform: uppercase;
+}
+.kit__stickers {
+  position: relative;
+  display: flex;
+  gap: var(--space-lg);
+  align-items: center;
+  margin-top: var(--space-lg);
+}
+.kit__sticker-a {
+  display: block;
+  padding: 0.1em 0.35em;
+  background: var(--color-crimson);
+  color: var(--color-gold);
+  font: 400 var(--text-xxl) / 1 var(--font-heavy);
+}
+.kit__sticker-b {
+  display: grid;
+  place-items: center;
+  width: 7rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--color-gold);
+  color: var(--color-ink);
+  font: 900 var(--text-lg) / 1 var(--font-condensed);
+}
+.kit__sticker-c {
+  display: block;
+  padding: 0.4em 0.7em;
+  background: var(--color-ink);
+  color: var(--color-phosphor);
+  font: 400 var(--text-lg) / 1 var(--font-mono);
+}
+.kit__stamp {
+  width: 16rem;
+  aspect-ratio: 4 / 5;
+}
+.kit__stamp-face {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  background: var(--color-crimson);
+  color: var(--color-gold);
+  font: 900 var(--text-lg) / 1 var(--font-condensed);
+}
+.kit__clip {
+  position: relative;
+  padding: var(--space-lg);
+  background: var(--color-paper);
+  box-shadow: var(--shadow-paper);
+  rotate: 2deg;
+  font-family: var(--font-serif);
+}
+.kit__tape {
+  top: -0.7rem;
+  left: 40%;
+}

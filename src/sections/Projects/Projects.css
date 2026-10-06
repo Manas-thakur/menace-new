@@ -1,0 +1,567 @@
+/* PROJECTS — "Tune in". Studied from the reference's EVENTS drawer: royal blue,
+ * ghost ticker rows, retro signage title, a line-art set, a card carousel with a
+ * counter and gold round buttons, and black/white tickers along the foot. */
+
+.projects {
+  /* poster unit: tracks width, but never lets ultra-wide screens outgrow the height */
+  --pu: min(1vw, 1.66svh);
+  background: linear-gradient(160deg, var(--color-royal) 24%, var(--color-royal-2));
+  color: var(--color-paper);
+}
+
+.projects__root {
+  position: relative;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  min-height: 100svh;
+}
+
+.projects__ht {
+  --tx-color: var(--color-royal-2);
+  --tx-opacity: 0.55;
+  --tx-size: 9px;
+  --ht-angle: 200deg;
+}
+
+/* ── Ghost rows ─────────────────────────────────────── */
+.projects__ghosts {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-content: space-evenly;
+  overflow: hidden;
+  pointer-events: none;
+}
+.projects__ghosts .marquee {
+  --mq-size: clamp(3rem, calc(var(--pu) * 9), 13rem);
+  opacity: 0.07;
+}
+
+/* ── Stage ──────────────────────────────────────────── */
+.projects__stage {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-areas:
+    'head'
+    'radio'
+    'card';
+  gap: var(--space-lg);
+  padding: calc(var(--nav-h) + var(--space-lg)) var(--gutter) var(--space-xl);
+}
+
+.projects__head {
+  grid-area: head;
+}
+
+.projects__title {
+  font-family: var(--font-signage);
+  font-weight: 400;
+  font-size: clamp(3.1rem, 15vw, 5.5rem);
+  line-height: 0.92;
+  letter-spacing: 0.01em;
+  color: var(--color-cream);
+  -webkit-text-stroke: 0.018em var(--color-ink);
+  paint-order: stroke fill;
+  text-shadow:
+    0.035em 0.035em 0 var(--color-ink),
+    0.065em 0.065em 0 var(--color-crimson),
+    0.095em 0.095em 0 var(--color-ink);
+  padding-bottom: 0.08em;
+}
+
+.projects__sub {
+  margin-top: var(--space-xs);
+  font-family: var(--font-condensed);
+  font-weight: 900;
+  font-size: clamp(1.35rem, 6vw, 2rem);
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--color-paper);
+}
+
+/* ── Radio column ───────────────────────────────────── */
+.projects__radio {
+  grid-area: radio;
+  position: relative;
+  width: 100%;
+}
+
+/* ── Station card ───────────────────────────────────── */
+.station-wrap {
+  grid-area: card;
+  position: relative;
+  width: 100%;
+}
+
+/* the next card in the stack, peeking out behind */
+.station-wrap::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 calc(var(--space-lg) + 2.75rem) 0;
+  background: var(--color-paper-3);
+  border-radius: var(--radius-md);
+  rotate: 2.6deg;
+  translate: 1.5% 1.2%;
+  box-shadow: var(--shadow-paper);
+}
+
+.station {
+  position: relative;
+  overflow: clip;
+  padding: var(--space-xs);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-paper);
+  rotate: -1.1deg;
+}
+
+.station__art {
+  position: relative;
+  aspect-ratio: 16 / 8;
+  overflow: hidden;
+  border-radius: calc(var(--radius-md) * 0.6);
+}
+.station__art .art {
+  width: 100%;
+  height: 100%;
+}
+
+.station__metric {
+  position: absolute;
+  top: 9%;
+  right: 4%;
+}
+.station__metric-inner {
+  display: grid;
+  justify-items: center;
+  gap: 0.25em;
+  padding: 0.5em 0.75em 0.45em;
+  background: var(--color-gold);
+  color: var(--color-ink);
+  border-radius: 0.45em;
+}
+.station__metric-value {
+  font-family: var(--font-condensed);
+  font-weight: 900;
+  font-size: clamp(1.05rem, calc(var(--pu) * 2.4), 3.3rem);
+  line-height: 0.9;
+  white-space: nowrap;
+}
+.station__metric-label {
+  font-family: var(--font-condensed);
+  font-weight: 700;
+  font-size: clamp(0.56rem, calc(var(--pu) * 0.76), 1.05rem);
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.station__body {
+  display: grid;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-2xs) var(--space-2xs);
+}
+
+.station__meta {
+  display: flex;
+  gap: 0.55em;
+  font-family: var(--font-mono);
+  font-size: clamp(0.78rem, calc(var(--pu) * 0.95), 1.25rem);
+  line-height: 1;
+  letter-spacing: 0.08em;
+  color: var(--color-royal);
+  font-variant-numeric: tabular-nums;
+}
+.station__freq {
+  color: var(--color-crimson-deep);
+}
+
+.station__name {
+  margin-top: 0.15em;
+  font-family: var(--font-condensed);
+  font-weight: 900;
+  font-size: clamp(2.3rem, calc(var(--pu) * 4.4), 6.25rem);
+  line-height: 0.88;
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
+}
+
+.station__kicker {
+  margin-top: 0.35em;
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: clamp(1.05rem, calc(var(--pu) * 1.3), 1.85rem);
+  line-height: 1.22;
+  color: var(--color-ink-soft);
+}
+
+.station__points {
+  display: grid;
+  gap: 0.4em;
+  font-family: var(--font-serif);
+  font-size: clamp(0.95rem, calc(var(--pu) * 1.02), 1.45rem);
+  line-height: 1.4;
+}
+.station__points li {
+  position: relative;
+  padding-inline-start: 1.15em;
+}
+.station__points li::before {
+  content: '';
+  position: absolute;
+  left: 0.1em;
+  top: 0.55em;
+  width: 0.4em;
+  height: 0.4em;
+  background: var(--color-crimson);
+  rotate: 45deg;
+}
+
+.station__stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4em;
+}
+.station__chip {
+  padding: 0.38em 0.75em 0.32em;
+  border: 1.5px solid var(--color-ink);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-condensed);
+  font-weight: 700;
+  font-size: clamp(0.74rem, calc(var(--pu) * 0.84), 1.15rem);
+  line-height: 1;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.station__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2xs) var(--space-sm);
+  padding-top: var(--space-2xs);
+  border-top: 1.5px dashed color-mix(in oklch, var(--color-ink) 35%, transparent);
+}
+.station__credit {
+  font-family: var(--font-mono);
+  font-size: clamp(0.74rem, calc(var(--pu) * 0.86), 1.15rem);
+  line-height: 1.3;
+  color: var(--color-ink-soft);
+}
+.station__link {
+  margin-inline-start: auto;
+  padding-block: 0.15em;
+  font-family: var(--font-condensed);
+  font-weight: 800;
+  font-size: clamp(1rem, calc(var(--pu) * 1.15), 1.6rem);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-crimson-deep);
+  position: relative;
+  isolation: isolate;
+  transition: color var(--dur-short) var(--ease-out);
+}
+/* underline that grows into a highlighter on hover (transform only) */
+.station__link::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  left: -0.15em;
+  right: -0.15em;
+  bottom: 0;
+  height: 100%;
+  background: var(--color-crimson-deep);
+  transform: scaleY(0.09);
+  transform-origin: 50% 100%;
+  transition:
+    transform var(--dur-short) var(--ease-out),
+    background-color var(--dur-short) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .station__link:hover {
+    color: var(--color-ink);
+  }
+  .station__link:hover::after {
+    background: var(--color-gold);
+    transform: scaleY(1);
+  }
+}
+
+/* static that washes over the card between stations. Mixed in oklab: an oklch
+ * mix of beige and blue swings the hue through green. */
+.station__static {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  background: color-mix(in oklab, var(--color-paper-2) 80%, var(--color-ink));
+}
+/* scanlines */
+.station__static::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, color-mix(in oklab, var(--color-ink) 34%, transparent) 0 2px, transparent 2px 4px);
+}
+/* the bright roll bar of a detuned set */
+.station__static::before {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 32%;
+  background: linear-gradient(transparent, color-mix(in oklab, var(--color-paper) 70%, transparent), transparent);
+  transform: translateY(-100%);
+}
+.station.is-tuning .station__static::before {
+  animation: station-roll 0.55s linear infinite;
+}
+@keyframes station-roll {
+  to {
+    transform: translateY(420%);
+  }
+}
+.station__noise {
+  position: absolute;
+  inset: -90px;
+  background:
+    url('/textures/grain.svg') 0 0 / 110px 110px,
+    url('/textures/grain.svg') 37px 53px / 67px 67px;
+  opacity: 0.6;
+}
+.station.is-tuning .station__noise {
+  animation: station-noise 0.24s steps(4) infinite;
+}
+@keyframes station-noise {
+  0% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(-31px, 17px);
+  }
+  50% {
+    transform: translate(23px, -41px);
+  }
+  75% {
+    transform: translate(-13px, -9px);
+  }
+  100% {
+    transform: translate(37px, 29px);
+  }
+}
+
+/* ── Controls ───────────────────────────────────────── */
+.projects__controls {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+  padding-inline: 3%;
+}
+.projects__step {
+  display: grid;
+  place-items: center;
+  width: clamp(2.9rem, calc(var(--pu) * 3.6), 4.25rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--color-gold);
+  color: var(--color-ink);
+  box-shadow: 0 4px 0 var(--color-ink);
+  transition:
+    translate var(--dur-micro) var(--ease-out),
+    box-shadow var(--dur-micro) var(--ease-out),
+    background-color var(--dur-short) var(--ease-out);
+}
+.projects__step svg {
+  width: 46%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+@media (hover: hover) and (pointer: fine) {
+  .projects__step:hover {
+    background: var(--color-saffron);
+    translate: 0 -1px;
+    box-shadow: 0 5px 0 var(--color-ink);
+  }
+}
+.projects__step:active {
+  translate: 0 3px;
+  box-shadow: 0 1px 0 var(--color-ink);
+}
+.projects__step:focus-visible {
+  border-radius: 50%;
+  box-shadow: 0 4px 0 var(--color-ink), var(--focus-ring);
+}
+
+.projects__count {
+  font-family: var(--font-mono);
+  font-size: clamp(1rem, calc(var(--pu) * 1.5), 2rem);
+  letter-spacing: 0.12em;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-sky);
+}
+.projects__count span {
+  color: var(--color-paper);
+}
+
+/* ── Foot tickers ───────────────────────────────────── */
+.projects__tickers {
+  position: relative;
+  z-index: 1;
+  display: grid;
+}
+.projects__tickers .marquee {
+  --mq-size: clamp(0.9rem, calc(var(--pu) * 1.05), 1.55rem);
+  --mq-pad: 0.42em;
+}
+.projects__ticker--ink {
+  --mq-bg: var(--color-ink);
+  --mq-fg: var(--color-paper);
+}
+
+/* ── Tablet & up: poster composition ────────────────── */
+@media (min-width: 64rem) {
+  .projects__stage {
+    --step: clamp(2.9rem, calc(var(--pu) * 3.5), 4.25rem);
+    grid-template-columns: minmax(0, 47fr) minmax(0, 53fr);
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      'card head'
+      'card radio';
+    column-gap: calc(var(--pu) * 4.5);
+    row-gap: calc(var(--pu) * 0.6);
+    align-items: start;
+    padding: calc(var(--nav-h) + var(--pu) * 2) var(--gutter) calc(var(--pu) * 1.6 + var(--step) / 2);
+  }
+
+  .projects__head {
+    justify-self: end;
+    text-align: right;
+  }
+  .projects__title {
+    font-size: calc(var(--pu) * 8);
+  }
+  .projects__sub {
+    margin-top: calc(var(--pu) * 0.5);
+    font-size: calc(var(--pu) * 2.4);
+  }
+
+  .projects__radio {
+    justify-self: end;
+    align-self: center;
+    width: min(100%, calc(var(--pu) * 49));
+  }
+
+  .station-wrap {
+    align-self: center;
+    width: min(100%, calc(var(--pu) * 46));
+  }
+  .station {
+    padding: calc(var(--pu) * 0.85);
+  }
+  .station__art {
+    aspect-ratio: 16 / 6.2;
+  }
+  .station__body {
+    gap: calc(var(--pu) * 0.7);
+    /* room for the controls that straddle the bottom edge */
+    padding: calc(var(--pu) * 1) calc(var(--pu) * 0.5) calc(var(--step) / 2 + var(--pu) * 0.9);
+  }
+  .station-wrap::before {
+    inset: 0;
+  }
+
+  /* controls straddle the card's bottom edge, like the reference carousel */
+  .projects__controls {
+    position: absolute;
+    z-index: 4;
+    left: -3.5%;
+    right: -3.5%;
+    bottom: 0;
+    margin: 0;
+    padding: 0;
+    translate: 0 50%;
+  }
+  .projects__step {
+    width: var(--step);
+  }
+  .projects__count {
+    padding: 0.35em 0.9em;
+    border-radius: var(--radius-pill);
+    background: var(--color-ink);
+    font-size: clamp(0.9rem, calc(var(--pu) * 1.1), 1.5rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .station__static {
+    display: none;
+  }
+}
+
+/* ── Cover art (duotone; colours arrive as --art-bg / --art-fg) ── */
+.art .art-bg,
+.art .art-line.art-bg-fill {
+  fill: var(--art-bg);
+}
+.art .art-fg {
+  fill: var(--art-fg);
+}
+.art .art-line {
+  fill: none;
+  stroke: var(--art-fg);
+}
+.art .art-line-bg {
+  fill: none;
+  stroke: var(--art-bg);
+}
+.art .art-soft {
+  opacity: 0.22;
+}
+.art .art-half {
+  opacity: 0.55;
+}
+.art .art-soft-fill {
+  opacity: 0.32;
+}
+.art .art-ht {
+  opacity: 0.4;
+}
+.art .art-txt {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  fill: var(--art-fg);
+}
+.art .art-q {
+  font-family: var(--font-condensed);
+  font-weight: 900;
+  font-size: 64px;
+  fill: var(--art-bg);
+}
+.art .art-main {
+  transform: scale(var(--art-scale, 1));
+  transform-origin: 160px 80px;
+  transform-box: view-box;
+}
+@media (min-width: 64rem) {
+  /* the desktop panel is wider than 2:1, so `slice` trims top and bottom */
+  .station__art {
+    --art-scale: 0.77;
+  }
+}

@@ -1,0 +1,176 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  overflow-x: clip;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  background: var(--color-night);
+  scroll-padding-top: var(--nav-h);
+}
+
+body {
+  min-height: 100svh;
+  background: var(--color-mustard);
+  color: var(--color-ink);
+  font-family: var(--font-serif);
+  font-size: var(--text-md);
+  line-height: var(--leading-body);
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+p,
+figure,
+blockquote,
+ul,
+ol,
+dl,
+dd {
+  margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-style: normal;
+  font-weight: inherit;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+ul,
+ol {
+  padding: 0;
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+::selection {
+  background: var(--color-signal);
+  color: var(--color-paper);
+}
+
+/* Focus: instant, double-ring, never animated. The ring is a box-shadow, so it
+ * follows each control's own radius (pills stay pills, rings stay round). */
+:focus {
+  outline: none;
+}
+:focus-visible {
+  outline: 2px solid transparent; /* Windows high-contrast */
+  box-shadow: var(--focus-ring);
+}
+
+.skip-link {
+  position: fixed;
+  top: var(--space-sm);
+  left: var(--space-sm);
+  z-index: var(--z-modal);
+  padding: var(--space-2xs) var(--space-sm);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font: 700 var(--text-sm) / 1 var(--font-condensed);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  transform: translateY(-200%);
+}
+.skip-link:focus-visible {
+  transform: none;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* One print grain over everything — static, never animated. Normal blending on
+ * purpose: a fixed multiply layer forces the whole page to re-blend every scroll frame. */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-grain);
+  pointer-events: none;
+  background: url('/textures/grain.svg') 0 0 / 240px 240px;
+  opacity: 0.06;
+}
+
+/* Lenis */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+/* Infinite loops only run while their drawer is on screen */
+[data-offscreen='true'] .loop,
+[data-offscreen='true'] .loop *,
+[data-covered='true'] .loop,
+[data-covered='true'] .loop * {
+  animation-play-state: paused !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 150ms !important;
+    animation-iteration-count: 1 !important;
+    /* Only colour and opacity may cross-fade. The property list matters:
+     * transition-property defaults to `all`, so a bare duration would make every
+     * script-driven transform (drags, dials, the colour wheel) trail by 150 ms.
+     * box-shadow is left out so focus rings still appear instantly. */
+    transition-property: opacity, color, background-color, border-color, fill, stroke !important;
+    transition-duration: 150ms !important;
+    scroll-behavior: auto !important;
+  }
+  .loop,
+  .loop * {
+    animation: none !important;
+  }
+}

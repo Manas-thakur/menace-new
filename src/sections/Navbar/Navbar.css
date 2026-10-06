@@ -1,0 +1,257 @@
+/* N7-adjacent "brutal slab" bar, studied from the reference: near-black, condensed caps,
+ * cream pill CTA. Sticky inside the stack so it rises with the hero, then pins. */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-nav);
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  height: var(--nav-h);
+  padding-inline: var(--gutter);
+  background: var(--color-night);
+  color: var(--color-cream);
+  box-shadow: var(--shadow-nav);
+  font-family: var(--font-condensed);
+}
+
+.navbar__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-inline-end: auto;
+  white-space: nowrap;
+}
+.navbar__mark {
+  width: clamp(2.25rem, 2.6vw, 3.25rem);
+  height: auto;
+}
+.navbar__name {
+  font-family: var(--font-gothic);
+  font-size: var(--text-lg);
+  line-height: 1;
+  color: var(--color-gold);
+  letter-spacing: 0.01em;
+}
+
+/* ── Vinyl monogram ─────────────────────────────────── */
+.vinyl-mark__disc {
+  fill: var(--color-ink);
+  stroke: var(--color-gold-deep);
+  stroke-width: 1.5;
+}
+.vinyl-mark__groove {
+  fill: none;
+  stroke: var(--color-groove);
+  stroke-width: 1.2;
+}
+.vinyl-mark__label {
+  fill: var(--color-crimson);
+}
+.vinyl-mark__mono {
+  fill: none;
+  stroke: var(--color-gold);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.vinyl-mark__hole {
+  fill: var(--color-mustard);
+}
+.vinyl-mark {
+  transition: rotate var(--dur-long) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .navbar__brand:hover .vinyl-mark {
+    rotate: 200deg;
+  }
+}
+
+/* ── Links ──────────────────────────────────────────── */
+.navbar__nav {
+  display: none;
+}
+.navbar__list {
+  display: flex;
+  gap: clamp(1rem, 1.9vw, 2.75rem);
+}
+.navbar__link {
+  position: relative;
+  display: block;
+  padding-block: var(--space-2xs);
+  font-weight: 700;
+  font-size: var(--text-md);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: color var(--dur-short) var(--ease-out);
+}
+.navbar__link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0.1em;
+  height: 2px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform var(--dur-short) var(--ease-out);
+}
+.navbar__link.is-active {
+  color: var(--color-mustard);
+}
+.navbar__link.is-active::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+@media (hover: hover) and (pointer: fine) {
+  .navbar__link:hover {
+    color: var(--color-mustard);
+  }
+  .navbar__link:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
+/* ── Résumé pill ────────────────────────────────────── */
+.navbar__cta {
+  display: none;
+  align-items: center;
+  gap: 0.35em;
+  padding: 0.45em 1.15em;
+  border-radius: var(--radius-pill);
+  background: var(--color-mustard);
+  color: var(--color-ink);
+  font-weight: 800;
+  font-size: var(--text-md);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition:
+    background-color var(--dur-short) var(--ease-out),
+    translate var(--dur-micro) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .navbar__cta:hover {
+    background: var(--color-gold);
+    translate: 0 -1px;
+  }
+}
+.navbar__cta:active {
+  translate: 0 1px;
+}
+
+/* ── Menu toggle (small screens) ────────────────────── */
+.navbar__toggle {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55em;
+  min-height: 44px;
+  padding: 0.35em 0.95em;
+  border-radius: var(--radius-pill);
+  background: var(--color-mustard);
+  color: var(--color-ink);
+  font-weight: 800;
+  font-size: var(--text-sm);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.navbar__toggle-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 0.9em;
+}
+.navbar__toggle-bars i {
+  width: 3px;
+  height: 100%;
+  background: currentColor;
+  transform-origin: bottom;
+  animation: nav-eq 0.9s var(--ease-in-out) infinite alternate;
+}
+.navbar__toggle-bars i:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.navbar__toggle-bars i:nth-child(3) {
+  animation-delay: -0.6s;
+}
+@keyframes nav-eq {
+  from {
+    transform: scaleY(0.35);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+/* ── Full-screen sheet ──────────────────────────────── */
+.nav-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  align-content: center;
+  gap: var(--space-lg);
+  padding: calc(var(--nav-h) + var(--space-md)) var(--gutter) var(--space-lg);
+  background: var(--color-crimson-deep);
+  color: var(--color-paper);
+  visibility: hidden;
+  overflow-y: auto;
+}
+.nav-sheet__mandala {
+  --tx-color: var(--color-maroon-deep);
+  --tx-opacity: 0.45;
+}
+.nav-sheet__list {
+  position: relative;
+  display: grid;
+  gap: 0.1em;
+}
+.nav-sheet__row {
+  overflow: hidden;
+}
+.nav-sheet__link {
+  display: block;
+  font-weight: 900;
+  font-size: clamp(2.6rem, 12vw, 6rem);
+  line-height: 0.95;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  color: var(--color-mustard);
+  white-space: nowrap;
+}
+.nav-sheet__link:active {
+  color: var(--color-paper);
+}
+.nav-sheet__foot {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs) var(--space-md);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+
+@media (min-width: 64rem) {
+  .navbar__nav {
+    display: block;
+  }
+  .navbar__cta {
+    display: inline-flex;
+  }
+  .navbar__toggle,
+  .nav-sheet {
+    display: none;
+  }
+}
+
+@media (max-width: 22rem) {
+  .navbar__name {
+    display: none;
+  }
+}

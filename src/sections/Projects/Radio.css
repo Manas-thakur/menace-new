@@ -1,0 +1,292 @@
+/* Line-art radio, blueprint-style on the blue. SVG text sizes are in viewBox
+ * units, so they scale with the set. */
+
+.radio {
+  position: relative;
+  container-type: inline-size;
+}
+
+/* faint blueprint grid behind the set */
+.radio::before {
+  content: '';
+  position: absolute;
+  inset: -8% -5% -6%;
+  background-image:
+    linear-gradient(color-mix(in oklch, var(--color-paper) 9%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklch, var(--color-paper) 9%, transparent) 1px, transparent 1px);
+  background-size: 4.5cqi 4.5cqi;
+  -webkit-mask-image: radial-gradient(closest-side, var(--color-ink) 55%, transparent);
+  mask-image: radial-gradient(closest-side, var(--color-ink) 55%, transparent);
+  pointer-events: none;
+}
+
+.radio__svg {
+  position: relative;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.radio__line {
+  fill: none;
+  stroke: var(--color-paper);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.radio__line--thin {
+  stroke-width: 1.5;
+  opacity: 0.7;
+}
+.radio__body {
+  fill: color-mix(in oklch, var(--color-royal) 50%, transparent);
+}
+.radio__window {
+  fill: color-mix(in oklch, var(--color-indigo-night) 40%, transparent);
+}
+
+.radio__tick {
+  stroke: var(--color-paper);
+  stroke-width: 1.4;
+}
+.radio__num {
+  font-family: var(--font-condensed);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  fill: var(--color-paper);
+}
+.radio__unit,
+.radio__brand,
+.radio__tiny {
+  font-family: var(--font-mono);
+  fill: var(--color-sky);
+}
+.radio__unit {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+}
+.radio__brand {
+  font-size: 9.5px;
+  letter-spacing: 0.32em;
+}
+.radio__tiny {
+  font-size: 9px;
+  letter-spacing: 0.22em;
+}
+
+.radio__mark path {
+  fill: var(--color-gold);
+  transition: fill var(--dur-short) var(--ease-out);
+}
+.radio__mark-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  fill: var(--color-gold);
+  transition: fill var(--dur-short) var(--ease-out);
+}
+.radio__mark.is-on path,
+.radio__mark.is-on .radio__mark-label {
+  fill: var(--color-electric);
+}
+
+.radio__needle path {
+  stroke: var(--color-signal);
+  stroke-width: 3.2;
+  stroke-linecap: round;
+}
+.radio__needle circle {
+  fill: var(--color-signal);
+}
+
+.radio__slat {
+  stroke: var(--color-paper);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  opacity: 0.55;
+}
+
+/* lamp + EQ: only animate while locked on a station */
+.radio__live-dot {
+  fill: var(--color-signal);
+  opacity: 0.35;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: opacity var(--dur-short) var(--ease-out);
+}
+.radio__live-glow {
+  fill: var(--color-signal);
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.radio.is-live .radio__live-dot {
+  opacity: 1;
+  animation: radio-dot 1.6s var(--ease-in-out) infinite;
+}
+.radio.is-live .radio__live-glow {
+  animation: radio-glow 1.6s var(--ease-in-out) infinite;
+}
+@keyframes radio-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.85);
+  }
+}
+@keyframes radio-glow {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+}
+.radio__live-text {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  fill: var(--color-paper);
+}
+.radio__readout {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  fill: var(--color-electric);
+}
+.radio__eq-bar {
+  fill: var(--color-phosphor);
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  transform: scaleY(0.22);
+  transition: transform var(--dur-long) var(--ease-out);
+}
+.radio.is-live .radio__eq-bar {
+  animation: radio-eq 0.85s var(--ease-in-out) infinite alternate;
+}
+.radio__eq-bar:nth-child(2n) {
+  animation-duration: 0.62s;
+}
+.radio__eq-bar:nth-child(3n) {
+  animation-duration: 1.05s;
+}
+@keyframes radio-eq {
+  from {
+    transform: scaleY(0.28);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+/* ── Station hit areas ──────────────────────────────── */
+.radio__marks {
+  position: absolute;
+}
+.radio__hit {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 7%;
+  min-width: 22px;
+  translate: -50% 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background-color var(--dur-short) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .radio__hit:hover {
+    background: color-mix(in oklch, var(--color-paper) 14%, transparent);
+  }
+}
+
+/* ── Tuning knob (the slider) ───────────────────────── */
+.radio__knob {
+  position: absolute;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  cursor: grab;
+  touch-action: none;
+}
+.radio__knob:active {
+  cursor: grabbing;
+}
+.radio__knob:focus-visible {
+  border-radius: 50%;
+}
+.radio__knob svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.knob__face {
+  fill: var(--color-royal);
+  stroke: var(--color-paper);
+  stroke-width: 2.6;
+}
+.knob__grip {
+  stroke: var(--color-paper);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+.knob__cap {
+  fill: color-mix(in oklch, var(--color-paper) 12%, var(--color-royal));
+  stroke: var(--color-paper);
+  stroke-width: 2;
+}
+.knob__pointer {
+  stroke: var(--color-gold);
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+.knob__hub {
+  fill: var(--color-gold);
+}
+@media (hover: hover) and (pointer: fine) {
+  .radio__knob:hover .knob__cap {
+    fill: color-mix(in oklch, var(--color-paper) 22%, var(--color-royal));
+  }
+}
+
+/* small sets: drop the tiny type that would turn to dust */
+@container (max-width: 460px) {
+  .radio__mark-label,
+  .radio__brand,
+  .radio__tiny {
+    display: none;
+  }
+}
+
+/* ── "Spin the dial" note ───────────────────────────── */
+.radio__note-arrow {
+  filter: url(#rough);
+  fill: none;
+  stroke: var(--color-gold);
+  stroke-width: 3.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.radio__note-text {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  letter-spacing: 0.14em;
+  fill: var(--color-gold);
+}
+@container (max-width: 460px) {
+  .radio__note {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* no dancing, but a locked station still shows a full meter */
+  .radio.is-live .radio__eq-bar {
+    transform: none;
+  }
+}
