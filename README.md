@@ -2,7 +2,7 @@
 
 Personal site for **Manas Kumar Thakur**, AI Engineer — *"I build AI systems that can think through a task, use tools, and finish the job."*
 
-**Live:** [menace-new.vercel.app](https://menace-new.vercel.app) — deployed on Vercel from this repo's `main` branch.
+**Live:** [tensorman.me](https://www.tensorman.me) (also [menace-new.vercel.app](https://menace-new.vercel.app)) — deployed on Vercel from this repo's `main` branch.
 
 Designed as a festival programme in the spirit of [Rendezvous '26](https://rendezvous-iitd.org/) (IIT Delhi's "riot of fusions"): full-screen **drawers** that pin and stack as you scroll, each in its own colour world, dressed in Indian print ephemera — vinyl, stamps, tickets, newsprint, railway boards. The fusion here is personal: **Delhi × Daegu × Palo Alto**. Every illustration is original, hand-built SVG/CSS; no reference assets are reused.
 
@@ -25,7 +25,7 @@ All facts live in **`src/data/profile.ts`** — roles, projects, press clippings
 - **Portrait:** put a photo in `public/` (e.g. `public/portrait.jpg`) and set `portrait = '/portrait.jpg'` in `profile.ts`; it appears inside the commemorative stamp in a gold-and-maroon duotone. Left empty, the stamp shows an illustrated MT monogram (and no request is made for a missing file).
 - **Résumé:** the nav links to the live PDF at `manas-thakur.github.io/Resume`, so it stays current when the résumé repo updates.
 - **Photos (Darkroom):** the 36 photographs (a full 36-exposure roll) come from [@menace_thakur](https://www.instagram.com/menace_thakur/). To change the selection, put the originals in a folder, edit the list at the top of `scripts/photos.mjs` (slug, file, alt text, caption, place), and run `node scripts/photos.mjs <folder>`. It writes three WebP sizes per photo to `public/photos/` and regenerates `src/data/photos.ts`, including each frame's colour palette, hue and saturation for the colour wheel (measured in OKLab; an optional hue range lets you say which colour tells a frame's story, e.g. red flowers on green leaves). Captions are Manas's own words from the posts; dates are decoded from the post IDs.
-- **Social card:** `public/og.jpg` (1200×630). `.env.production` sets `VITE_SITE_URL=https://menace-new.vercel.app` so LinkedIn and X get an absolute image URL; change it there if the site moves to another domain.
+- **Social card:** `public/og.jpg` (1200×630). `.env.production` sets `VITE_SITE_URL=https://www.tensorman.me` so LinkedIn and X get an absolute image URL; change it there if the site moves to another domain.
 
 ## The drawers
 
