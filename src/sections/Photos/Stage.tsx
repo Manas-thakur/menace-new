@@ -785,6 +785,15 @@ export function Stage({ view, reduced, entered, onView, onOpen }: StageProps) {
       const t = L.sheet.targets[i];
       loupe.current?.moveTo(t.cx, t.cy, { user: true });
     } else if (shown.current === 'wheel') previewPrint(i);
+    else if (shown.current === 'line') {
+      // On a phone the line scrolls sideways and snaps print by print; the browser only
+      // nudges a focused print part-way in, and the snap pulls it back out. Centre it.
+      const st = stageRef.current;
+      const t = L.line.targets[i];
+      if (st && t && st.scrollWidth > st.clientWidth + 1) {
+        st.scrollTo({ left: Math.max(0, t.cx - st.clientWidth / 2), behavior: reducedRef.current ? 'auto' : 'smooth' });
+      }
+    }
   };
   /** The edge printing, for keyboards and fingers: bring the loupe to rest on it. */
   const toEdge = () => {

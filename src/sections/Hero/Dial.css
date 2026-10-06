@@ -5,8 +5,9 @@
   z-index: 3;
   left: 50%;
   top: 100%;
-  /* the visible half never takes more than ~30% of a short phone screen */
-  width: min(138vw, 60svh);
+  /* a smaller record on narrow screens, so the ticket can rest on its rim and the
+   * label rings at its centre still show beneath it */
+  width: min(118vw, 48svh);
   aspect-ratio: 1;
   translate: -50% -50%;
   pointer-events: none;
@@ -33,6 +34,9 @@
   width: 100%;
   height: 100%;
   overflow: visible;
+  /* the face is a square SVG turning inside a round link: its corners sweep into the
+   * next ring out, so it must never take the click — the round link under it does */
+  pointer-events: none;
   animation: dial-spin var(--spin) linear infinite;
 }
 .dial__face.is-reverse {
@@ -177,6 +181,12 @@
   stroke-linecap: round;
 }
 
+/* a short phone has no room for both: the ticket wins (the bar has the same links) */
+@media (max-width: 63.99rem) and (max-height: 44rem) {
+  .dial {
+    display: none;
+  }
+}
 @media (min-width: 64rem) {
   .dial {
     left: 100%;

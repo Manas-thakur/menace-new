@@ -71,7 +71,7 @@ export function Lightbox({ state, reduced, onIndex, onClosed }: LightboxProps) {
 
     if (!dlg.open) {
       dlg.showModal();
-      lockScroll(true);
+      lockScroll(true, 'lightbox');
       shown.current = state.index;
       dlg.querySelector<HTMLElement>('.lb__close')?.focus({ preventScroll: true });
       if (reduced) return;
@@ -159,7 +159,7 @@ export function Lightbox({ state, reduced, onIndex, onClosed }: LightboxProps) {
     gsap.killTweensOf([printRef.current, infoRef.current, ...chrome()]);
     gsap.set([printRef.current, infoRef.current, ...chrome()], { clearProps: 'transform,opacity' });
     closing.current = false;
-    lockScroll(false);
+    lockScroll(false, 'lightbox');
     // Return focus to the print of the photo being viewed if it can take focus in
     // this view (not buried in the tray); otherwise to whatever opened the viewer.
     const current = printOf(shown.current ?? -1);

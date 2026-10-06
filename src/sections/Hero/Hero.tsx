@@ -1,16 +1,17 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
+import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import type { SectionProps } from '../../App';
 import { Drawer } from '../../components/primitives/Drawer';
 import { gsap, SplitText, useGSAP } from '../../lib/gsap';
 import { flags, prefersReducedMotion } from '../../lib/motion';
 import { scrollToSection } from '../../lib/scroll';
 import { profile } from '../../data/profile';
-import { deepCut, deepCuts } from '../../data/deep';
-import { discover, openLinerNotes } from '../../lib/deep';
+import { deepCut } from '../../data/deep';
+import { discover } from '../../lib/deep';
 import { useReveal } from './useReveal';
 import { Skyline } from './Skyline';
 import { Cloud, Kites } from './Sky';
 import { Dial } from './Dial';
+import { Ticket } from './Ticket';
 import './Hero.css';
 import './Dial.css';
 
@@ -18,56 +19,6 @@ import './Dial.css';
 const ARCH = 'M0 1V.44C0 .27 .2 .17 .37 .1C.45 .067 .485 .04 .5 0C.515 .04 .55 .067 .63 .1C.8 .17 1 .27 1 .44V1Z';
 const FRAME = 'M0 100V44C0 27 20 17 37 10C45 6.7 48.5 4 50 0C51.5 4 55 6.7 63 10C80 17 100 27 100 44V100';
 const FRAME_IN = 'M2.2 100V45C2.2 28.6 21.6 18.8 37.9 12.1C45.4 9 48.6 6.5 50 2.9C51.4 6.5 54.6 9 62.1 12.1C78.4 18.8 97.8 28.6 97.8 45V100';
-
-function useLocalTime(timeZone: string) {
-  const fmt = useMemo(
-    () => new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone }),
-    [timeZone]
-  );
-  const [time, setTime] = useState(() => fmt.format(new Date()));
-  useEffect(() => {
-    const id = window.setInterval(() => setTime(fmt.format(new Date())), 15_000);
-    return () => window.clearInterval(id);
-  }, [fmt]);
-  return time;
-}
-
-function Ticket() {
-  const time = useLocalTime(profile.timeZone);
-  const [hh, mm] = time.split(':');
-  return (
-    <aside className="hero__ticket" aria-label="Now playing">
-      <div className="ticket">
-        <div className="ticket__stub" aria-hidden="true">
-          <span>Admit one</span>
-        </div>
-        <div className="ticket__body">
-          <p className="ticket__now">
-            <i className="ticket__dot loop" aria-hidden="true" /> Now playing
-          </p>
-          <p className="ticket__title">{profile.now}</p>
-          <p className="ticket__line">{profile.tagline}</p>
-          <p className="ticket__meta">
-            <span>Delhi × Daegu × Palo Alto</span>
-            <span>
-              <time aria-label={`${time} India Standard Time`}>
-                {hh}
-                <b className="ticket__colon loop" aria-hidden="true">
-                  :
-                </b>
-                {mm}
-              </time>{' '}
-              IST
-            </span>
-          </p>
-          <button type="button" className="ticket__cuts" onClick={() => openLinerNotes()}>
-            {deepCuts.length} deep cuts inside <span aria-hidden="true">→</span>
-          </button>
-        </div>
-      </div>
-    </aside>
-  );
-}
 
 /** Where the name tag hangs: from the top of the name's last letter, kept on screen. */
 type TagPos = { x: number; y: number; threadX: number };
@@ -120,12 +71,16 @@ export function Hero({ index }: SectionProps) {
   }, [name.open]);
 
   const settled = useRef(false);
+  // one flip at a time: a close that is still playing must not finish after a reopen
+  // (its delayed "letters back" step would bring the gothic name back over मानस)
+  const flip = useRef<gsap.core.Timeline | null>(null);
   useGSAP(
     () => {
       if (!settled.current) {
         settled.current = true;
         return;
       }
+      flip.current?.kill();
       const q = gsap.utils.selector(rootRef);
       const chars = q('.hero__first .hero__char').length ? q('.hero__first .hero__char') : q('.hero__first');
       const deva = q('.hero__deva');
@@ -137,13 +92,13 @@ export function Hero({ index }: SectionProps) {
         return;
       }
       if (name.open) {
-        gsap
+        flip.current = gsap
           .timeline()
           .to(chars, { rotateX: 90, opacity: 0, transformPerspective: 600, duration: 0.3, ease: 'power2.in', stagger: 0.035, overwrite: 'auto' })
           .fromTo(deva, { rotateX: -90, opacity: 0, transformPerspective: 600 }, { rotateX: 0, opacity: 1, duration: 0.65, ease: 'expoOut' }, '-=0.08')
           .fromTo(tag, { rotate: -18, opacity: 0, y: -14 }, { rotate: 0, opacity: 1, y: 0, duration: 1.2, ease: 'elastic.out(1, 0.45)' }, '-=0.5');
       } else {
-        gsap
+        flip.current = gsap
           .timeline()
           .to(tag, { opacity: 0, y: -10, rotate: 8, duration: 0.3, ease: 'power2.in', overwrite: 'auto' })
           .to(deva, { rotateX: 90, opacity: 0, transformPerspective: 600, duration: 0.3, ease: 'power2.in', overwrite: 'auto' }, 0)

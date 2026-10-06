@@ -106,8 +106,11 @@ export function Navbar() {
   );
 
   useEffect(() => {
-    lockScroll(open);
+    lockScroll(open, 'menu');
     if (!open) return;
+    // the sheet is modal: everything behind it leaves the tab order until it closes
+    const behind = document.querySelectorAll<HTMLElement>('.skip-link, #top, #main');
+    behind.forEach((el) => (el.inert = true));
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setOpen(false);
@@ -116,25 +119,30 @@ export function Navbar() {
     };
     document.addEventListener('keydown', onKey);
     sheetRef.current?.querySelector<HTMLElement>('a, button')?.focus();
-    return () => document.removeEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      behind.forEach((el) => (el.inert = false));
+    };
   }, [open]);
 
   const go = (id: string) => (e: React.MouseEvent) => {
     e.preventDefault();
+    // the open sheet holds the page still; let go before moving it, or the scroll is dropped
+    lockScroll(false, 'menu');
     setOpen(false);
     scrollToSection(id);
   };
 
   return (
     <header className="navbar">
-      <a className="navbar__brand" href="#top" onClick={go('top')} aria-label={`${profile.first} ${profile.last} — back to top`}>
+      <a className="navbar__brand" href="#top" onClick={go('top')} aria-label={`${profile.first} ${profile.last} — back to top`} inert={open}>
         <VinylMark className="navbar__mark" />
         <span className="navbar__name">
           {profile.first} {profile.last}
         </span>
       </a>
 
-      <nav className="navbar__nav" aria-label="Sections">
+      <nav className="navbar__nav" aria-label="Sections" inert={open}>
         <ul className="navbar__list">
           {LINKS.map((l) => (
             <li key={l.id}>
@@ -151,7 +159,7 @@ export function Navbar() {
         </ul>
       </nav>
 
-      <a className="navbar__cta" href={profile.links.resume} target="_blank" rel="noreferrer">
+      <a className="navbar__cta" href={profile.links.resume} target="_blank" rel="noreferrer" inert={open}>
         Résumé <span aria-hidden="true">↗</span>
       </a>
 

@@ -28,7 +28,7 @@ export function LinerNotes() {
       if (dlg.open) return;
       opener.current = document.activeElement;
       dlg.showModal();
-      lockScroll(true);
+      lockScroll(true, 'notes');
       dlg.querySelector<HTMLElement>('.ln__close')?.focus({ preventScroll: true });
       if (!prefersReducedMotion() && sleeveRef.current) {
         gsap.fromTo(sleeveRef.current, { y: 60, rotate: -1.5, opacity: 0 }, { y: 0, rotate: 0, opacity: 1, duration: 0.6, ease: 'expoOut', clearProps: 'transform,opacity' });
@@ -46,7 +46,7 @@ export function LinerNotes() {
 
   const close = () => dialogRef.current?.close();
   const onClose = () => {
-    lockScroll(false);
+    lockScroll(false, 'notes');
     setFocusId(undefined);
     (opener.current as HTMLElement | null)?.focus?.({ preventScroll: true });
   };

@@ -1,0 +1,270 @@
+/* The ticket — admit one. A crimson tear-off stub, a perforated tear line notched top
+ * and bottom, security-print paper, and a conductor's punch for every deep cut found.
+ * The paper's outline, perforations and punches are one mask, cut in Ticket.tsx. */
+
+.hero__ticket {
+  position: absolute;
+  z-index: 4;
+  top: calc(2svh + min(56svh, 150vw) + 2.4svh);
+  left: 50%;
+  width: min(88vw, 23.5rem);
+  translate: -50% 0;
+  rotate: -2deg;
+  filter: var(--drop-stamp);
+}
+@media (min-width: 64rem) {
+  .hero__ticket {
+    top: auto;
+    bottom: 4svh;
+    left: 55vw;
+    width: clamp(19.5rem, 24vw, 36rem);
+    translate: none;
+    rotate: -4deg;
+  }
+}
+
+.ticket {
+  --stub: clamp(3.2rem, 3.3vw, 5rem);
+  --punch: clamp(1.32rem, 1.35vw, 2rem);
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--stub) minmax(0, 1fr);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  transition: translate var(--dur-long) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .hero__ticket:hover .ticket {
+    translate: 0 -4px;
+  }
+}
+
+/* ── The stub ─────────────────────────────────────────── */
+.ticket__stub {
+  display: grid;
+  background: var(--color-crimson);
+  color: var(--color-cream);
+  /* a printed rule inside the stub's edge */
+  box-shadow: inset 0 0 0 5px var(--color-crimson), inset 0 0 0 6px color-mix(in oklch, var(--color-cream) 45%, transparent);
+}
+.ticket__stub-print {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.9em;
+  padding-block: 1.1em;
+  writing-mode: vertical-rl;
+  text-orientation: sideways;
+  rotate: 180deg;
+  white-space: nowrap;
+}
+.ticket__admit {
+  font: 400 clamp(1.15rem, 1.35vw, 2rem) / 1 var(--font-signage);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.ticket__alt {
+  font: 400 var(--text-xs) / 1 var(--font-deva);
+  letter-spacing: 0.04em;
+}
+.ticket__alt [lang='ko'] {
+  font-family: var(--font-hangul);
+}
+.ticket__serial {
+  font: 400 var(--text-xs) / 1 var(--font-mono);
+  letter-spacing: 0.14em;
+}
+
+/* ── The body ─────────────────────────────────────────── */
+.ticket__body {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  min-width: 0;
+  gap: var(--space-2xs);
+  padding: clamp(0.95rem, 1.1vw, 1.6rem) clamp(1rem, 1.25vw, 1.8rem) clamp(1rem, 1.15vw, 1.65rem) clamp(1.05rem, 1.3vw, 1.9rem);
+}
+/* security print: woven sine lines under everything */
+.ticket__body::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background-color: var(--color-paper-3);
+  opacity: 0.6;
+  -webkit-mask: url('/textures/guilloche.svg') 0 0 / 120px 48px repeat;
+  mask: url('/textures/guilloche.svg') 0 0 / 120px 48px repeat;
+}
+/* a printed frame line inside the edge */
+.ticket__body::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 6px 7px 6px 9px;
+  border: 1px solid color-mix(in oklch, var(--color-crimson) 32%, transparent);
+  border-radius: 3px;
+  pointer-events: none;
+}
+.ticket__body > * {
+  margin: 0;
+}
+
+.ticket__head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.4em var(--space-sm);
+  color: var(--color-ink-soft);
+  font: 400 var(--text-xs) / 1 var(--font-mono);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.ticket__now {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+}
+.ticket__side {
+  color: var(--color-crimson);
+}
+.ticket__dot {
+  width: 0.6em;
+  height: 0.6em;
+  border-radius: 50%;
+  background: var(--color-signal);
+  animation: ticket-live 1.6s var(--ease-in-out) infinite;
+}
+@keyframes ticket-live {
+  50% {
+    opacity: 0.35;
+    transform: scale(0.8);
+  }
+}
+
+.ticket__title {
+  margin-top: 0.15em;
+  font: 800 var(--text-xl) / 0.95 var(--font-condensed);
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+.ticket__line {
+  color: var(--color-ink-2);
+  font: 400 var(--text-sm) / 1.35 var(--font-serif);
+  text-wrap: pretty;
+}
+
+.ticket__meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-3xs) var(--space-sm);
+  margin-top: var(--space-3xs);
+  padding-top: var(--space-2xs);
+  border-top: 1px dashed color-mix(in oklch, var(--color-ink-soft) 45%, transparent);
+  color: var(--color-ink-soft);
+  font: 400 var(--text-xs) / 1.2 var(--font-mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+.ticket__meta span {
+  white-space: nowrap;
+}
+.ticket__colon {
+  font-weight: inherit;
+  animation: ticket-colon 2s steps(1) infinite;
+}
+@keyframes ticket-colon {
+  50% {
+    opacity: 0.2;
+  }
+}
+
+/* ── The punch row: nine stages, holed as they are found ── */
+.ticket__punch {
+  display: grid;
+  gap: 0.45em;
+  padding-top: var(--space-2xs);
+  border-top: 1px dashed color-mix(in oklch, var(--color-ink-soft) 45%, transparent);
+}
+.ticket__punch-label {
+  color: var(--color-crimson);
+  font: 400 var(--text-xs) / 1 var(--font-mono);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.ticket__stages {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  justify-items: center;
+  gap: clamp(0.15rem, 0.3vw, 0.45rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ticket__stage {
+  display: grid;
+  place-items: center;
+  width: min(100%, var(--punch));
+  aspect-ratio: 1;
+  border: 1px solid color-mix(in oklch, var(--color-ink-soft) 60%, transparent);
+  border-radius: 50%;
+  color: var(--color-ink-soft);
+  font: 400 calc(var(--punch) * 0.46) / 1 var(--font-mono);
+}
+/* a punched stage is a real hole (cut by the mask); what shows round it is the
+ * crushed rim the punch leaves in the paper */
+.ticket__stage.is-punched {
+  border-color: transparent;
+  color: transparent;
+  box-shadow:
+    0 0 0 1.5px color-mix(in oklch, var(--color-ink) 45%, transparent),
+    0 0 0 3.5px color-mix(in oklch, var(--color-paper-3) 90%, transparent);
+}
+
+.ticket__chad {
+  position: absolute;
+  z-index: 1;
+  border-radius: 50%;
+  background: var(--color-paper);
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--color-ink-soft) 50%, transparent);
+  pointer-events: none;
+}
+
+.ticket__cuts {
+  justify-self: start;
+  margin-top: var(--space-3xs);
+  padding: 0.2em 0;
+  border: 0;
+  border-bottom: 1.5px solid currentColor;
+  background: none;
+  color: var(--color-crimson);
+  font: 700 var(--text-xs) / 1 var(--font-condensed);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color var(--dur-short) var(--ease-out);
+}
+.ticket__cuts span {
+  display: inline-block;
+  transition: translate var(--dur-short) var(--ease-out);
+}
+.ticket__cuts:active {
+  color: var(--color-crimson-deep);
+}
+@media (hover: hover) and (pointer: fine) {
+  .ticket__cuts:hover {
+    color: var(--color-ink);
+  }
+  .ticket__cuts:hover span {
+    translate: 0.25em 0;
+  }
+}

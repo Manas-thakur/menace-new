@@ -1,7 +1,7 @@
 import { Component, lazy, Suspense, useEffect, useState, type ComponentType, type ReactNode } from 'react';
 import { gsap, ScrollTrigger, useGSAP } from './lib/gsap';
 import { flags, prefersReducedMotion } from './lib/motion';
-import { naturalTop, startSmoothScroll } from './lib/scroll';
+import { keepFocusVisible, naturalTop, startSmoothScroll } from './lib/scroll';
 import { SvgDefs } from './components/primitives/Print';
 import { Kit } from './components/primitives/Kit';
 import { Hero } from './sections/Hero/Hero';
@@ -122,7 +122,11 @@ function FullPage() {
 
   useEffect(() => {
     const stop = startSmoothScroll();
-    return stop;
+    const release = keepFocusVisible();
+    return () => {
+      release();
+      stop();
+    };
   }, []);
 
   useEffect(() => {

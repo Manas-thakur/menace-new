@@ -291,7 +291,8 @@
   top: calc(100% + 1.4svh);
   left: 50%;
   translate: -50% 0;
-  display: grid;
+  /* on narrow screens the ticket under the arch says the same thing */
+  display: none;
   justify-items: center;
   gap: 0.15em;
   padding: 0.45em 0.8em 0.5em;
@@ -316,116 +317,6 @@
   font-size: var(--text-xl);
   line-height: 0.9;
   letter-spacing: 0.04em;
-}
-
-/* ── Ticket — a stub resting on the record ───────────── */
-.hero__ticket {
-  position: absolute;
-  z-index: 4;
-  left: 56vw;
-  bottom: 4svh;
-  display: none;
-  width: clamp(17rem, 21vw, 33rem);
-  rotate: -4deg;
-  filter: var(--drop-stamp);
-}
-.ticket {
-  --notch: clamp(0.7rem, 0.9vw, 1.2rem);
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  background: var(--color-paper);
-  -webkit-mask:
-    radial-gradient(circle at 0 50%, transparent var(--notch), #000 calc(var(--notch) + 0.5px)) left / 51% 100% no-repeat,
-    radial-gradient(circle at 100% 50%, transparent var(--notch), #000 calc(var(--notch) + 0.5px)) right / 51% 100% no-repeat;
-  mask:
-    radial-gradient(circle at 0 50%, transparent var(--notch), #000 calc(var(--notch) + 0.5px)) left / 51% 100% no-repeat,
-    radial-gradient(circle at 100% 50%, transparent var(--notch), #000 calc(var(--notch) + 0.5px)) right / 51% 100% no-repeat;
-}
-.ticket__stub {
-  display: grid;
-  place-items: center;
-  padding: var(--space-sm) calc(var(--notch) + var(--space-2xs));
-  border-right: 2px dashed var(--color-paper-3);
-  background: var(--color-crimson);
-  color: var(--color-cream); /* ≈5.3:1 on crimson; gold was 3.9:1 at small sizes */
-}
-.ticket__stub span {
-  writing-mode: vertical-rl;
-  rotate: 180deg;
-  font-family: var(--font-condensed);
-  font-weight: 800;
-  font-size: var(--text-sm);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-.ticket__body {
-  display: grid;
-  gap: var(--space-2xs);
-  padding: var(--space-md) calc(var(--notch) + var(--space-md)) var(--space-md) var(--space-md);
-}
-.ticket__now {
-  display: flex;
-  align-items: center;
-  gap: 0.5em;
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  color: var(--color-ink-soft);
-}
-.ticket__dot {
-  width: 0.6em;
-  height: 0.6em;
-  border-radius: 50%;
-  background: var(--color-signal);
-  animation: live-dot 1.6s var(--ease-in-out) infinite;
-}
-@keyframes live-dot {
-  50% {
-    opacity: 0.35;
-    transform: scale(0.8);
-  }
-}
-.ticket__title {
-  font-family: var(--font-condensed);
-  font-weight: 800;
-  font-size: var(--text-xl);
-  line-height: 0.95;
-  text-transform: uppercase;
-}
-.ticket__line {
-  font-family: var(--font-serif);
-  font-size: var(--text-sm);
-  line-height: 1.35;
-  color: var(--color-ink-2);
-}
-.ticket__meta {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: var(--space-3xs) var(--space-sm);
-  margin-top: var(--space-3xs);
-  padding-top: var(--space-2xs);
-  border-top: 1px solid var(--color-paper-3);
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--color-ink-soft);
-  font-variant-numeric: tabular-nums;
-}
-.ticket__meta span {
-  white-space: nowrap;
-}
-.ticket__colon {
-  font-weight: inherit;
-  animation: colon-blink 2s steps(1) infinite;
-}
-@keyframes colon-blink {
-  50% {
-    opacity: 0.2;
-  }
 }
 
 /* ── Scroll cue ──────────────────────────────────────── */
@@ -492,17 +383,13 @@
     right: -1%;
     translate: none;
     rotate: 8deg;
+    display: grid;
   }
   .hero__cue {
     display: grid;
   }
 }
 
-@media (min-width: 80rem) {
-  .hero__ticket {
-    display: block;
-  }
-}
 
 /* ── Deep cut 01 · मानस — the name in its own script ───────────────── */
 .hero__first-cell {
@@ -679,20 +566,3 @@
 }
 
 /* ── Side A's hint: nine deep cuts inside ──────────────────────────── */
-.ticket__cuts {
-  justify-self: start;
-  margin-top: var(--space-3xs);
-  padding: 0.2em 0;
-  border-bottom: 1.5px solid currentColor;
-  font: 700 var(--text-xs) / 1 var(--font-condensed);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  white-space: nowrap;
-  color: var(--color-crimson);
-  transition: color var(--dur-short) var(--ease-out);
-}
-@media (hover: hover) and (pointer: fine) {
-  .ticket__cuts:hover {
-    color: var(--color-ink);
-  }
-}

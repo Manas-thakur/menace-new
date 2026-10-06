@@ -5,6 +5,7 @@
 //   feather.svg  — peacock-feather "eye" tile, full colour, used as a background
 //   grain.svg    — fractal-noise print grain, used as a fixed overlay
 //   flower.svg   — four-petal flower tile for the cover's album-page margin
+//   guilloche.svg — woven sine lines (security print) for the hero's ticket
 import { mkdirSync, writeFileSync } from 'node:fs';
 
 const out = new URL('../public/textures/', import.meta.url);
@@ -123,6 +124,23 @@ writeFileSync(
   writeFileSync(
     new URL('flower.svg', out),
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${T} ${T}" width="${T}" height="${T}"><g fill="#000">${[0, 90, 180, 270].map(petal).join('')}<circle cx="${c}" cy="${c}" r="1.9"/><circle cx="0" cy="0" r="1.2"/><circle cx="${T}" cy="0" r="1.2"/><circle cx="0" cy="${T}" r="1.2"/><circle cx="${T}" cy="${T}" r="1.2"/></g></svg>`
+  );
+}
+
+/* ── Guilloche: the woven sine lines of security print, for the ticket ── */
+{
+  const W = 120, H = 48, rows = 4;
+  let d = '';
+  for (let k = 0; k < rows; k++) {
+    const y0 = ((k + 0.5) * H) / rows;
+    for (const dir of [1, -1]) {
+      d += `M0 ${f(y0 + dir * 4.2 * Math.sin((k * Math.PI) / 2))}`;
+      for (let x = 2; x <= W; x += 2) d += `L${x} ${f(y0 + dir * 4.2 * Math.sin((2 * Math.PI * x) / W + (k * Math.PI) / 2))}`;
+    }
+  }
+  writeFileSync(
+    new URL('guilloche.svg', out),
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}"><path d="${d}" fill="none" stroke="#000" stroke-width="0.7"/></svg>`
   );
 }
 
