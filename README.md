@@ -4,7 +4,9 @@ Personal site for **Manas Kumar Thakur**, AI Engineer — *"I build AI systems t
 
 **Live:** [tensorman.me](https://www.tensorman.me) (also [menace-new.vercel.app](https://menace-new.vercel.app)) — deployed on Vercel from this repo's `main` branch.
 
-Designed as a festival programme in the spirit of [Rendezvous '26](https://rendezvous-iitd.org/) (IIT Delhi's "riot of fusions"): full-screen **drawers** that pin and stack as you scroll, each in its own colour world, dressed in Indian print ephemera — vinyl, stamps, tickets, newsprint, railway boards. The fusion here is personal: **Delhi × Daegu × Palo Alto**. Every illustration is original, hand-built SVG/CSS; no reference assets are reused.
+Designed as a festival programme in the spirit of [Rendezvous '26](https://rendezvous-iitd.org/) (IIT Delhi's "riot of fusions"): full-screen **drawers** that pin and stack as you scroll, each in its own colour world, dressed in Indian print ephemera — vinyl, stamps, tickets, newsprint, railway boards. The fusion here is personal: **Delhi × Daegu × Palo Alto**. Every illustration is original, hand-built SVG/CSS/canvas; no reference assets are reused.
+
+The cover is the site's own: **मानसरोवर, the lake of the mind.** *Manas* is Sanskrit for the mind, and Mānasarovar, under Mount Kailash, is the lake the mind made. The name stands on its water at first light, and the lake answers in the name's own script. The water ripples while the visitor moves. Be still, and it stills too: the reflection turns into मानस ठाकुर and Patañjali's line rises through it — *yogaś citta-vṛtti-nirodhaḥ*, the stilling of the ripples of the mind.
 
 ## Run it
 
@@ -31,8 +33,8 @@ All facts live in **`src/data/profile.ts`** — roles, projects, press clippings
 
 | # | Drawer | Idea | Signature motion |
 |---|---|---|---|
-| 0 | Hero — *Side A* | Mughal-arch window on a fused Delhi × Daegu × Palo Alto sunset; gothic wordmark | Arch rises, landmarks lift, record rings spin in, wordmark stamps down; metro crosses, kites sway |
-| — | Nav | Black slab; the record dial in the hero is a second, playful nav | Active section tracks scroll; circular-reveal menu on phones |
+| 0 | Cover — *Side A* | मानसरोवर, the lake of the mind: a page from an album — Kailash at dawn, the name on the water, a hamsa, lotus lanterns | Night turns to first light, a drop wakes the lake, the name rises out of it with its reflection; the water ripples under the visitor's hand and goes to glass when they keep still |
+| — | Nav | Black slab; the cover's margin carries a second set of contents | Active section tracks scroll; circular-reveal menu on phones |
 | 1 | About | Laptop-lid sticker wall + "Think. Use tools. Finish the job." | Stickers slap on; draggable |
 | 2 | Press — *The Kulhad Times* | Newspaper clippings of wins and milestones | Clippings pop in, tape sticks; chai pours into a kulhad |
 | 3 | Work — *On Tour* | Gig-poster wall + band-tee tour dates | Poster columns drift; rows expand |
@@ -44,12 +46,12 @@ All facts live in **`src/data/profile.ts`** — roles, projects, press clippings
 
 ## Deep cuts
 
-*Side A is what I show. Side B is what I mean.* Nine messages are pressed into the record, each bound to an object already in the design and revealed by looking closely (hover and rest, focus, or tap):
+*Side A is what I show. Side B is what I mean.* Nine messages are pressed into the record, each bound to an object already in the design and revealed by looking closely (hover and rest, focus, or tap — or, on the cover, by being still):
 
 | # | Cut | Where | What it says |
 |---|---|---|---|
-| 01 | मानस | the name in the hero | Manas is Sanskrit for *the mind* — he builds the other kind |
-| 02 | The string | the crimson kite | a kite climbs only because someone on the ground holds the string |
+| 01 | मानस | the lake on the cover — keep still | Patañjali, Yoga Sūtra 1.2, योगश्चित्तवृत्तिनिरोधः; the reflection turns to मानस ठाकुर. Manas is Sanskrit for *the mind* — he builds the other kind |
+| 02 | Milk from water | the swan crossing the lake | the hamsa that drinks the milk and leaves the water — *nīra-kṣīra viveka*, discernment |
 | 03 | Slowly | the kulhad in The Kulhad Times | Kabir: धीरे धीरे रे मना… |
 | 04 | The quiet frequency | the radio, at 108.0 (the end of the dial) | Bhagavad Gita 2.47 |
 | 05 | One step | the station clock on the departures board | Korean proverb 천 리 길도 한 걸음부터 |
@@ -58,7 +60,7 @@ All facts live in **`src/data/profile.ts`** — roles, projects, press clippings
 | 08 | Dead wax | Side B's run-out groove | etched like a mastering engineer's signature |
 | 09 | Hidden track | Side B's centre hole | Manas's own caption, as the closing words |
 
-Every line lives in **`src/data/deep.ts`** — originals in their own script with a free translation, and a source. Rewrite them there. A visitor's finds are remembered in their own browser (`localStorage`, key `tensorman:deep-cuts`); the **Liner notes** (from the ticket, the footer, or the "deep cut found" notice) list what they've found and hint at the rest. Developers get one more in the browser console.
+Every line lives in **`src/data/deep.ts`** — originals in their own script with a free translation, and a source. Rewrite them there. A visitor's finds are remembered in their own browser (`localStorage`, key `tensorman:deep-cuts`); the **Liner notes** (from the cover's panel, the footer, or the "deep cut found" notice) list what they've found and hint at the rest. Developers get one more in the browser console.
 
 ## Structure
 
@@ -71,13 +73,15 @@ src/
   lib/                     GSAP setup, Lenis smooth scroll, drawer-aware scroll helpers
   components/primitives/   Drawer, Marquee, TornEdge, Tape, Stamp, Sticker, SVG filters
   sections/<Name>/         one folder per drawer, each self-contained
+  sections/Hero/           the cover: scene.ts paints sky and Kailash, lake.ts the water and its
+                           reflection (canvas); Hero, Swan, Lotus are the HTML/SVG laid over it
 public/textures/           generated by scripts/textures.mjs
 ```
 
 ## Development helpers
 
 - `?only=<id>` renders one drawer in isolation (`about`, `press`, `work`, `projects`, `numbers`, `community`, `contact`, or `top` for the hero). `?only=kit` shows the primitives.
-- `?nointro` skips the hero intro.
+- `?nointro` skips the cover's first light.
 - `node scripts/shot.mjs <url> <out.png> [--w 2560 --h 1249 --full --reduced --frames 6 --every 250 --early]` takes headless screenshots with the system Chrome.
 - `node scripts/tour.mjs <url> <dir> [--w 1440 --h 900 --reduced]` walks the real stacked page and captures every drawer pinned and every hand-off.
 - `node scripts/a11y.mjs [url]` runs an axe-core audit of the whole page and prints the heading outline.
@@ -86,9 +90,10 @@ public/textures/           generated by scripts/textures.mjs
 ## Motion & accessibility
 
 - GSAP (ScrollTrigger, SplitText, Draggable, Inertia, CustomEase) + Lenis. One signature entrance per drawer; decorative loops pause when their drawer is off-screen or covered.
-- `prefers-reduced-motion: reduce` turns off smooth scroll, entrances and loops; everything renders in its final state.
+- The cover's water is a 2D canvas that mirrors the sky row by row; it draws at ~30 fps while it breathes, every frame only while stirred, and stops drawing entirely once it is still or off-screen. Device pixels are capped so 4K screens don't pay for it.
+- `prefers-reduced-motion: reduce` turns off smooth scroll, entrances and loops; everything renders in its final state (the lake is a still mirror, the swan rests).
 - Real text everywhere (no type baked into images), one `h1`, one `h2` per drawer, a visible double focus ring on every control, keyboard-operable radio dial and disclosures.
 
 ## Credits
 
-Visual language studied from Rendezvous '26, IIT Delhi — used as inspiration only. Type: Pirata One, Barlow Condensed, Dela Gothic One, Rye, Newsreader, Share Tech Mono, Yatra One, Black Han Sans (Google Fonts).
+Visual language studied from Rendezvous '26, IIT Delhi — used as inspiration only; the cover is original. Type: Cormorant Garamond, Tiro Devanagari Sanskrit, Pirata One, Barlow Condensed, Dela Gothic One, Rye, Newsreader, Share Tech Mono, Yatra One, Black Han Sans (Google Fonts). Verses on the cover: Patañjali's *Yoga Sūtra* 1.2 and an anonymous Sanskrit *subhāṣita*, both public domain.

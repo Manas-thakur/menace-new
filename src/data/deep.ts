@@ -16,6 +16,8 @@ export type DeepCut = {
   /** Track number on Side B's liner notes. */
   no: number;
   title: string;
+  /** The title's language when the first line can't tell (a Sanskrit title over a sutra). */
+  titleLang?: DeepLang;
   /** Which part of the record it is pressed into. */
   where: string;
   /** Shown in the liner notes while the cut is still hidden. */
@@ -36,19 +38,28 @@ export const deepCuts: DeepCut[] = [
     id: 'mind',
     no: 1,
     title: 'मानस',
-    where: 'Side A · the name',
-    hint: 'Linger on the name.',
-    lines: [{ text: 'मानस', lang: 'sa' }, { text: 'Sanskrit for the mind.' }, { text: 'He builds the other kind.' }],
-    source: 'Sanskrit mānasa, “of the mind” — the same word as the lake Mānasarovar.',
+    titleLang: 'sa',
+    where: 'Side A · the lake',
+    hint: 'Be still over the water.',
+    lines: [
+      { text: 'योगश्चित्तवृत्तिनिरोधः', lang: 'sa' },
+      { text: 'Yoga is the stilling of the ripples of the mind.' },
+      { text: 'Manas is Sanskrit for the mind, and Mānasarovar is its lake. He builds the other kind.' },
+    ],
+    source: 'Patañjali, Yoga Sūtra 1.2. Vivekananda read it as a lake: you only see to the bottom once the ripples settle.',
   },
   {
-    id: 'string',
+    id: 'swan',
     no: 2,
-    title: 'The string',
-    where: 'Side A · the kites',
-    hint: 'Follow a kite down to the ground.',
-    lines: [{ text: 'A kite climbs only because someone on the ground holds the string.' }],
-    source: 'Every Delhi rooftop on the fifteenth of August.',
+    title: 'Milk from water',
+    where: 'Side A · the swan',
+    hint: 'Stop the swan as it crosses.',
+    lines: [
+      { text: 'हंसः श्वेतो बकः श्वेतो को भेदो बकहंसयोः।', lang: 'sa' },
+      { text: 'नीरक्षीरविवेके तु हंसो हंसो बको बकः॥', lang: 'sa' },
+      { text: 'The swan is white, the heron is white — so what tells them apart? Set milk and water before them: the swan is a swan, the heron a heron.' },
+    ],
+    source: 'A Sanskrit saying: the hamsa drinks the milk and leaves the water, nīra-kṣīra viveka, discernment. In Kālidāsa’s Meghadūta, the royal swans fly north to this lake.',
   },
   {
     id: 'slowly',
@@ -127,6 +138,7 @@ export const deepCut = (id: string) => deepCuts.find((c) => c.id === id)!;
 /** The language of a cut's title, from its own script — "Slowly" is English even
  *  though its message is Hindi; "मानस" takes the language of its first line. */
 export function titleLang(c: DeepCut): DeepLang | undefined {
+  if (c.titleLang) return c.titleLang;
   if (c.title === c.lines[0].text) return c.lines[0].lang === 'en' ? undefined : c.lines[0].lang;
   if (/[ऀ-ॿ]/.test(c.title)) return 'hi';
   if (/[ᄀ-ᇿ가-힯]/.test(c.title)) return 'ko';

@@ -6,6 +6,8 @@ export const profile = {
   name: 'Manas Kumar Thakur',
   first: 'Manas',
   last: 'Thakur',
+  /** The name in its own script: what the lake shows under the name. */
+  devanagari: 'मानस ठाकुर',
   role: 'AI Engineer',
   handle: '@Menace_thakur',
   tagline: 'I build AI systems that can think through a task, use tools, and finish the job.',

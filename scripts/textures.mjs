@@ -4,6 +4,7 @@
 //   jaali.svg    — Mughal-lattice (8-point star) tile, used as a CSS mask
 //   feather.svg  — peacock-feather "eye" tile, full colour, used as a background
 //   grain.svg    — fractal-noise print grain, used as a fixed overlay
+//   flower.svg   — four-petal flower tile for the cover's album-page margin
 import { mkdirSync, writeFileSync } from 'node:fs';
 
 const out = new URL('../public/textures/', import.meta.url);
@@ -114,5 +115,15 @@ writeFileSync(
   new URL('grain.svg', out),
   `<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240"><filter id="n" x="0" y="0"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="3" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .9 0"/></filter><rect width="100%" height="100%" filter="url(#n)"/></svg>`
 );
+
+/* ── Margin flower: four petals round a seed, for the cover's album page ── */
+{
+  const T = 24, c = 12;
+  const petal = (rot) => `<ellipse cx="${c}" cy="${c - 5}" rx="2.6" ry="4.6" transform="rotate(${rot} ${c} ${c})"/>`;
+  writeFileSync(
+    new URL('flower.svg', out),
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${T} ${T}" width="${T}" height="${T}"><g fill="#000">${[0, 90, 180, 270].map(petal).join('')}<circle cx="${c}" cy="${c}" r="1.9"/><circle cx="0" cy="0" r="1.2"/><circle cx="${T}" cy="0" r="1.2"/><circle cx="0" cy="${T}" r="1.2"/><circle cx="${T}" cy="${T}" r="1.2"/></g></svg>`
+  );
+}
 
 console.log('textures written to public/textures/');

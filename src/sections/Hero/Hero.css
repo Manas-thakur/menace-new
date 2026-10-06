@@ -1,698 +1,710 @@
-/* Hero — "Side A". Mustard paper, a Mughal-arch window onto a fused sunset skyline,
- * the gothic wordmark breaking the frame, and the record dial on the right edge. */
+/* Side A, the cover: मानसरोवर, the lake of the mind.
+ * A page from an album — a dawn painting of the lake under Kailash, ruled in gold
+ * on a flowered margin. Sky and water are canvas (scene.ts, lake.ts); everything a
+ * visitor reads or presses is HTML laid over the painting. */
 
 .hero {
-  background: var(--color-mustard);
+  background: var(--color-paper-2);
   color: var(--color-ink);
 }
 
-.hero__stage {
+.lake {
+  --side: clamp(0.75rem, 1.4vw, 2rem);
+  --top: clamp(3rem, 4.4vw, 5rem);
+  --bottom: clamp(3rem, 4.2vw, 4.75rem);
+  --plaque-x: clamp(0.75rem, 2.4vw, 3rem);
+  --plaque-w: min(22.5rem, calc(100% - 2 * var(--plaque-x)));
+  --verse-w: min(32rem, calc(100% - 2rem));
   position: relative;
-  min-height: 100svh;
+  display: grid;
+  grid-template-rows: var(--top) minmax(0, 1fr) var(--bottom);
+  height: 100svh;
+  min-height: 34rem;
+  padding-inline: var(--side);
   overflow: clip;
 }
-.hero__stage.is-intro {
+/* a phone on its side: let the page run taller than the screen and scroll to the water */
+@media (max-height: 30rem) and (orientation: landscape) {
+  .lake {
+    min-height: 40rem;
+  }
+}
+.lake.is-intro {
   visibility: hidden;
 }
-.hero__defs {
+
+/* the album page: small gold flowers scattered over buff paper */
+.lake::before {
+  content: '';
   position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-color: var(--color-gold-deep);
+  opacity: 0.2;
+  -webkit-mask: url('/textures/flower.svg') 0 0 / 22px 22px repeat;
+  mask: url('/textures/flower.svg') 0 0 / 22px 22px repeat;
 }
 
-/* ── Arch window ─────────────────────────────────────── */
-.hero__arch-wrap {
-  position: absolute;
+/* ── Margins ──────────────────────────────────────────── */
+.lake__margin {
+  position: relative;
   z-index: 1;
-  left: 4vw;
-  right: 4vw;
-  top: 2svh;
-  height: min(56svh, 150vw);
-}
-.hero__arch {
-  position: absolute;
-  inset: 0;
-  clip-path: url(#hero-arch);
-  background: var(--color-sunset-top);
-}
-.hero__sky {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, var(--color-sunset-top) 8%, var(--color-orange) 82%);
-}
-.hero__mandala {
-  --tx-color: var(--color-maroon-deep);
-  --tx-opacity: 0.3;
-  --tx-size: clamp(300px, 30vw, 860px);
-  -webkit-mask-position: 50% 12%;
-  mask-position: 50% 12%;
-}
-.hero__halftone {
-  --tx-color: var(--color-maroon-deep);
-  --tx-opacity: 0.6;
-  --tx-size: clamp(6px, 0.5vw, 13px);
-  --ht-angle: 180deg;
-  bottom: 40%;
-}
-.hero__sun {
-  position: absolute;
-  left: 50%;
-  bottom: 13%;
-  width: 52%;
-  aspect-ratio: 1;
-  translate: -50% 0;
-  border-radius: 50%;
-  background: linear-gradient(180deg, var(--color-gold), var(--color-saffron));
-  -webkit-mask: linear-gradient(180deg, #000 0 50%, transparent 50% 54%, #000 54% 62%, transparent 62% 67%, #000 67% 74%, transparent 74% 80%, #000 80% 86%, transparent 86%);
-  mask: linear-gradient(180deg, #000 0 50%, transparent 50% 54%, #000 54% 62%, transparent 62% 67%, #000 67% 74%, transparent 74% 80%, #000 80% 86%, transparent 86%);
-}
-
-.cloud {
-  position: absolute;
-  fill: var(--color-paper-3);
-  opacity: 0.94;
-}
-.hero__cloud--a {
-  left: 2%;
-  top: 55%;
-  width: 24%;
-  animation: cloud-drift 16s var(--ease-in-out) infinite alternate;
-}
-.hero__cloud--b {
-  right: 5%;
-  top: 38%;
-  width: 17%;
-  animation: cloud-drift 21s var(--ease-in-out) -7s infinite alternate-reverse;
-}
-@keyframes cloud-drift {
-  from {
-    transform: translateX(-4%);
-  }
-  to {
-    transform: translateX(5%);
-  }
-}
-
-/* Kites */
-.kite {
-  position: absolute;
-  rotate: var(--kite-tilt);
-}
-.kite__svg {
-  width: 100%;
-  height: auto;
-  overflow: visible;
-  transform-origin: 50% 8%;
-  animation: kite-sway 6.5s var(--ease-in-out) var(--kite-delay) infinite alternate;
-}
-@keyframes kite-sway {
-  from {
-    transform: translate(-7%, 1%) rotate(-6deg);
-  }
-  to {
-    transform: translate(7%, -3%) rotate(7deg);
-  }
-}
-.kite--crimson {
-  --k1: var(--color-crimson);
-  --k2: var(--color-gold);
-}
-.kite--teal {
-  --k1: var(--color-peacock);
-  --k2: var(--color-paper);
-}
-.kite--gold {
-  --k1: var(--color-gold);
-  --k2: var(--color-signal);
-}
-.kite__a {
-  fill: var(--k1);
-}
-.kite__b {
-  fill: var(--k2);
-}
-.kite__tail {
-  fill: var(--k1);
-}
-.kite__frame {
-  fill: none;
-  stroke: var(--color-ink);
-  stroke-width: 1.8;
-  stroke-linecap: round;
-}
-.kite__string {
-  fill: none;
-  stroke: var(--color-paper-3);
-  stroke-width: 1;
-  opacity: 0.55;
-  vector-effect: non-scaling-stroke;
-}
-
-/* Skyline */
-.skyline {
-  position: absolute;
-  left: -7.5%;
-  bottom: 0;
-  width: 115%;
-  height: auto;
-}
-.skyline__far {
-  fill: var(--color-maroon);
-  opacity: 0.6;
-}
-.skyline__mid {
-  fill: var(--color-maroon-deep);
-}
-.skyline__flute {
-  fill: none;
-  stroke: var(--color-maroon);
-  stroke-width: 1.5;
-  opacity: 0.7;
-}
-.skyline__recess {
-  fill: var(--color-sunset-top);
-}
-.skyline__petal {
-  fill: var(--color-maroon);
-}
-.skyline__bridge {
-  fill: var(--color-ink);
-}
-.metro {
-  animation: metro-drive 17s linear infinite;
-}
-@keyframes metro-drive {
-  from {
-    transform: translateX(-1150px);
-  }
-  to {
-    transform: translateX(1750px);
-  }
-}
-.metro__body {
-  fill: var(--color-paper-2);
-}
-.metro__roof {
-  fill: var(--color-khaki);
-}
-.metro__glass {
-  fill: var(--color-ink-2);
-}
-.metro__stripe {
-  fill: var(--color-crimson);
-}
-.metro__door {
-  fill: none;
-  stroke: var(--color-khaki);
-  stroke-width: 1.5;
-}
-.metro__bogie {
-  fill: var(--color-ink);
-}
-.metro__lamp {
-  fill: var(--color-electric);
-}
-.trees {
-  fill: var(--color-leaf-deep);
-}
-.trees__light {
-  fill: var(--color-leaf);
-  opacity: 0.4;
-}
-
-/* Arch frame */
-.hero__frame {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  pointer-events: none;
-}
-.hero__frame path {
-  fill: none;
-  vector-effect: non-scaling-stroke;
-}
-.hero__frame-outer {
-  stroke: var(--color-maroon-deep);
-  stroke-width: 5px;
-}
-.hero__frame-inner {
-  stroke: var(--color-gold);
-  stroke-width: 1.5px;
-}
-
-/* ── Wordmark ────────────────────────────────────────── */
-.hero__name {
-  position: absolute;
-  z-index: 2;
-  left: 0;
-  right: 0;
-  top: 13%;
   display: grid;
-  justify-items: center;
-  font-family: var(--font-gothic);
-  font-weight: 400;
-  line-height: 0.78;
-  pointer-events: none;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-sm);
+  padding-inline: 0.15rem;
+  color: var(--color-ink-soft);
+  font: 400 var(--text-xs) / 1.2 var(--font-mono);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
 }
-.hero__first {
-  display: block;
-  font-size: clamp(5.5rem, 27vw, 32rem);
-  color: var(--color-gold);
-  letter-spacing: 0.005em;
-  text-shadow:
-    0.012em 0.012em 0 var(--color-crimson),
-    0.024em 0.024em 0 var(--color-crimson),
-    0.036em 0.036em 0 var(--color-crimson-deep),
-    0.048em 0.048em 0 var(--color-maroon-deep),
-    0.06em 0.06em 0 var(--color-maroon-deep),
-    0.075em 0.09em 0.05em color-mix(in oklch, var(--color-shadow) 45%, transparent);
+.lake__margin > * {
+  margin: 0;
 }
-.hero__char {
-  will-change: transform;
+.lake__margin > :first-child {
+  justify-self: start;
 }
-.hero__last {
-  display: block;
+.lake__margin > :last-child {
   justify-self: end;
-  margin-top: 0.02em;
-  margin-right: 9%;
-  font-size: clamp(2.6rem, 12vw, 14rem);
-  color: var(--color-cream);
-  text-shadow:
-    0.02em 0.02em 0 var(--color-maroon),
-    0.04em 0.04em 0 var(--color-maroon-deep),
-    0.06em 0.07em 0.04em color-mix(in oklch, var(--color-shadow) 40%, transparent);
+}
+.lake__margin > :nth-child(2) {
+  grid-column: 2;
 }
 
-/* Rubber stamp role label — inked onto the paper. Mobile: in the gap between the
- * arch and the dial. Desktop: over the arch's right shoulder. */
-.hero__stamp {
-  position: absolute;
-  z-index: 2;
-  top: calc(100% + 1.4svh);
-  left: 50%;
-  translate: -50% 0;
-  display: grid;
-  justify-items: center;
-  gap: 0.15em;
-  padding: 0.45em 0.8em 0.5em;
-  border: 3px solid currentColor;
-  outline: 1.5px solid currentColor;
-  outline-offset: 3px;
-  color: var(--color-crimson);
-  rotate: -4deg;
-  font-family: var(--font-condensed);
-  text-transform: uppercase;
-  white-space: nowrap;
-  mix-blend-mode: multiply;
-  filter: url(#hero-ink);
-}
-.hero__stamp-small {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  letter-spacing: var(--tracking-wide);
-}
-.hero__stamp-big {
-  font-weight: 900;
-  font-size: var(--text-xl);
-  line-height: 0.9;
-  letter-spacing: 0.04em;
-}
-
-/* ── Ticket — a stub resting on the record ───────────── */
-.hero__ticket {
-  position: absolute;
-  z-index: 4;
-  left: 56vw;
-  bottom: 4svh;
-  display: none;
-  width: clamp(17rem, 21vw, 33rem);
-  rotate: -4deg;
-  filter: var(--drop-stamp);
-}
-.ticket {
-  --notch: clamp(0.7rem, 0.9vw, 1.2rem);
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  background: var(--color-paper);
-  -webkit-mask:
-    radial-gradient(circle at 0 50%, transparent var(--notch), #000 calc(var(--notch) + 0.5px)) left / 51% 100% no-repeat,
-    radial-gradient(circle at 100% 50%, transparent var(--notch), #000 calc(var(--notch) + 0.5px)) right / 51% 100% no-repeat;
-  mask:
-    radial-gradient(circle at 0 50%, transparent var(--notch), #000 calc(var(--notch) + 0.5px)) left / 51% 100% no-repeat,
-    radial-gradient(circle at 100% 50%, transparent var(--notch), #000 calc(var(--notch) + 0.5px)) right / 51% 100% no-repeat;
-}
-.ticket__stub {
-  display: grid;
-  place-items: center;
-  padding: var(--space-sm) calc(var(--notch) + var(--space-2xs));
-  border-right: 2px dashed var(--color-paper-3);
-  background: var(--color-crimson);
-  color: var(--color-cream); /* ≈5.3:1 on crimson; gold was 3.9:1 at small sizes */
-}
-.ticket__stub span {
-  writing-mode: vertical-rl;
-  rotate: 180deg;
-  font-family: var(--font-condensed);
-  font-weight: 800;
-  font-size: var(--text-sm);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-.ticket__body {
-  display: grid;
-  gap: var(--space-2xs);
-  padding: var(--space-md) calc(var(--notch) + var(--space-md)) var(--space-md) var(--space-md);
-}
-.ticket__now {
+.lake__cartouche {
   display: flex;
   align-items: center;
-  gap: 0.5em;
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  color: var(--color-ink-soft);
-}
-.ticket__dot {
-  width: 0.6em;
-  height: 0.6em;
-  border-radius: 50%;
-  background: var(--color-signal);
-  animation: live-dot 1.6s var(--ease-in-out) infinite;
-}
-@keyframes live-dot {
-  50% {
-    opacity: 0.35;
-    transform: scale(0.8);
-  }
-}
-.ticket__title {
-  font-family: var(--font-condensed);
-  font-weight: 800;
-  font-size: var(--text-xl);
-  line-height: 0.95;
-  text-transform: uppercase;
-}
-.ticket__line {
-  font-family: var(--font-serif);
-  font-size: var(--text-sm);
-  line-height: 1.35;
-  color: var(--color-ink-2);
-}
-.ticket__meta {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: var(--space-3xs) var(--space-sm);
-  margin-top: var(--space-3xs);
-  padding-top: var(--space-2xs);
-  border-top: 1px solid var(--color-paper-3);
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--color-ink-soft);
-  font-variant-numeric: tabular-nums;
-}
-.ticket__meta span {
+  gap: 0.65em;
+  padding: 0.38em 1.15em 0.34em;
+  border: 1px solid var(--color-gold-deep);
+  border-radius: var(--radius-pill);
+  background: var(--color-paper);
+  box-shadow:
+    0 0 0 3px var(--color-paper-2),
+    0 0 0 4px color-mix(in oklch, var(--color-gold-deep) 55%, transparent);
+  color: var(--color-ink);
+  letter-spacing: 0.01em;
+  text-transform: none;
   white-space: nowrap;
 }
-.ticket__colon {
-  font-weight: inherit;
-  animation: colon-blink 2s steps(1) infinite;
+.lake__cartouche-deva {
+  color: var(--color-crimson);
+  font: 400 var(--text-md) / 1 var(--font-sanskrit);
 }
-@keyframes colon-blink {
+.lake__cartouche-en {
+  font: italic 400 var(--text-sm) / 1 var(--font-serif);
+}
+.lake__cartouche-name {
+  display: none;
+}
+
+.lake__folio,
+.lake__places {
+  display: none;
+}
+
+.lake__nav {
+  display: none;
+}
+.lake__nav ul {
+  display: flex;
+  gap: clamp(1rem, 1.7vw, 2.5rem);
+}
+.lake__nav a {
+  display: block;
+  padding-block: 0.35em;
+  background: linear-gradient(currentColor 0 0) 0 100% / 0 1px no-repeat;
+  color: var(--color-ink);
+  font: 600 var(--text-sm) / 1 var(--font-condensed);
+  letter-spacing: var(--tracking-wide);
+  transition:
+    background-size var(--dur-short) var(--ease-out),
+    color var(--dur-short) var(--ease-out);
+}
+.lake__nav a:active {
+  color: var(--color-crimson-deep);
+}
+@media (hover: hover) and (pointer: fine) {
+  .lake__nav a:hover {
+    background-size: 100% 1px;
+    color: var(--color-crimson);
+  }
+}
+
+.lake__time {
+  color: var(--color-ink);
+  font-variant-numeric: tabular-nums;
+}
+.lake__colon {
+  font-weight: inherit;
+  animation: lake-colon 2s steps(1) infinite;
+}
+@keyframes lake-colon {
   50% {
     opacity: 0.2;
   }
 }
 
-/* ── Scroll cue ──────────────────────────────────────── */
-.hero__cue {
-  position: absolute;
-  z-index: 5;
-  left: 31vw;
-  bottom: 2.5svh;
-  display: none;
+.lake__cue {
+  display: grid;
   place-items: center;
-  width: clamp(2.75rem, 2.8vw, 4rem);
+  width: clamp(2.25rem, 2.6vw, 3.25rem);
   aspect-ratio: 1;
-  translate: -50% 0;
-  border: 2px solid var(--color-ink);
+  padding: 0;
+  border: 1px solid var(--color-ink-soft);
   border-radius: 50%;
-  background: var(--color-mustard);
+  background: var(--color-paper);
   color: var(--color-ink);
-  font: 900 var(--text-lg) / 1 var(--font-condensed);
-  transition: background-color var(--dur-short) var(--ease-out);
+  font: 400 var(--text-md) / 1 var(--font-serif);
+  cursor: pointer;
+  transition:
+    background-color var(--dur-short) var(--ease-out),
+    border-color var(--dur-short) var(--ease-out);
 }
-.hero__cue span {
-  animation: cue-bob 1.8s var(--ease-in-out) infinite;
+.lake__cue span {
+  animation: lake-cue 2.4s var(--ease-in-out) infinite;
 }
-@keyframes cue-bob {
+@keyframes lake-cue {
   50% {
-    transform: translateY(5px);
+    transform: translateY(3px);
   }
 }
-.hero__cue:focus-visible {
-  border-radius: 50%;
+.lake__cue:active {
+  background: var(--color-paper-3);
 }
 @media (hover: hover) and (pointer: fine) {
-  .hero__cue:hover {
+  .lake__cue:hover {
+    border-color: var(--color-gold-deep);
     background: var(--color-gold);
   }
 }
 
-/* ── Desktop composition ─────────────────────────────── */
-@media (min-width: 64rem) {
-  .hero__arch-wrap {
-    left: 2.5vw;
-    right: auto;
-    width: 57vw;
-    top: 3svh;
-    height: auto;
-    bottom: 0;
+@media (min-width: 40rem) {
+  .lake__folio,
+  .lake__places {
+    display: block;
   }
-  .skyline {
-    left: 0;
-    width: 100%;
-  }
-  .hero__name {
-    top: 17%;
-  }
-  .hero__first {
-    font-size: clamp(6rem, 17.5vw, 30rem);
-  }
-  .hero__last {
-    font-size: clamp(3rem, 7.4vw, 13rem);
-  }
-  .hero__stamp {
-    top: 4%;
-    left: auto;
-    right: -1%;
-    translate: none;
-    rotate: 8deg;
-  }
-  .hero__cue {
-    display: grid;
+  .lake__cartouche-name {
+    display: inline;
   }
 }
-
-@media (min-width: 80rem) {
-  .hero__ticket {
+@media (min-width: 64rem) {
+  .lake__nav {
     display: block;
   }
 }
 
-/* ── Deep cut 01 · मानस — the name in its own script ───────────────── */
-.hero__first-cell {
-  display: grid;
-  justify-items: center;
-}
-.hero__first-cell > * {
-  grid-area: 1 / 1;
-}
-.hero__first {
-  pointer-events: auto;
-  cursor: help;
-}
-.hero__deva {
-  align-self: center;
-  font-family: var(--font-deva);
-  font-weight: 400;
-  font-size: clamp(3.6rem, 17vw, 20rem);
-  line-height: 1.05;
-  white-space: nowrap;
-  color: var(--color-gold);
-  text-shadow:
-    0.012em 0.012em 0 var(--color-crimson),
-    0.024em 0.024em 0 var(--color-crimson),
-    0.036em 0.036em 0 var(--color-crimson-deep),
-    0.048em 0.048em 0 var(--color-maroon-deep),
-    0.06em 0.07em 0.05em color-mix(in oklch, var(--color-shadow) 45%, transparent);
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* keyboard way in: hidden until focused, then a pill above the name */
-.hero__name-btn {
-  position: absolute;
-  z-index: 5;
-  left: 50%;
-  top: 5%;
-  translate: -50% 0;
-  padding: 0.45em 1em;
-  border-radius: var(--radius-pill);
-  background: var(--color-paper);
-  color: var(--color-ink);
-  font: 700 var(--text-sm) / 1 var(--font-condensed);
-  letter-spacing: var(--tracking-caps);
-  text-transform: uppercase;
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-}
-.hero__name-btn:focus-visible {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* the tag, hanging on a thread from the last letter */
-.hero__name-tag {
-  --thread-len: clamp(1.4rem, 2.6vw, 3.6rem);
-  position: absolute;
-  z-index: 4;
-  /* positioned with left/top: GSAP owns this element's transform (the swing) and
-   * folds any CSS `translate` into it, which would throw the tag to the corner */
-  left: var(--tag-x, 0);
-  top: calc(var(--tag-y, 0px) + var(--thread-len));
-  width: clamp(12.5rem, 16vw, 21rem);
-  margin: 0;
-  transform-origin: var(--thread-x, 20%) calc(-1 * var(--thread-len));
-  opacity: 0;
-  pointer-events: none;
-  filter: var(--drop-sticker);
-}
-.hero__name-tag.is-unplaced {
-  visibility: hidden;
-}
-.hero__name-tag-thread {
-  position: absolute;
-  left: var(--thread-x, 20%);
-  top: calc(-1 * var(--thread-len));
-  width: 1.5px;
-  height: calc(var(--thread-len) + 0.95rem);
-  translate: -50% 0;
-  background: var(--color-paper-3);
-}
-.hero__name-tag-card {
+/* ── The painting, ruled in ink and gold ──────────────── */
+.lake__frame {
   position: relative;
-  display: grid;
-  gap: 0.25rem;
-  padding: 1.75rem 1rem 0.95rem;
-  background: var(--color-paper);
-  color: var(--color-ink);
-  /* luggage-tag shoulders */
-  clip-path: polygon(12% 0, 88% 0, 100% 14%, 100% 100%, 0 100%, 0 14%);
+  z-index: 1;
+  min-height: 0;
 }
-.hero__name-tag-hole {
+.lake__painting {
   position: absolute;
-  left: var(--thread-x, 20%);
-  top: 0.6rem;
-  width: 0.7rem;
-  height: 0.7rem;
-  translate: -50% 0;
-  border-radius: 50%;
-  background: var(--color-sunset-top);
-  box-shadow: 0 0 0 2px var(--color-gold-deep);
+  inset: 0;
+  overflow: clip;
+  isolation: isolate;
+  background: var(--color-lake-deep);
+  box-shadow:
+    0 0 0 1px var(--color-ink),
+    0 0 0 4px var(--color-gold-deep),
+    0 0 0 5px var(--color-ink),
+    0 0 0 9px var(--color-paper-2),
+    0 0 0 10px color-mix(in oklch, var(--color-gold-deep) 70%, transparent);
+  -webkit-tap-highlight-color: transparent;
 }
-.hero__name-tag-deva {
-  font: 400 clamp(1.5rem, 1.9vw, 2.7rem) / 1.15 var(--font-deva);
-  color: var(--color-maroon);
-}
-.hero__name-tag-line {
-  font: 400 var(--text-sm) / 1.35 var(--font-serif);
-}
-.hero__name-tag-line--b {
-  font-weight: 600;
-  color: var(--color-crimson-deep);
-}
-
-/* ── Deep cut 02 · the string ──────────────────────────────────────── */
-.kite--btn {
-  display: block;
-  padding: 0;
-  aspect-ratio: 1 / 1.22;
-  overflow: visible;
-  cursor: help;
-  transition: translate var(--dur-long) var(--ease-out);
-}
-.kite--btn .kite__svg {
+/* lake.ts sizes the sky canvas a little wider than the painting and pulls it left */
+.lake__sky,
+.lake__water {
   position: absolute;
   left: 0;
+  display: block;
+  width: 100%;
+}
+.lake__sky {
   top: 0;
+  height: var(--horizon, 60%);
 }
-.kite--btn.is-open {
-  translate: 0 -0.5rem; /* the line pulls taut */
+.lake__water {
+  top: var(--horizon, 60%);
+  height: var(--water, 40%);
 }
-.kite--btn .kite__string {
-  transition: stroke var(--dur-long) var(--ease-out), opacity var(--dur-long) var(--ease-out);
-}
-.kite--btn.is-open .kite__string {
-  stroke: var(--color-paper);
-  opacity: 0.95;
-}
-.kite-note {
+
+/* ── The name, standing on the water ──────────────────── */
+.lake__name {
+  --name-size: min(14.5vw, calc(var(--horizon, 50svh) * 0.31));
   position: absolute;
   z-index: 3;
-  left: calc(var(--kx) + var(--ks) * 0.42);
-  top: calc(var(--ky) + var(--ks) * 2.05);
-  width: clamp(10.5rem, 14vw, 19rem);
+  top: calc(var(--horizon, 60%) - var(--name-base, 0.82em));
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
   margin: 0;
-  padding: 0.55rem 0.75rem 0.6rem 1.4rem;
-  border-radius: var(--radius-sm);
+  font: 600 var(--name-size) / 1 var(--font-display);
+  /* nothing below the water line: the letters stand in the lake */
+  clip-path: inset(-0.6em -0.3em calc(100% - var(--name-base, 0.82em)) -0.3em);
+  pointer-events: none;
+  filter: drop-shadow(0 0.03em 0.2em color-mix(in oklch, var(--color-indigo-night) 50%, transparent));
+}
+@media (min-width: 48rem) {
+  .lake__name {
+    --name-size: min(10.8vw, calc(var(--horizon, 50svh) * 0.31));
+  }
+}
+.lake__name-line {
+  position: relative;
+  white-space: nowrap;
+  background: linear-gradient(180deg, var(--color-dawn-gold) 14%, var(--color-gold) 52%, var(--color-gold-deep) 96%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.lake__probe {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  vertical-align: baseline;
+}
+
+/* ── Swan ─────────────────────────────────────────────── */
+.swan {
+  --swan-w: clamp(4.25rem, 6.6vw, 9.5rem);
+  position: absolute;
+  z-index: 4;
+  top: calc(var(--horizon, 60%) + var(--water, 40%) * var(--lane, 0.2) - var(--swan-w) * 0.5);
+  left: 0;
+  width: var(--swan-w);
+  will-change: transform;
+}
+.swan__btn {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.swan__art {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.swan__stop-lit {
+  stop-color: var(--color-sticker);
+}
+.swan__stop-shade {
+  stop-color: var(--color-snow-shade);
+}
+.swan__fill {
+  fill: url(#swan-plumage);
+}
+.swan__neck {
+  fill: none;
+  stroke: var(--color-sticker);
+  stroke-width: 9;
+  stroke-linecap: round;
+}
+.swan__wing {
+  fill: none;
+  stroke: var(--color-snow-shade);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+.swan__feather {
+  fill: none;
+  stroke: var(--color-snow-shade);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  opacity: 0.8;
+}
+.swan__beak {
+  fill: var(--color-tape);
+}
+.swan__knob,
+.swan__eye {
+  fill: var(--color-ink);
+}
+.swan__wake {
+  fill: none;
+  stroke: var(--color-paper-3);
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  opacity: 0.45;
+}
+.swan__waterline {
+  fill: none;
+  stroke: var(--color-lake-deep);
+  stroke-width: 1.5;
+  opacity: 0.5;
+}
+/* while it drinks, its note lies over everything else on the water */
+.swan.is-drinking {
+  z-index: 8;
+}
+.swan.is-drinking .swan__wake {
+  opacity: 0;
+  transition: opacity 1.2s var(--ease-out);
+}
+
+.swan__note {
+  position: absolute;
+  z-index: 1;
+  top: calc(100% + 0.25rem);
+  left: var(--note-x, 0);
+  display: grid;
+  gap: 0.25rem;
+  width: min(22rem, 82vw);
+  margin: 0;
+  padding: 0.95rem 1.1rem 1rem;
   background: var(--color-paper);
   color: var(--color-ink);
-  font: 400 var(--text-sm) / 1.35 var(--font-serif);
-  box-shadow: var(--shadow-paper);
-  rotate: -2deg;
+  box-shadow:
+    inset 0 0 0 1px var(--color-gold-deep),
+    var(--shadow-paper);
   opacity: 0;
-  translate: 0 3rem;
+  visibility: hidden;
+  translate: 0 6px;
   pointer-events: none;
   transition:
     opacity var(--dur-long) var(--ease-out),
-    translate 1.1s var(--ease-out);
+    translate var(--dur-long) var(--ease-out),
+    visibility 0s linear var(--dur-long);
 }
-.kite-note.is-open {
+.swan.is-drinking .swan__note {
   opacity: 1;
+  visibility: visible;
   translate: 0 0;
+  transition-delay: 0.6s, 0.6s, 0s;
 }
-.kite-note__ring {
-  position: absolute;
-  left: 0.45rem;
-  top: 50%;
-  width: 0.55rem;
-  height: 0.55rem;
-  translate: 0 -50%;
-  border: 1.5px solid var(--color-khaki);
-  border-radius: 50%;
+.swan__note-deva {
+  color: var(--color-crimson-deep);
+  font: 400 var(--text-sm) / 1.45 var(--font-sanskrit);
+}
+.swan__note-line {
+  margin-top: 0.35rem;
+  font: italic 400 var(--text-sm) / 1.4 var(--font-serif);
 }
 
-/* ── Side A's hint: nine deep cuts inside ──────────────────────────── */
-.ticket__cuts {
-  justify-self: start;
-  margin-top: var(--space-3xs);
-  padding: 0.2em 0;
-  border-bottom: 1.5px solid currentColor;
-  font: 700 var(--text-xs) / 1 var(--font-condensed);
-  letter-spacing: var(--tracking-wide);
+/* ── Lotus lanterns, still burning from the night ─────── */
+.lanterns {
+  --lantern: clamp(1.9rem, 3vw, 4.5rem);
+  position: absolute;
+  z-index: 2;
+  inset: var(--horizon, 60%) 0 0;
+  pointer-events: none;
+}
+.lantern {
+  --size: calc(var(--lantern) * (0.45 + var(--depth) * 1.25));
+  position: absolute;
+  top: calc(var(--depth) * 100% - var(--size) * 0.72);
+  width: var(--size);
+  aspect-ratio: 60 / 48;
+  animation: lantern-drift var(--dur) ease-in-out var(--delay) infinite alternate;
+}
+@keyframes lantern-drift {
+  to {
+    translate: var(--drift) 0;
+  }
+}
+.lantern__glow {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  width: 280%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, color-mix(in oklch, var(--color-dawn-gold) 42%, transparent), transparent);
+  animation: lantern-flicker 2.6s ease-in-out infinite alternate;
+}
+@keyframes lantern-flicker {
+  to {
+    opacity: 0.72;
+  }
+}
+.lantern__streak {
+  position: absolute;
+  top: 80%;
+  left: 50%;
+  width: 46%;
+  height: 300%;
+  translate: -50% 0;
+  background: radial-gradient(50% 100% at 50% 0%, color-mix(in oklch, var(--color-saffron) 50%, transparent), transparent);
+}
+.lantern__art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  animation: lantern-bob 4.4s ease-in-out infinite alternate;
+}
+@keyframes lantern-bob {
+  to {
+    transform: translateY(1.5px) rotate(1.4deg);
+  }
+}
+.lantern__leaf {
+  fill: color-mix(in oklch, var(--color-leaf-deep) 55%, var(--color-lake-deep));
+}
+.lantern__petal-back {
+  fill: var(--color-lotus-deep);
+}
+.lantern__light {
+  fill: var(--color-dawn-gold);
+}
+.lantern__petal {
+  fill: var(--color-lotus);
+  stroke: var(--color-dawn-gold);
+  stroke-width: 0.8;
+}
+
+/* ── The near shore ───────────────────────────────────── */
+.lake__shore {
+  position: absolute;
+  z-index: 5;
+  right: -0.5%;
+  bottom: -0.5%;
+  width: clamp(12rem, 25vw, 36rem);
+  height: auto;
+  pointer-events: none;
+}
+/* on a phone the text panel takes the near water, so the lotus floats further out */
+@media (max-width: 47.99rem) {
+  .lake__shore {
+    bottom: calc(var(--water, 40%) * 0.38);
+    width: 9.5rem;
+    opacity: 0.92;
+  }
+}
+.lotus__stop-heart {
+  stop-color: var(--color-paper);
+}
+.lotus__stop-petal {
+  stop-color: var(--color-lotus);
+}
+.lotus__stop-tip {
+  stop-color: var(--color-lotus-deep);
+}
+.lotus__stop-leaf-lit {
+  stop-color: color-mix(in oklch, var(--color-leaf) 50%, var(--color-dawn-gold));
+}
+.lotus__stop-leaf {
+  stop-color: color-mix(in oklch, var(--color-leaf-deep) 62%, var(--color-lake-deep));
+}
+.lotus__stop-leaf-deep {
+  stop-color: color-mix(in oklch, var(--color-leaf-deep) 34%, var(--color-lake-deep));
+}
+.lotus__pad {
+  fill: url(#lotus-leaf);
+}
+.lotus__vein {
+  fill: none;
+  stroke: color-mix(in oklch, var(--color-leaf) 30%, transparent);
+  stroke-width: 1;
+}
+.lotus__rim {
+  fill: none;
+  stroke: color-mix(in oklch, var(--color-dawn-gold) 45%, transparent);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+}
+.lotus__stalk {
+  fill: none;
+  stroke: color-mix(in oklch, var(--color-leaf-deep) 70%, var(--color-lake-deep));
+  stroke-width: 3.5;
+  stroke-linecap: round;
+}
+.lotus__petal {
+  fill: url(#lotus-petal);
+  stroke: color-mix(in oklch, var(--color-lotus-deep) 55%, transparent);
+  stroke-width: 0.8;
+}
+.lotus__petal--back {
+  opacity: 0.88;
+}
+.lotus__seed {
+  fill: var(--color-gold);
+}
+.lotus__stamen {
+  fill: var(--color-saffron);
+}
+.lotus__sway {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: lotus-sway 7s ease-in-out infinite alternate;
+}
+@keyframes lotus-sway {
+  from {
+    rotate: -1.5deg;
+  }
+  to {
+    rotate: 2deg;
+  }
+}
+
+/* ── What the still water shows ───────────────────────── */
+/* centred under the name; on wide screens, stepping right of the text panel if it is in the way */
+.lake__verse,
+.lake__hint {
+  position: absolute;
+  z-index: 6;
+  top: calc(var(--horizon, 60%) + var(--refl, 4rem) + var(--water, 40%) * 0.05);
+  left: 50%;
+}
+@media (min-width: 40rem) and (min-aspect-ratio: 1/1) {
+  .lake {
+    --verse-w: min(32rem, calc(100% - var(--plaque-x) * 2 - var(--plaque-w) - 3rem));
+  }
+  .lake__verse,
+  .lake__hint {
+    left: max(50%, calc(var(--plaque-x) + var(--plaque-w) + 1.5rem + var(--verse-w) / 2));
+  }
+}
+.lake__verse {
+  width: var(--verse-w);
+  margin: 0;
+  translate: -50% 0;
+  text-align: center;
+  pointer-events: none;
+}
+/* the deep water under the words, so they read over the reflected dawn */
+.lake__verse::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -30% -12%;
+  background: radial-gradient(closest-side, color-mix(in oklch, var(--color-lake-deep) 62%, transparent), transparent);
+  opacity: 0;
+  transition: opacity 1.6s var(--ease-out);
+}
+.lake[data-verse] .lake__verse::before {
+  opacity: 1;
+}
+.lake__verse > * {
+  margin: 0;
+  opacity: 0;
+}
+.lake__verse-deva {
+  color: var(--color-gold);
+  font: 400 var(--text-xl) / 1.2 var(--font-sanskrit);
+}
+.lake__verse-en {
+  margin-top: 0.35em;
+  color: var(--color-paper);
+  font: italic 400 var(--text-md) / 1.35 var(--font-serif);
+  text-wrap: balance;
+}
+.lake__verse-src {
+  margin-top: 0.7em;
+  color: var(--color-paper-3);
+  font: 400 var(--text-xs) / 1.3 var(--font-mono);
+  letter-spacing: var(--tracking-caps);
   text-transform: uppercase;
+}
+.lake__verse-name {
+  display: none;
+  max-width: 30rem;
+  margin: 1em auto 0;
+  color: var(--color-paper-2);
+  font: 400 var(--text-sm) / 1.45 var(--font-serif);
+  text-wrap: balance;
+}
+/* the line about the name needs room under the verse; short and narrow screens keep the verse alone */
+@media (min-width: 40rem) and (min-height: 47rem) {
+  .lake__verse-name {
+    display: block;
+  }
+}
+
+.lake__hint {
+  padding: 0.55em 1em;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: color-mix(in oklch, var(--color-lake-deep) 45%, transparent);
+  color: var(--color-paper-2);
+  font: italic 400 var(--text-sm) / 1.2 var(--font-serif);
   white-space: nowrap;
-  color: var(--color-crimson);
-  transition: color var(--dur-short) var(--ease-out);
+  translate: -50% 0;
+  cursor: pointer;
+  transition:
+    translate 1.4s var(--ease-out),
+    background-color var(--dur-short) var(--ease-out),
+    color var(--dur-short) var(--ease-out);
+}
+.lake[data-verse] .lake__hint {
+  translate: -50% calc(var(--verse-h, 8rem) + 0.75rem);
+}
+.lake__hint:active {
+  background: color-mix(in oklch, var(--color-lake-deep) 80%, transparent);
 }
 @media (hover: hover) and (pointer: fine) {
-  .ticket__cuts:hover {
-    color: var(--color-ink);
+  .lake__hint:hover {
+    color: var(--color-gold);
+    background: color-mix(in oklch, var(--color-lake-deep) 70%, transparent);
+  }
+}
+
+/* ── The text panel, as in the corner of a miniature ──── */
+.lake__plaque {
+  position: absolute;
+  z-index: 6;
+  bottom: var(--plaque-x);
+  left: var(--plaque-x);
+  width: var(--plaque-w);
+  padding: clamp(0.9rem, 1.1vw, 1.5rem) clamp(1rem, 1.35vw, 1.75rem) clamp(0.95rem, 1.1vw, 1.5rem);
+  background: var(--color-paper-2);
+  color: var(--color-ink);
+  box-shadow:
+    inset 0 0 0 1px var(--color-gold-deep),
+    inset 0 0 0 4px var(--color-paper-2),
+    inset 0 0 0 5px color-mix(in oklch, var(--color-crimson) 65%, transparent),
+    var(--shadow-paper);
+}
+.lake__plaque > * {
+  margin: 0;
+}
+.lake__role {
+  color: var(--color-crimson-deep);
+  font: 400 var(--text-xs) / 1.2 var(--font-mono);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+.lake__tagline {
+  margin-top: 0.45em;
+  font: 400 var(--text-md) / 1.38 var(--font-serif);
+  text-wrap: pretty;
+}
+.lake__cuts {
+  margin-top: 0.8em;
+  padding: 0.2em 0;
+  border: 0;
+  background: linear-gradient(currentColor 0 0) 0 100% / 100% 1px no-repeat;
+  color: var(--color-ink);
+  font: 700 var(--text-sm) / 1.1 var(--font-condensed);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color var(--dur-short) var(--ease-out);
+}
+.lake__cuts span {
+  display: inline-block;
+  transition: translate var(--dur-short) var(--ease-out);
+}
+.lake__cuts:active {
+  color: var(--color-crimson-deep);
+}
+@media (hover: hover) and (pointer: fine) {
+  .lake__cuts:hover {
+    color: var(--color-crimson);
+  }
+  .lake__cuts:hover span {
+    translate: 0.25em 0;
   }
 }

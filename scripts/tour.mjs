@@ -24,7 +24,7 @@ page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
 await page.goto(url, { waitUntil: 'networkidle' });
 await page.evaluate(() => document.fonts.ready);
 await page.waitForFunction(() => document.querySelectorAll('.drawer').length >= 8, null, { timeout: 15000 });
-await page.waitForTimeout(2600); // hero intro
+await page.waitForTimeout(4400); // the cover's first light
 
 const drawers = await page.evaluate(() => {
   const natural = (el) => {
