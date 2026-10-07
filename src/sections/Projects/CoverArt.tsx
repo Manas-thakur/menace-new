@@ -7,7 +7,7 @@ import type { Motif } from '../../data/profile';
 const PALETTE: Record<Motif, { bg: string; fg: string }> = {
   shield: { bg: 'var(--color-crimson-deep)', fg: 'var(--color-gold)' },
   track: { bg: 'var(--color-ink)', fg: 'var(--color-paper-3)' },
-  wave: { bg: 'var(--color-indigo-night)', fg: 'var(--color-phosphor)' },
+  release: { bg: 'var(--color-teal-night)', fg: 'var(--color-gold)' },
   strata: { bg: 'var(--color-terracotta)', fg: 'var(--color-mustard)' },
   crane: { bg: 'var(--color-saffron)', fg: 'var(--color-ink)' },
   pages: { bg: 'var(--color-violet)', fg: 'var(--color-lilac)' },
@@ -87,19 +87,52 @@ function Track() {
   );
 }
 
-function Wave() {
-  const grid = [];
-  for (let x = 20; x < 320; x += 20) grid.push(`M${x} 0V160`);
-  for (let y = 20; y < 160; y += 20) grid.push(`M0 ${y}H320`);
+/** A board, its traces running out to a stack of release tags: built once, buildable again. */
+function Release() {
+  const pins = [64, 74, 84, 94];
   return (
     <>
-      <path className="art-line art-soft" strokeWidth="1" d={grid.join('')} />
+      {/* the board, with its mounting holes */}
+      <rect className="art-line art-soft" strokeWidth="2" x="18" y="18" width="176" height="124" rx="10" />
+      {[
+        [30, 30],
+        [182, 30],
+        [30, 130],
+        [182, 130],
+      ].map(([x, y]) => (
+        <circle key={`${x}-${y}`} className="art-line art-half" strokeWidth="2" cx={x} cy={y} r="5" />
+      ))}
       <g className="art-main">
-      <path className="art-line art-half" strokeWidth="2.5" strokeLinejoin="round" d="M12 44H32V24H52V44H72V24H92V44H112V24H132V44H152V24H172V44H192" />
-      <path className="art-line" strokeWidth="5" strokeLinejoin="round" strokeLinecap="round" d="M12 116H44V72H92V116H116V72H180V116H204" />
-      <path className="art-line" strokeWidth="4" strokeLinecap="round" d="M204 62H236M204 126H236M292 94H312" />
-      <path className="art-bg-fill art-line" strokeWidth="5" strokeLinejoin="round" d="M236 50H258A44 44 0 0 1 258 138H236Z" />
-      <circle cx="312" cy="94" r="5" className="art-fg" />
+        {/* the chip and its legs */}
+        <rect className="art-bg-fill art-line" strokeWidth="3.5" x="70" y="54" width="54" height="52" rx="4" />
+        <path className="art-line" strokeWidth="3" strokeLinecap="round" d={pins.map((y) => `M58 ${y}H70M124 ${y}H136`).join('')} />
+        <circle className="art-fg" cx="80" cy="64" r="3" />
+        {/* traces: out of the chip, down the board, across to the tags */}
+        <path
+          className="art-line"
+          strokeWidth="2.5"
+          strokeLinejoin="round"
+          strokeLinecap="round"
+          d="M58 64H44V40H98M58 84H36V116H70M136 64H160L172 52H206M136 84H178L190 96H206M136 94H160L170 104V122H206"
+        />
+        {[
+          [98, 40],
+          [70, 116],
+        ].map(([x, y]) => (
+          <circle key={`v${x}`} className="art-bg-fill art-line" strokeWidth="2.5" cx={x} cy={y} r="4.5" />
+        ))}
+        {/* a header of pads along the bottom edge */}
+        <path className="art-line art-half" strokeWidth="2" d="M88 130h8v-8h-8zM102 130h8v-8h-8zM116 130h8v-8h-8zM130 130h8v-8h-8z" />
+      </g>
+      {/* the releases, oldest at the back */}
+      <g className="art-main">
+        {[0, 1, 2].map((i) => (
+          <g key={i} transform={`translate(${206 + i * 12} ${34 + i * 22}) rotate(${-6 + i * 4})`}>
+            <path className="art-bg-fill art-line" strokeWidth="3" strokeLinejoin="round" d="M0 8L8 0H82V58H8L0 50Z" />
+            <circle className="art-line" strokeWidth="2.5" cx="10" cy="29" r="4" />
+            <path className={`art-line ${i < 2 ? 'art-half' : ''}`} strokeWidth="3" strokeLinecap="round" d="M24 20H70M24 31H58M24 42H64" />
+          </g>
+        ))}
       </g>
     </>
   );
@@ -191,7 +224,7 @@ function Flame() {
 const MOTIFS: Record<Motif, () => ReactNode> = {
   shield: Shield,
   track: Track,
-  wave: Wave,
+  release: Release,
   strata: Strata,
   crane: Crane,
   pages: Pages,

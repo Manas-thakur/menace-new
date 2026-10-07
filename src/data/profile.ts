@@ -170,7 +170,7 @@ export const stages: Stage[] = [
 ];
 
 /* ── Projects: the stations ─────────────────────────────── */
-export type Motif = 'shield' | 'track' | 'wave' | 'strata' | 'crane' | 'pages' | 'flame';
+export type Motif = 'shield' | 'track' | 'release' | 'strata' | 'crane' | 'pages' | 'flame';
 
 export type Station = {
   id: string;
@@ -221,19 +221,19 @@ export const stations: Station[] = [
     motif: 'track',
   },
   {
-    id: 'gateflow',
+    id: 'paradize',
     freq: 94.5,
-    name: 'GateFlow',
-    kicker: 'A Claude Code plugin for SystemVerilog.',
+    name: 'Paradize',
+    kicker: 'A home for people who build hardware.',
     year: '2026',
-    stack: ['TypeScript', 'SystemVerilog', 'Claude Code'],
+    stack: ['Platform', 'Marketplace', 'Research'],
     points: [
-      'Lint, generate, simulate and debug HDL in plain language, from inside Claude Code.',
-      'Fixes lint errors, writes testbenches and reads simulation waveforms.',
-      'Built on one belief: loving hardware shouldn’t be gatekept.',
+      'Write a hardware project down once — design, build instructions, parts list and firmware — and publish it as releases.',
+      'A release pins one board revision and its firmware, so someone else can build that exact version a year later, or fork it.',
+      'Builds check your parts bin, and only the lines you are short of become a kit. Still in development; the waitlist is open.',
     ],
-    links: [{ label: 'GitHub', href: 'https://github.com/Manas-thakur/Gateflow-Plugin' }],
-    motif: 'wave',
+    links: [{ label: 'paradize.space', href: 'https://www.paradize.space' }],
+    motif: 'release',
   },
   {
     id: 'lithology',
