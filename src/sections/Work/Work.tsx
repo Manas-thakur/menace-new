@@ -52,17 +52,17 @@ export function Work({ index }: SectionProps) {
           .to(cue, { y: 0, opacity: 1, duration: 0.6 }, 0.7);
       });
 
-      // Tour rows deal in when the list itself comes into view.
+      // The passes drop onto the rail, one by one, when the rail comes into view.
       const list = listRef.current;
       if (list) {
-        const rows = list.querySelectorAll('.tour-row');
-        gsap.set(rows, { y: 26, opacity: 0 });
+        const passes = list.querySelectorAll('.pass-hang');
+        gsap.set(passes, { y: -90, opacity: 0 });
         ScrollTrigger.create({
           start: () => naturalTop(list) - window.innerHeight * 0.85,
           end: 'max',
           once: true,
           invalidateOnRefresh: true,
-          onEnter: () => gsap.to(rows, { y: 0, opacity: 1, duration: 0.7, stagger: 0.06, ease: 'riot' }),
+          onEnter: () => gsap.to(passes, { y: 0, opacity: 1, duration: 1.1, stagger: 0.08, ease: 'elastic.out(1, 0.55)' }),
         });
       }
 

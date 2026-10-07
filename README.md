@@ -35,7 +35,7 @@ All facts live in **`src/data/profile.ts`** — roles, projects, press clippings
 | — | Nav | Black slab; the record dial in the hero is a second, playful nav | Active section tracks scroll; circular-reveal menu on phones |
 | 1 | About | Laptop-lid sticker wall + "Think. Use tools. Finish the job." | Stickers slap on; draggable |
 | 2 | Press — *The Kulhad Times* | Newspaper clippings of wins and milestones | Clippings pop in, tape sticks; chai pours into a kulhad |
-| 3 | Work — *On Tour* | Gig-poster wall + band-tee tour dates | Poster columns drift; rows expand |
+| 3 | Work — *On Tour* | Gig-poster wall, then the tour dates as backstage passes: one laminated pass per stage on its own lanyard, colour-coded, with the full story on the back | Poster columns drift; passes drop onto the rail, sway, and turn over when chosen (click, arrow keys, or swipe the rail on phones) |
 | 4 | Projects — *Tune in* | A vintage radio; each project is a station | Drag the tuning knob (or use arrows) to lock a station |
 | 5 | Numbers — *Departures* | Indian-railway split-flap board + live IST station clock | Flaps cascade into real figures |
 | 6 | Community | Commemorative postage stamp + the stack + a Delhi auto-rickshaw | The postmark thunks onto the stamp |

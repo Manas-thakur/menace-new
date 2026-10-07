@@ -1,8 +1,5 @@
-/* ── Tour dates ───────────────────────────────────────── */
+/* ── Tour dates: the passes collected along the way ───── */
 .tour {
-  --tour-rule: color-mix(in oklch, var(--color-cream) 24%, transparent);
-  --tour-hover: color-mix(in oklch, var(--color-violet) 34%, transparent);
-  --tour-cols: minmax(11ch, 1.05fr) minmax(0, 2.3fr) minmax(0, 1.3fr) minmax(0, 1.35fr) 2.5ch;
   position: relative;
   padding: var(--space-xl) var(--gutter) var(--space-2xl);
   scroll-margin-top: var(--nav-h);
@@ -48,272 +45,405 @@
   gap: 0.45em;
 }
 
-/* ── A row ────────────────────────────────────────────── */
-.tour-row {
-  border-block-end: 2px dashed var(--tour-rule);
-}
-
-.tour-row__btn {
-  width: 100%;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-areas:
-    'when arrow'
-    'venue arrow'
-    'meta arrow';
-  align-items: center;
-  gap: 0.3em var(--space-sm);
-  padding: var(--space-sm) var(--space-xs);
-  text-align: start;
-  color: var(--color-cream);
-  transition:
-    color var(--dur-short) var(--ease-out),
-    background-color var(--dur-short) var(--ease-out);
-}
-.tour-row__btn:focus-visible {
-  color: var(--color-gold);
-  background-color: var(--tour-hover);
-}
-@media (hover: hover) and (pointer: fine) {
-  .tour-row__btn:hover {
-    color: var(--color-gold);
-    background-color: var(--tour-hover);
-  }
-  .tour-row__btn:hover .tour-row__arrow {
-    translate: 0.3em 0;
-  }
-}
-.tour-row__btn:active {
-  background-color: color-mix(in oklch, var(--color-violet) 48%, transparent);
-}
-
-.tour-row__when {
-  grid-area: when;
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-  color: color-mix(in oklch, currentColor 78%, transparent);
-}
-
-.tour-row__venue {
-  grid-area: venue;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.15em 0.6em;
-  min-width: 0;
-}
-.tour-row__org {
-  font-family: var(--font-condensed);
-  font-weight: 900;
-  font-size: var(--text-xl);
-  line-height: 0.95;
-  text-transform: uppercase;
-  letter-spacing: 0.005em;
-}
-.tour-row__note {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  letter-spacing: 0.05em;
-  color: var(--color-lilac);
-}
-
-.tour-row__live {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55em;
-  align-self: center;
-  padding: 0.3em 0.75em 0.26em 0.6em;
-  border-radius: var(--radius-pill);
-  background: color-mix(in oklch, var(--color-signal) 18%, transparent);
-  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--color-signal) 60%, transparent);
-  color: var(--color-paper);
-  font-family: var(--font-condensed);
-  font-weight: 800;
-  font-size: var(--text-xs);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-.tour-row__dot {
+/* ── The rail, and the passes hanging from it ─────────── */
+.passes {
+  --pass-w: clamp(9.6rem, 12.4vw, 15.5rem);
   position: relative;
-  width: 0.62em;
-  height: 0.62em;
-  border-radius: 50%;
-  background: var(--color-signal);
+  margin-top: var(--space-md);
 }
-.tour-row__dot::after {
+.passes__rail {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 0.7rem;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(180deg, var(--color-paper-3), var(--color-khaki) 55%, var(--color-ink-soft));
+  box-shadow: 0 6px 12px -6px color-mix(in oklch, var(--color-shadow) 80%, transparent);
+}
+.passes__list {
+  display: flex;
+  gap: clamp(0.5rem, 1vw, 1.25rem);
+  margin: 0;
+  padding: 0.35rem 0 var(--space-lg);
+  list-style: none;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.passes__list::-webkit-scrollbar {
+  display: none;
+}
+
+/* one pass on its lanyard: everything that swings together */
+.pass-hang {
+  flex: 0 0 auto;
+  width: var(--pass-w);
+  scroll-snap-align: center;
+}
+.pass-hang__swing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform-origin: 50% 0;
+  animation: pass-sway var(--sway, 5s) var(--ease-in-out) var(--sway-delay, 0s) infinite alternate;
+}
+@keyframes pass-sway {
+  from {
+    rotate: -1.3deg;
+  }
+  to {
+    rotate: 1.3deg;
+  }
+}
+.pass-hang__strap {
+  display: grid;
+  place-items: start center;
+  width: 1.15rem;
+  height: var(--drop, 4rem);
+  overflow: clip;
+  background: var(--strap);
+  box-shadow:
+    inset 2px 0 0 color-mix(in oklch, var(--color-sheen) 18%, transparent),
+    inset -2px 0 0 color-mix(in oklch, var(--color-shadow) 25%, transparent);
+}
+.pass-hang__strap span {
+  padding-block: 0.3rem;
+  writing-mode: vertical-rl;
+  color: var(--strap-ink);
+  font: 400 0.52rem / 1 var(--font-mono);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+/* the swivel clip that holds the pass by its slot */
+.pass-hang__clip {
+  width: 0.75rem;
+  height: 1.15rem;
+  margin-top: -0.1rem;
+  border: 2px solid var(--color-paper-3);
+  border-radius: 0.4rem 0.4rem 0.25rem 0.25rem;
+  background: linear-gradient(90deg, var(--color-khaki), var(--color-paper-3), var(--color-khaki));
+}
+
+/* ── A pass ───────────────────────────────────────────── */
+.pass {
+  position: relative;
+  display: grid;
+  gap: 0.45rem;
+  width: 100%;
+  margin-top: -0.35rem;
+  padding: 1.15rem 0.7rem 0.8rem;
+  border: 0;
+  border-radius: 0.7rem;
+  background: var(--pass-bg);
+  color: var(--pass-ink);
+  text-align: start;
+  cursor: pointer;
+  /* laminate: an edge, and a soft drop */
+  box-shadow:
+    inset 0 0 0 1px color-mix(in oklch, var(--color-sheen) 22%, transparent),
+    0 18px 26px -14px color-mix(in oklch, var(--color-shadow) 85%, transparent);
+  transition:
+    translate var(--dur-long) var(--ease-out),
+    box-shadow var(--dur-long) var(--ease-out),
+    filter var(--dur-short) var(--ease-out);
+}
+/* the laminate's sheen */
+.pass::after {
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: 50%;
-  background: var(--color-signal);
-  animation: tour-ping 1.8s var(--ease-out) infinite;
+  border-radius: inherit;
+  background: linear-gradient(118deg, transparent 30%, color-mix(in oklch, var(--color-sheen) 20%, transparent) 42%, transparent 52%);
+  pointer-events: none;
 }
-@keyframes tour-ping {
-  from {
-    transform: scale(1);
-    opacity: 0.7;
+.pass:focus-visible {
+  border-radius: 0.7rem;
+}
+.pass-hang:not(.is-on) .pass {
+  filter: saturate(0.78) brightness(0.86);
+}
+.pass-hang.is-on .pass {
+  translate: 0 -0.55rem;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in oklch, var(--color-sheen) 30%, transparent),
+    0 0 0 3px var(--color-gold),
+    0 26px 34px -14px color-mix(in oklch, var(--color-shadow) 90%, transparent);
+}
+@media (hover: hover) and (pointer: fine) {
+  .pass-hang:not(.is-on) .pass:hover {
+    filter: none;
+    translate: 0 -0.25rem;
   }
-  to {
-    transform: scale(2.8);
-    opacity: 0;
-  }
+}
+.pass:active {
+  translate: 0 1px;
 }
 
-.tour-row__meta {
-  grid-area: meta;
+.pass__slot {
+  position: absolute;
+  top: 0.45rem;
+  left: 50%;
+  width: 1.6rem;
+  height: 0.38rem;
+  translate: -50% 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-indigo-night);
+  box-shadow: inset 0 1px 2px color-mix(in oklch, var(--color-shadow) 70%, transparent);
+}
+.pass__band {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 0.25em 0.9em;
-  min-width: 0;
-}
-.tour-row__role {
-  font-family: var(--font-condensed);
-  font-weight: 700;
-  font-size: var(--text-lg);
-  line-height: 1.05;
-  letter-spacing: var(--tracking-caps);
-  text-transform: uppercase;
-}
-.tour-row__where {
-  display: inline-flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.6em;
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: color-mix(in oklch, currentColor 82%, transparent);
-}
-
-.tour-row__arrow {
-  grid-area: arrow;
-  justify-self: end;
-  font-family: var(--font-condensed);
-  font-weight: 800;
-  font-size: var(--text-xl);
-  line-height: 1;
-  transition:
-    translate var(--dur-short) var(--ease-out),
-    rotate var(--dur-short) var(--ease-out);
-}
-.tour-row__btn[aria-expanded='true'] .tour-row__arrow {
-  rotate: 90deg;
-  color: var(--color-gold);
-}
-
-/* ── Disclosure panel ─────────────────────────────────── */
-.tour-row__panel {
-  display: grid;
-  grid-template-rows: 0fr;
-  visibility: hidden;
-  transition:
-    grid-template-rows var(--dur-long) var(--ease-in-out),
-    visibility 0s linear var(--dur-long);
-}
-.tour-row.is-open .tour-row__panel {
-  grid-template-rows: 1fr;
-  visibility: visible;
-  transition:
-    grid-template-rows var(--dur-long) var(--ease-in-out),
-    visibility 0s;
-}
-.tour-row__clip {
-  min-height: 0;
-  overflow: hidden;
-}
-
-.tour-row__body {
-  display: grid;
-  gap: var(--space-sm);
-  padding: var(--space-2xs) var(--space-xs) var(--space-md);
-}
-
-.tour-row__mode {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
+  justify-content: space-between;
+  gap: 0.4rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1.5px dashed color-mix(in oklch, var(--pass-ink) 45%, transparent);
+  font: 700 0.68rem / 1 var(--font-condensed);
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
-  color: var(--color-lilac);
 }
-
-.tour-row__points {
-  display: grid;
-  gap: 0.55em;
-  max-width: 62ch;
-  font-family: var(--font-serif);
-  font-size: var(--text-md);
-  line-height: var(--leading-body);
+.pass__live {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  padding: 0.2em 0.45em;
+  border-radius: var(--radius-pill);
+  background: var(--color-night);
   color: var(--color-cream);
 }
-.tour-row__points li {
-  position: relative;
-  padding-inline-start: 1.25em;
+.pass__dot {
+  width: 0.5em;
+  height: 0.5em;
+  border-radius: 50%;
+  background: var(--color-signal);
+  animation: pass-live 1.6s var(--ease-in-out) infinite;
 }
-.tour-row__points li::before {
-  content: '';
+@keyframes pass-live {
+  50% {
+    opacity: 0.35;
+  }
+}
+.pass__org {
+  min-height: 2.2em;
+  padding-right: 1.4rem;
+  font: 800 clamp(1.05rem, 1.35vw, 1.65rem) / 0.92 var(--font-condensed);
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+/* the printed white window with the details */
+.pass__card {
+  display: grid;
+  gap: 0.28rem;
+  padding: 0.55rem 0.55rem 0.5rem;
+  border-radius: 0.4rem;
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+.pass__role {
+  font: 700 0.78rem / 1.1 var(--font-condensed);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.pass__when,
+.pass__where {
+  color: var(--color-ink-soft);
+  font: 400 0.64rem / 1.2 var(--font-mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+.pass__where .zone {
+  font-size: 0.92em;
+}
+.pass .zone--IST,
+.pass-back .zone--IST {
+  --zone: var(--color-terracotta-deep);
+}
+.pass .zone--KST,
+.pass-back .zone--KST {
+  --zone: var(--color-royal);
+}
+.pass .zone--PT,
+.pass-back .zone--PT {
+  --zone: var(--color-crimson-deep);
+}
+.pass__barcode {
+  height: 1.05rem;
+  margin-top: 0.15rem;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--color-ink) 0 1px,
+    transparent 1px 3px,
+    var(--color-ink) 3px 5px,
+    transparent 5px 6px,
+    var(--color-ink) 6px 7px,
+    transparent 7px 10px
+  );
+  -webkit-mask: linear-gradient(90deg, #000 0 88%, transparent 88%);
+  mask: linear-gradient(90deg, #000 0 88%, transparent 88%);
+  opacity: 0.85;
+}
+/* the holographic sticker */
+.pass__holo {
   position: absolute;
-  left: 0.15em;
-  top: 0.62em;
-  width: 0.42em;
-  height: 0.42em;
-  background: var(--color-gold);
-  rotate: 45deg;
+  top: 2.15rem;
+  right: -0.45rem;
+  display: grid;
+  place-items: center;
+  width: 2.35rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 30%, color-mix(in oklch, var(--color-sheen) 75%, transparent), transparent 45%),
+    conic-gradient(from 20deg, var(--color-lilac), var(--color-sky), var(--color-phosphor), var(--color-gold), var(--color-lotus), var(--color-lilac));
+  color: var(--color-ink);
+  font: 700 0.6rem / 1 var(--font-mono);
+  letter-spacing: 0.04em;
+  rotate: 12deg;
+  box-shadow: 0 3px 6px -2px color-mix(in oklch, var(--color-shadow) 60%, transparent);
 }
 
-.tour-row__tags {
+/* ── Tones: each pass its own colour ───────────────────── */
+.pass--crimson {
+  --pass-bg: var(--color-crimson);
+  --pass-ink: var(--color-cream);
+  --strap: var(--color-ink);
+  --strap-ink: var(--color-gold);
+}
+.pass--royal {
+  --pass-bg: var(--color-royal);
+  --pass-ink: var(--color-cream);
+  --strap: var(--color-sky);
+  --strap-ink: var(--color-royal);
+}
+.pass--leaf {
+  --pass-bg: var(--color-leaf-deep);
+  --pass-ink: var(--color-cream);
+  --strap: var(--color-gold);
+  --strap-ink: var(--color-leaf-deep);
+}
+.pass--gold {
+  --pass-bg: var(--color-gold);
+  --pass-ink: var(--color-ink);
+  --strap: var(--color-crimson);
+  --strap-ink: var(--color-cream);
+}
+.pass--violet {
+  --pass-bg: var(--color-violet);
+  --pass-ink: var(--color-cream);
+  --strap: var(--color-lilac);
+  --strap-ink: var(--color-violet);
+}
+.pass--terracotta {
+  --pass-bg: var(--color-terracotta-deep);
+  --pass-ink: var(--color-cream);
+  --strap: var(--color-saffron);
+  --strap-ink: var(--color-terracotta-deep);
+}
+.pass--peacock {
+  --pass-bg: var(--color-teal-night);
+  --pass-ink: var(--color-cream);
+  --strap: var(--color-peacock);
+  --strap-ink: var(--color-cream);
+}
+
+/* ── The back of the pass: the whole story ─────────────── */
+.pass-back {
+  display: grid;
+  gap: var(--space-md) var(--space-xl);
+  max-width: 68rem;
+  margin-inline: auto;
+  padding: var(--space-md) var(--space-md) var(--space-md) calc(var(--space-md) + 0.55rem);
+  border-radius: var(--radius-md);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  box-shadow:
+    inset 0.55rem 0 0 var(--pass-bg),
+    0 24px 40px -22px color-mix(in oklch, var(--color-shadow) 90%, transparent);
+}
+.pass-back > * > * {
+  margin: 0;
+}
+.pass-back__kicker {
+  color: var(--color-crimson-deep);
+  font: 400 var(--text-xs) / 1.2 var(--font-mono);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+.pass-back__org {
+  margin-top: 0.3rem;
+  font: 900 var(--text-xxl) / 0.9 var(--font-condensed);
+  text-transform: uppercase;
+}
+.pass-back__org small {
+  display: block;
+  margin-top: 0.35rem;
+  color: var(--color-ink-soft);
+  font: 400 var(--text-xs) / 1.2 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: none;
+}
+.pass-back__role {
+  margin-top: 0.55rem;
+  font: 700 var(--text-lg) / 1.1 var(--font-condensed);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.pass-back__where {
+  margin-top: 0.5rem;
+  color: var(--color-ink-soft);
+  font: 400 var(--text-xs) / 1.5 var(--font-mono);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.pass-back__points {
+  display: grid;
+  gap: 0.6em;
+  padding: 0;
+  list-style: none;
+  font: 400 var(--text-md) / 1.45 var(--font-serif);
+}
+.pass-back__points li {
+  position: relative;
+  padding-left: 1.2em;
+}
+.pass-back__points li::before {
+  content: '◆';
+  position: absolute;
+  top: 0.2em;
+  left: 0;
+  color: var(--color-crimson);
+  font-size: 0.62em;
+}
+.pass-back__tags {
   display: flex;
   flex-wrap: wrap;
-  align-content: flex-start;
-  gap: 0.45em;
+  gap: 0.4rem;
+  margin-top: var(--space-sm);
+  padding: 0;
+  list-style: none;
 }
-.tour-row__tags li {
-  padding: 0.3em 0.75em 0.26em;
+.pass-back__tags li {
+  padding: 0.3em 0.7em;
+  border: 1px solid var(--color-ink-soft);
   border-radius: var(--radius-pill);
-  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--color-lilac) 55%, transparent);
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
+  font: 400 var(--text-xs) / 1 var(--font-mono);
   letter-spacing: 0.04em;
-  color: var(--color-lilac);
-  white-space: nowrap;
 }
 
-/* ── Wide: tee-back columns ───────────────────────────── */
-@media (min-width: 64rem) {
-  .tour-row__btn {
-    grid-template-columns: var(--tour-cols);
-    grid-template-areas: 'when venue role where arrow';
-    column-gap: var(--space-md);
-    padding-block: clamp(0.9rem, 1.35vw, 2rem);
-  }
-  .tour-row__meta {
-    display: contents;
-  }
-  .tour-row__role {
-    grid-area: role;
-  }
-  .tour-row__where {
-    grid-area: where;
-  }
-  .tour-row__body {
-    grid-template-columns: var(--tour-cols);
-    column-gap: var(--space-md);
+@media (min-width: 48rem) {
+  .pass-back {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr);
     align-items: start;
   }
-  .tour-row__mode {
-    grid-column: 1;
-    padding-top: 0.35em;
-  }
-  .tour-row__points {
-    grid-column: 2 / span 2;
-  }
-  .tour-row__tags {
-    grid-column: 4 / span 2;
+}
+/* wide screens: the whole rail fits, nothing to swipe */
+@media (min-width: 80rem) {
+  .passes__list {
+    justify-content: center;
+    overflow: visible;
   }
 }
