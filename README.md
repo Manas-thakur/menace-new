@@ -51,6 +51,8 @@ The arch is a window, and what it shows is the sky over Delhi at this moment. `s
 - **Dusk:** the house sunset.
 - **Night:** stars, tonight's moon drawn in its real phase, the tomb's arches and the metro's windows lit, and a *tukkal* (the paper lantern flown on kite strings on Uttarayan nights) glowing on every kite's string.
 
+Three gauraiya live on the cover: house sparrows, Delhi's state bird and one the city is slowly losing. They perch on what is already there (the name, the stamp, the ticket's edge, the record), blink, peck, hop and look round; come slowly and they turn to look at you, rush them and they fly to another perch. Tap one and it chirps in a bubble: चीं-चीं, 짹짹, chirp. They sing most at dawn, and when the window shows Delhi's night they sleep where they sit (`src/sections/Hero/Sparrows.tsx`).
+
 The ticket's clock carries the same sky (☀ ◐ ☾), the contact page says what hour it is where he is, and screen readers are told what is in the window. `?sky=dawn|day|dusk|night` shows a given hour.
 
 ## Deep cuts

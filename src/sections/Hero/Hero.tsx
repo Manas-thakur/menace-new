@@ -13,6 +13,7 @@ import { Cloud, Kites, Moon } from './Sky';
 import { describeSky, useDelhiSky } from '../../lib/delhiSky';
 import { Dial } from './Dial';
 import { Ticket } from './Ticket';
+import { Sparrows } from './Sparrows';
 import './Hero.css';
 import './Dial.css';
 
@@ -177,6 +178,7 @@ export function Hero({ index }: SectionProps) {
 
         <p className="visually-hidden">Through the arch, the sky over Delhi right now: {describeSky(sky, moon)}.</p>
         <div ref={wrapRef} className="hero__arch-wrap" data-sky={sky}>
+          <i className="perch perch--finial" data-perch="finial" aria-hidden="true" />
           <div className="hero__arch">
             <div className="hero__sky" />
             <div className="hero__stars" />
@@ -205,6 +207,7 @@ export function Hero({ index }: SectionProps) {
             </span>
             <span className="hero__last" aria-hidden="true">
               {profile.last}
+              <i className="perch perch--name" data-perch="name" />
             </span>
           </h1>
           <button type="button" className="hero__name-btn" aria-expanded={name.open} aria-controls="hero-name-tag" onClick={name.toggle}>
@@ -233,6 +236,7 @@ export function Hero({ index }: SectionProps) {
           <p className="hero__stamp">
             <span className="hero__stamp-small">The portfolio · Vol. 26</span>
             <strong className="hero__stamp-big">{profile.role}</strong>
+            <i className="perch perch--stamp" data-perch="stamp" aria-hidden="true" />
           </p>
         </div>
 
@@ -244,6 +248,7 @@ export function Hero({ index }: SectionProps) {
             ↓
           </span>
         </button>
+        <Sparrows sky={sky} ready={introDone} />
       </div>
     </Drawer>
   );

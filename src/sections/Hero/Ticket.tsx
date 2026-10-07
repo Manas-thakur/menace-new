@@ -118,6 +118,8 @@ export function Ticket() {
   return (
     <aside ref={wrapRef} className="hero__ticket" aria-label="Ticket — admit one">
       <div ref={paperRef} className="ticket">
+        <i className="perch perch--ticket-a" data-perch="ticket-a" aria-hidden="true" />
+        <i className="perch perch--ticket-b" data-perch="ticket-b" aria-hidden="true" />
         <div ref={stubRef} className="ticket__stub" aria-hidden="true">
           <div className="ticket__stub-print">
             <span className="ticket__alt">

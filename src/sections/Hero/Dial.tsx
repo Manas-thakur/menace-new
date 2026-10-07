@@ -73,6 +73,7 @@ export function Dial() {
           <RingFace ring={ring} />
         </a>
       ))}
+      <i className="perch perch--record" data-perch="record" aria-hidden="true" />
       <span className="dial__spindle" aria-hidden="true">
         <i />
       </span>

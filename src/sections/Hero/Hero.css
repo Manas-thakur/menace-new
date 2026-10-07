@@ -693,3 +693,24 @@
 }
 
 /* ── Side A's hint: nine deep cuts inside ──────────────────────────── */
+
+/* ── Perches for the sparrows (Sparrows.tsx) ── */
+.perch--finial {
+  top: 0;
+  left: 50%;
+}
+.perch--stamp {
+  top: -5px;
+  left: 66%;
+}
+.hero__last {
+  position: relative;
+}
+.perch--name {
+  top: 0.12em;
+  left: 0.3em;
+}
+.perch--record {
+  top: 0;
+  left: 50%;
+}

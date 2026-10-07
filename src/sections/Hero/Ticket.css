@@ -37,11 +37,6 @@
   mask-repeat: no-repeat;
   transition: translate var(--dur-long) var(--ease-out);
 }
-@media (hover: hover) and (pointer: fine) {
-  .hero__ticket:hover .ticket {
-    translate: 0 -4px;
-  }
-}
 
 /* ── The stub ─────────────────────────────────────────── */
 .ticket__stub {
@@ -270,4 +265,14 @@
   .ticket__cuts:hover span {
     translate: 0.25em 0;
   }
+}
+
+/* where the sparrows stand on the ticket's top edge */
+.perch--ticket-a {
+  top: 0;
+  left: 44%;
+}
+.perch--ticket-b {
+  top: 0;
+  left: 77%;
 }
