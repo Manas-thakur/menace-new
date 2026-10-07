@@ -31,7 +31,7 @@ All facts live in **`src/data/profile.ts`** — roles, projects, press clippings
 
 | # | Drawer | Idea | Signature motion |
 |---|---|---|---|
-| 0 | Hero — *Side A* | Mughal-arch window on Delhi × Daegu × Palo Alto; gothic wordmark; an Admit One ticket on the record | Arch rises, landmarks lift, record rings spin in, wordmark stamps down; metro crosses, kites sway. The window shows the sky over Delhi *right now* (below), and the ticket is punched for every deep cut found |
+| 0 | Hero — *Side A* | A red-sandstone gateway, and through its arch Humayun's Tomb across the garden, painted as a poster; gothic wordmark; an Admit One ticket on the record | Arch rises, the painting surfaces, record rings spin in, wordmark stamps down; a kite sways, black kites circle. The window shows the sky over Delhi *right now* (below), and the ticket is punched for every deep cut found |
 | — | Nav | Black slab; the record dial in the hero is a second, playful nav | Active section tracks scroll; circular-reveal menu on phones |
 | 1 | About | Laptop-lid sticker wall + "Think. Use tools. Finish the job." | Stickers slap on; draggable |
 | 2 | Press — *The Kulhad Times* | Newspaper clippings of wins and milestones | Clippings pop in, tape sticks; chai pours into a kulhad |
@@ -44,16 +44,18 @@ All facts live in **`src/data/profile.ts`** — roles, projects, press clippings
 
 ## The window onto Delhi
 
-The arch is a window, and what it shows is the sky over Delhi at this moment. `src/lib/delhiSky.ts` works out the sun's real height above the city (so dawn and dusk follow the actual sunrise and sunset for the date) and the phase of tonight's moon:
+The arch is a window, and what it shows is Humayun's Tomb across its garden under the sky over Delhi at this moment. The tomb is drawn to the building's real proportions, measured off straight-on photographs of the west front: the seventeen-cell plinth, the iwans and their marble inlay, the jali windows, the four kiosks and the double dome with its finial (`src/sections/Hero/painting/`). It is painted the way the rest of the site is printed, in the house inks: every face in one of three flat tones, shadows with hard edges, halftone low in the sky.
 
-- **Dawn:** violet into rose and saffron, the sun just clearing the skyline.
-- **Day:** a cobalt sky with a high, pale sun.
-- **Dusk:** the house sunset.
-- **Night:** stars, tonight's moon drawn in its real phase, the tomb's arches and the metro's windows lit, and a *tukkal* (the paper lantern flown on kite strings on Uttarayan nights) glowing on every kite's string.
+`src/lib/delhiSky.ts` works out where the sun really is over the city, its height and its bearing, and the phase of tonight's moon, and the painting is lit from there. The window looks west, so:
 
-Three gauraiya live on the cover: house sparrows, Delhi's state bird and one the city is slowly losing. They perch on what is already there (the name, the stamp, the ticket's edge, the record), blink, peck, hop and look round; come slowly and they turn to look at you, rush them and they fly to another perch. Tap one and it chirps in a bubble: चीं-चीं, 짹짹, chirp. They sing most at dawn, and when the window shows Delhi's night they sleep where they sit (`src/sections/Hero/Sparrows.tsx`).
+- **Dawn:** the sun rises behind you; the stone takes the first gold under a violet-to-saffron sky.
+- **Day:** cobalt overhead; the light falls on the faces it really reaches, and reaches into each arch as far as the sun's height allows.
+- **Dusk:** the house sunset: a banded poster sun goes down behind the dome, at the bearing it really sets on that day, and the tomb stands against it in maroon with a rim of light on the dome.
+- **Night:** stars, tonight's moon drawn in its real phase, the tomb floodlit gold from the lawn the way it is, and a *tukkal* (the paper lantern flown on kite strings on Uttarayan nights) glowing on the kite's string.
 
-The ticket's clock carries the same sky (☀ ◐ ☾), the contact page says what hour it is where he is, and screen readers are told what is in the window. `?sky=dawn|day|dusk|night` shows a given hour.
+Three gauraiya live on the cover: house sparrows, Delhi's state bird and one the city is slowly losing. They perch on what is already there (the name, the gateway's rosettes, the ticket's edge, the record), blink, peck, hop and look round; come slowly and they turn to look at you, rush them and they fly to another perch. Tap one and it chirps in a bubble: चीं-चीं, 짹짹, chirp. They sing most at dawn, and when the window shows Delhi's night they sleep where they sit (`src/sections/Hero/Sparrows.tsx`).
+
+The ticket's clock carries the same sky (☀ ◐ ☾), the contact page says what hour it is where he is, and screen readers are told what is in the window. `?sky=dawn|day|dusk|night` shows a given hour, and `?sun=altitude,bearing` (say `?sun=20,120`) puts the sun anywhere.
 
 ## Deep cuts
 

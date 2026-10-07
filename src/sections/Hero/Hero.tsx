@@ -8,8 +8,9 @@ import { profile } from '../../data/profile';
 import { deepCut } from '../../data/deep';
 import { discover } from '../../lib/deep';
 import { useReveal } from './useReveal';
-import { Skyline } from './Skyline';
-import { Cloud, Kites, Moon } from './Sky';
+import { Kites } from './Sky';
+import { Portal } from './Portal';
+import { Painting } from './painting/Painting';
 import { describeSky, useDelhiSky } from '../../lib/delhiSky';
 import { Dial } from './Dial';
 import { Ticket } from './Ticket';
@@ -32,7 +33,7 @@ export function Hero({ index }: SectionProps) {
   // the hidden messages wait until the intro has landed, so a reveal never fights it
   const [introDone, setIntroDone] = useState(() => !intro);
   // the arch is a window onto Delhi: its sky is the sky over the city at this moment
-  const { sky, moon } = useDelhiSky();
+  const { sky, sun, moon } = useDelhiSky();
 
   /* Deep cut 01 — "मानस". Rest on the name, tap it or use the keyboard button: the
    * gothic letters flip away, the name rises in its own script, and a paper tag
@@ -129,20 +130,18 @@ export function Hero({ index }: SectionProps) {
 
         gsap
           .timeline({ defaults: { ease: 'expoOut' }, onComplete: () => setIntroDone(true) })
+          .from('.hero__portal', { opacity: 0, duration: 0.9, ease: 'power2.out' }, 0)
           .from('.hero__arch', { scaleY: 0, transformOrigin: '50% 100%', duration: 1.15 }, 0.05)
           .from('.hero__frame', { opacity: 0, duration: 0.6 }, 0.55)
-          .from('.hero__sun', { yPercent: 45, duration: 1.7 }, 0.1)
           .from('.dial__ring', { rotate: -110, scale: 0.86, opacity: 0, duration: 1.25, stagger: 0.07 }, 0.2)
           // needle drop: the arm swings in from its rest beside the platter, then lowers
           .from('.dial__arm-swing', { rotation: -18, svgOrigin: '420 -20', duration: 1.1, ease: 'expoOut' }, 0.95)
           .from('.dial__arm', { scale: 1.03, transformOrigin: '42% 0%', duration: 0.4, ease: 'power2.out' }, 1.85)
-          .from('.skyline__far', { yPercent: 18, opacity: 0, duration: 1.4 }, 0.45)
-          .from('.skyline__mid .landmark', { yPercent: 105, duration: 1.5, stagger: 0.11 }, 0.5)
-          .from('.skyline__bridge, .skyline__front', { yPercent: 30, opacity: 0, duration: 1.2 }, 0.62)
-          .from('.hero__cloud', { xPercent: (i) => (i ? 30 : -30), opacity: 0, duration: 1.6 }, 0.7)
+          // the painting surfaces whole (moved as one layer, so its filters are drawn once)
+          .from('.painting__land', { yPercent: 7, opacity: 0, duration: 1.5 }, 0.45)
+          .from('.painting__clouds', { opacity: 0, duration: 1.8, ease: 'power1.out' }, 0.6)
           .from(split.chars, { yPercent: -80, rotate: () => gsap.utils.random(-12, 12), opacity: 0, duration: 0.95, ease: 'slap', stagger: 0.065 }, 0.78)
           .from('.hero__last', { clipPath: 'inset(0% 100% 0% 0%)', duration: 0.9 }, 1.08)
-          .from('.hero__stamp', { scale: 1.9, rotate: -24, opacity: 0, duration: 0.65, ease: 'slap' }, 1.25)
           .from('.kite', { yPercent: 25, opacity: 0, duration: 1.3, stagger: 0.14 }, 1.0)
           .from('.hero__ticket', { y: 48, rotate: 4, opacity: 0, duration: 0.95 }, 1.32)
           .from('.hero__cue', { opacity: 0, y: -10, duration: 0.6 }, 1.65);
@@ -178,18 +177,12 @@ export function Hero({ index }: SectionProps) {
 
         <p className="visually-hidden">Through the arch, the sky over Delhi right now: {describeSky(sky, moon)}.</p>
         <div ref={wrapRef} className="hero__arch-wrap" data-sky={sky}>
-          <i className="perch perch--finial" data-perch="finial" aria-hidden="true" />
+          <Portal />
           <div className="hero__arch">
-            <div className="hero__sky" />
-            <div className="hero__stars" />
-            <div className="tx tx-mandala hero__mandala" />
-            <div className="tx tx-halftone hero__halftone" />
-            <div className="hero__glow" />
-            <div className="hero__sun">{sky === 'night' && <Moon phase={moon} />}</div>
-            <Cloud className="hero__cloud hero__cloud--a loop" />
-            <Cloud className="hero__cloud hero__cloud--b loop" />
-            <Kites ready={introDone} />
-            <Skyline />
+            <Painting sky={sky} sun={sun} moon={moon}>
+              <Kites ready={introDone} />
+            </Painting>
+            <div className="tx tx-grain hero__grain" />
           </div>
           <svg className="hero__frame" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
             <path className="hero__frame-outer" d={FRAME} />
@@ -232,11 +225,6 @@ export function Hero({ index }: SectionProps) {
               <span className="hero__name-tag-line">{mind.lines[1].text}</span>
               <span className="hero__name-tag-line hero__name-tag-line--b">{mind.lines[2].text}</span>
             </span>
-          </p>
-          <p className="hero__stamp">
-            <span className="hero__stamp-small">The portfolio · Vol. 26</span>
-            <strong className="hero__stamp-big">{profile.role}</strong>
-            <i className="perch perch--stamp" data-perch="stamp" aria-hidden="true" />
           </p>
         </div>
 

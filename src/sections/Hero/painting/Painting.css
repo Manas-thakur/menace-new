@@ -1,0 +1,477 @@
+/* The painted window (Painting.tsx), printed in the house inks. The light arrives as
+ * custom properties worked out from the sun's real place over Delhi (light.ts): --lf, --ll
+ * and --lr pick the ink for the tomb's front and its two turned corners (lit, half, shade),
+ * --lu the ground's, --direct says how strong the sun is, --warm how gold. Each material
+ * has a lit ink and a shade ink; everything else is those two, mixed by that much. */
+
+.painting {
+  /* the land is a band along the bottom; the horizon sits a quarter of the way up it */
+  --land-h: min(50cqh, 70cqw);
+  --horizon: calc(var(--land-h) * 0.2629);
+
+  /* the sky over Delhi at sunset (the house look); the other skies repaint it below */
+  --sky-top: var(--color-sunset-top);
+  --sky-mid: color-mix(in oklab, var(--color-sunset-top) 50%, var(--color-orange));
+  --sky-bottom: var(--color-orange);
+  --sky-ink: var(--color-maroon-deep);
+  --glow: transparent;
+  --glow-x: 50%;
+  --stars-o: 0;
+  --halftone-o: 0.3;
+  --cloud-body: color-mix(in oklab, var(--color-orange) 45%, var(--color-dawn-rose));
+  --cloud-under: color-mix(in oklab, var(--color-maroon) 55%, var(--color-sunset-top));
+  --cloud-shine: var(--color-gold);
+  --bird: var(--color-maroon-deep);
+
+  /* each material's lit ink (gold when the light is low) and its shade ink (taking the sky's colour) */
+  --sun-stone: color-mix(in oklab, var(--color-orange) calc(var(--warm) * 0.5), var(--color-terracotta));
+  --shade-stone: color-mix(in oklab, var(--color-maroon) 84%, var(--sky-ink));
+  --deep-stone: color-mix(in oklab, var(--color-maroon-deep) 88%, var(--sky-ink));
+  --sun-marble: color-mix(in oklab, var(--color-gold) calc(var(--warm) * 0.4), var(--color-cream));
+  --shade-marble: color-mix(in oklab, var(--color-paper-3) 70%, var(--sky-ink));
+  --sun-plaster: color-mix(in oklab, var(--color-gold) calc(var(--warm) * 0.3), var(--color-paper-2));
+  --shade-plaster: color-mix(in oklab, var(--color-paper-3) 62%, var(--sky-ink));
+  --sun-buff: color-mix(in oklab, var(--color-saffron) calc(var(--warm) * 0.3), var(--color-chai-light));
+  --shade-buff: color-mix(in oklab, var(--color-chai) 80%, var(--sky-ink));
+  --sun-leaf: color-mix(in oklab, var(--color-gold) calc(var(--warm) * 0.3), var(--color-leaf));
+  --shade-leaf: color-mix(in oklab, var(--color-leaf-deep) 85%, var(--sky-ink));
+  --far: color-mix(in oklab, var(--color-leaf-deep) 45%, var(--sky-bottom));
+
+  position: absolute;
+  inset: 0;
+}
+.painting[data-sky='day'] {
+  --sky-top: var(--color-royal);
+  --sky-mid: var(--color-royal-2);
+  --sky-bottom: var(--color-sky);
+  --sky-ink: var(--color-royal);
+  --glow: color-mix(in oklab, var(--color-paper) 30%, transparent);
+  --halftone-o: 0.22;
+  --cloud-body: var(--color-paper-2);
+  --cloud-under: color-mix(in oklab, var(--color-paper-3) 62%, var(--color-sky));
+  --cloud-shine: var(--color-paper);
+  --bird: var(--color-royal);
+}
+/* the sun rising behind you: the stone takes the first gold, the sky ahead still dusky */
+.painting[data-sky='dawn'] {
+  --sky-top: var(--color-indigo);
+  --sky-mid: var(--color-dawn-rose);
+  --sky-bottom: var(--color-saffron);
+  --sky-ink: var(--color-indigo);
+  --glow: color-mix(in oklab, var(--color-dawn-gold) 40%, transparent);
+  --cloud-body: color-mix(in oklab, var(--color-paper) 58%, var(--color-dawn-rose));
+  --cloud-under: color-mix(in oklab, var(--color-dawn-rose) 70%, var(--color-indigo));
+  --cloud-shine: var(--color-paper);
+  --bird: var(--color-indigo);
+}
+/* night: the tomb floodlit gold from the lawn under the city's glow */
+.painting[data-sky='night'] {
+  --sky-top: var(--color-indigo-night);
+  --sky-mid: var(--color-indigo);
+  --sky-bottom: var(--color-violet);
+  --sky-ink: var(--color-indigo-night);
+  --glow: color-mix(in oklab, var(--color-saffron) 18%, transparent);
+  --stars-o: 1;
+  --halftone-o: 0.4;
+  --cloud-body: color-mix(in oklab, var(--color-indigo) 55%, var(--color-lilac));
+  --cloud-under: var(--color-indigo);
+  --cloud-shine: color-mix(in oklab, var(--color-lilac) 60%, var(--color-paper));
+  --sun-stone: color-mix(in oklab, var(--color-saffron) 45%, var(--color-terracotta));
+  --sun-marble: color-mix(in oklab, var(--color-gold) 30%, var(--color-cream));
+  --sun-plaster: color-mix(in oklab, var(--color-gold) 40%, var(--color-paper-2));
+  --shade-stone: color-mix(in oklab, var(--color-maroon-deep) 70%, var(--color-indigo-night));
+  --deep-stone: color-mix(in oklab, var(--color-maroon-deep) 45%, var(--color-indigo-night));
+  --shade-marble: color-mix(in oklab, var(--color-paper-3) 35%, var(--color-indigo));
+  --shade-plaster: color-mix(in oklab, var(--color-paper-3) 30%, var(--color-indigo));
+  --shade-buff: color-mix(in oklab, var(--color-chai) 40%, var(--color-indigo-night));
+  --sun-leaf: color-mix(in oklab, var(--color-leaf-deep) 60%, var(--color-indigo));
+  --shade-leaf: color-mix(in oklab, var(--color-leaf-deep) 45%, var(--color-indigo-night));
+  --far: color-mix(in oklab, var(--color-leaf-deep) 30%, var(--color-indigo));
+}
+
+/* ── Sky ── */
+.painting__sky {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, var(--sky-bottom) var(--horizon), var(--sky-mid) calc(var(--horizon) + 30cqh), var(--sky-top) 92%);
+}
+.painting__stars {
+  position: absolute;
+  inset: 0 0 36%;
+  background-image:
+    radial-gradient(circle, var(--color-paper) 0 1.1px, transparent 1.7px),
+    radial-gradient(circle, color-mix(in oklab, var(--color-paper) 75%, transparent) 0 0.8px, transparent 1.3px),
+    radial-gradient(circle, color-mix(in oklab, var(--color-paper-3) 80%, transparent) 0 1.4px, transparent 2px);
+  background-size: 97px 83px, 61px 53px, 167px 131px;
+  background-position: 13px 21px, 37px 9px, 71px 47px;
+  -webkit-mask-image: linear-gradient(180deg, #000 30%, transparent);
+  mask-image: linear-gradient(180deg, #000 30%, transparent);
+  opacity: var(--stars-o);
+  pointer-events: none;
+}
+.painting__glow {
+  position: absolute;
+  left: var(--glow-x);
+  bottom: var(--horizon);
+  width: 120cqw;
+  height: 56cqw;
+  translate: -50% 50%;
+  background: radial-gradient(closest-side, var(--glow), transparent);
+  pointer-events: none;
+}
+/* the poster sun, setting where it really sets: across the window by its bearing, down
+ * towards the trees by its height, banded as it goes */
+.painting__sun {
+  position: absolute;
+  left: var(--sun-x);
+  bottom: calc(var(--horizon) + 9cqh + var(--sun-alt) * 1cqw - 17cqw);
+  width: 34cqw;
+  aspect-ratio: 1;
+  translate: -50% 0;
+  border-radius: 50%;
+  background: linear-gradient(180deg, var(--color-gold), var(--color-saffron));
+  -webkit-mask: linear-gradient(180deg, #000 0 34%, transparent 34% 37%, #000 37% 44%, transparent 44% 48%, #000 48% 54%, transparent 54% 59%, #000 59% 64%, transparent 64% 70%, #000 70% 74%, transparent 74%);
+  mask: linear-gradient(180deg, #000 0 34%, transparent 34% 37%, #000 37% 44%, transparent 44% 48%, #000 48% 54%, transparent 54% 59%, #000 59% 64%, transparent 64% 70%, #000 70% 74%, transparent 74%);
+}
+.painting__moon {
+  position: absolute;
+  left: 30%;
+  bottom: calc(var(--horizon) + 30cqh);
+  width: 7cqw;
+  aspect-ratio: 1;
+  translate: -50% 50%;
+}
+/* printed dots, thick at the horizon and thinning upward (never up behind the name) */
+.painting__halftone {
+  --tx-color: var(--sky-ink);
+  --tx-opacity: var(--halftone-o);
+  --tx-size: clamp(5px, 0.6cqw, 11px);
+  --ht-angle: 0deg;
+  top: auto;
+  bottom: var(--horizon);
+  height: 24cqh;
+}
+
+/* ── Clouds, and the land, drawn to the same scale ── */
+.painting__clouds,
+.painting__land {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: calc(var(--land-h) * 1600 / 700);
+  max-width: none;
+  height: var(--land-h);
+  translate: -50% 0;
+  overflow: visible;
+  pointer-events: none;
+}
+.painting__clouds {
+  animation: clouds-drift 80s var(--ease-in-out) infinite alternate;
+}
+@keyframes clouds-drift {
+  from {
+    transform: translateX(-1.5%);
+  }
+  to {
+    transform: translateX(1.5%);
+  }
+}
+.cloud__body {
+  fill: var(--cloud-body);
+}
+.cloud__under {
+  fill: var(--cloud-under);
+}
+.cloud__shine {
+  fill: none;
+  stroke: var(--cloud-shine);
+  stroke-width: 3.6;
+  stroke-linecap: round;
+}
+
+/* ── Birds: black kites circling high over the garden ── */
+.soaring {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.soaring__orbit {
+  position: absolute;
+  width: 0;
+  height: 0;
+  scale: 1 0.42;
+}
+.soaring__orbit--0 {
+  --r: 6.5cqw;
+  left: 31%;
+  top: 60%;
+}
+.soaring__orbit--1 {
+  --r: 4cqw;
+  left: 22%;
+  top: 64%;
+}
+.soaring__spin {
+  position: absolute;
+  animation: soar 36s linear infinite;
+}
+.soaring__orbit--1 .soaring__spin {
+  animation-duration: 27s;
+  animation-direction: reverse;
+}
+@keyframes soar {
+  to {
+    rotate: 1turn;
+  }
+}
+.soaring__bird {
+  position: absolute;
+  width: 1.8cqw;
+  translate: calc(var(--r) - 50%) -50%;
+  rotate: 180deg;
+  fill: var(--bird);
+}
+.soaring__orbit--1 .soaring__bird {
+  rotate: 0deg;
+}
+
+/* ── The tomb ── */
+.tomb__stone-f {
+  fill: color-mix(in oklab, var(--sun-stone) var(--lf), var(--shade-stone));
+}
+.tomb__stone-l,
+.tomb__cyl-l {
+  fill: color-mix(in oklab, var(--sun-stone) var(--ll), var(--shade-stone));
+  stop-color: color-mix(in oklab, var(--sun-stone) var(--ll), var(--shade-stone));
+}
+.tomb__stone-r,
+.tomb__cyl-r {
+  fill: color-mix(in oklab, var(--sun-stone) var(--lr), var(--shade-stone));
+  stop-color: color-mix(in oklab, var(--sun-stone) var(--lr), var(--shade-stone));
+}
+.tomb__stone-top {
+  fill: color-mix(in oklab, var(--sun-stone) var(--lu), var(--shade-stone));
+}
+.tomb__buff {
+  fill: color-mix(in oklab, color-mix(in oklab, var(--sun-stone) 55%, var(--sun-marble)) var(--lf), color-mix(in oklab, var(--shade-stone) 60%, var(--shade-marble)));
+}
+.tomb__inlay-f,
+.tomb__diamond,
+.tomb__lotus,
+.tomb__petals {
+  fill: color-mix(in oklab, var(--sun-marble) var(--lf), var(--shade-marble));
+}
+.tomb__inlay-l {
+  fill: color-mix(in oklab, var(--sun-marble) var(--ll), var(--shade-marble));
+}
+.tomb__inlay-r {
+  fill: color-mix(in oklab, var(--sun-marble) var(--lr), var(--shade-marble));
+}
+.tomb__line-f,
+.tomb__line-l,
+.tomb__line-r,
+.tomb__fine-f,
+.tomb__fine-l,
+.tomb__fine-r,
+.tomb__lattice,
+.tomb__zigzag {
+  fill: none;
+  stroke: color-mix(in oklab, var(--sun-marble) var(--lf), var(--shade-marble));
+  stroke-width: 3.4;
+  stroke-linejoin: round;
+}
+.tomb__line-l,
+.tomb__fine-l {
+  stroke: color-mix(in oklab, var(--sun-marble) var(--ll), var(--shade-marble));
+}
+.tomb__line-r,
+.tomb__fine-r {
+  stroke: color-mix(in oklab, var(--sun-marble) var(--lr), var(--shade-marble));
+}
+.tomb__fine-f,
+.tomb__fine-l,
+.tomb__fine-r {
+  stroke-width: 2.2;
+}
+.tomb__lattice {
+  stroke-width: 2;
+}
+.tomb__zigzag {
+  stroke-width: 2.4;
+}
+.tomb__recess {
+  fill: var(--deep-stone);
+}
+.tomb__recess--turned {
+  fill: color-mix(in oklab, var(--deep-stone) 80%, var(--color-ink));
+}
+.tomb__recess-lit {
+  fill: color-mix(in oklab, var(--sun-stone) var(--lf), var(--shade-stone));
+}
+.tomb__ribs {
+  fill: none;
+  stroke: var(--shade-stone);
+  stroke-width: 2.2;
+}
+.tomb__plaster {
+  fill: var(--shade-plaster);
+}
+.tomb__plaster-lit {
+  fill: color-mix(in oklab, var(--sun-plaster) var(--lf), var(--shade-plaster));
+}
+.tomb__vault,
+.tomb__blind {
+  fill: none;
+  stroke: color-mix(in oklab, var(--shade-plaster) 60%, var(--shade-stone));
+  stroke-width: 1.8;
+}
+.tomb__dark {
+  fill: var(--color-ink-2);
+}
+.tomb__jali-bar {
+  fill: none;
+  stroke: color-mix(in oklab, var(--shade-marble) 45%, var(--color-ink-2));
+  stroke-width: 1;
+}
+.tomb__rail-gap {
+  fill: var(--deep-stone);
+}
+.tomb__crease,
+.tomb__under {
+  fill: var(--deep-stone);
+}
+.tomb__passage-top {
+  stop-color: var(--color-ink-2);
+}
+.tomb__passage-low {
+  stop-color: var(--deep-stone);
+}
+.tomb__marble-shade {
+  fill: var(--shade-marble);
+}
+.tomb__marble-lit {
+  fill: var(--sun-marble);
+}
+.tomb__tile-shade {
+  fill: color-mix(in oklab, var(--color-peacock-blue) 70%, var(--sky-ink));
+}
+.tomb__tile-lit {
+  fill: color-mix(in oklab, var(--color-peacock-blue) 75%, var(--color-sky));
+}
+.tomb__courses {
+  fill: none;
+  stroke: color-mix(in oklab, var(--shade-marble) 80%, var(--color-ink));
+  stroke-width: 1.2;
+  opacity: 0.22;
+}
+.tomb__chevron {
+  fill: none;
+  stroke: var(--color-cream);
+  stroke-width: 1.6;
+}
+.tomb__brass {
+  fill: color-mix(in oklab, var(--color-gold) var(--lf), var(--color-gold-deep));
+}
+.tomb__buff-f,
+.tomb__stair {
+  fill: color-mix(in oklab, var(--sun-buff) var(--lf), var(--shade-buff));
+}
+.tomb__buff-top {
+  fill: color-mix(in oklab, var(--sun-buff) var(--lu), var(--shade-buff));
+}
+.tomb__joints,
+.tomb__treads {
+  fill: none;
+  stroke: var(--shade-buff);
+  stroke-width: 1.6;
+}
+.tomb__falloff-top {
+  stop-color: color-mix(in oklab, var(--color-indigo-night) 60%, transparent);
+}
+.tomb__falloff-mid {
+  stop-color: color-mix(in oklab, var(--color-indigo-night) 25%, transparent);
+}
+.tomb__falloff-low {
+  stop-color: transparent;
+}
+
+/* ── The garden ── */
+.garden__far-back {
+  fill: color-mix(in oklab, var(--far) 70%, var(--sky-bottom));
+}
+.garden__far-front {
+  fill: var(--far);
+}
+.garden__grass-far {
+  fill: color-mix(in oklab, color-mix(in oklab, var(--sun-leaf) var(--lu), var(--shade-leaf)) 72%, var(--sky-bottom));
+}
+.garden__grass {
+  fill: color-mix(in oklab, var(--sun-leaf) var(--lu), var(--shade-leaf));
+}
+.garden__walk {
+  fill: color-mix(in oklab, var(--sun-buff) var(--lu), var(--shade-buff));
+}
+.garden__walk-edge {
+  fill: none;
+  stroke: color-mix(in oklab, var(--sun-marble) var(--lu), var(--shade-marble));
+  stroke-width: 2.4;
+}
+.garden__coping {
+  fill: color-mix(in oklab, var(--sun-marble) var(--lu), var(--shade-marble));
+}
+.garden__water {
+  fill: var(--sky-mid);
+}
+.garden__glint {
+  fill: var(--sky-bottom);
+}
+.garden__shadow {
+  fill: color-mix(in oklab, var(--shade-leaf) 75%, var(--sun-leaf));
+  opacity: 0.7;
+}
+.garden__shrub {
+  fill: var(--shade-leaf);
+}
+.garden__shrub-lit {
+  fill: color-mix(in oklab, var(--sun-leaf) var(--direct), var(--shade-leaf));
+}
+.garden__shrub-marks {
+  fill: none;
+  stroke: color-mix(in oklab, var(--shade-leaf) 70%, var(--color-ink));
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.garden__trunk {
+  fill: var(--color-maroon-deep);
+}
+.garden__bark {
+  fill: color-mix(in oklab, var(--color-maroon) var(--direct), var(--color-maroon-deep));
+}
+.garden__leaves {
+  fill: var(--shade-leaf);
+}
+.garden__leaves-mid {
+  fill: color-mix(in oklab, var(--sun-leaf) calc(var(--direct) * 0.45 + 15%), var(--shade-leaf));
+}
+.garden__leaves-lit {
+  fill: color-mix(in oklab, var(--sun-leaf) calc(var(--direct) * 0.8 + 10%), var(--shade-leaf));
+}
+.garden__leaf-marks {
+  fill: none;
+  stroke: color-mix(in oklab, var(--shade-leaf) 75%, var(--color-ink));
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  opacity: 0.55;
+}
+/* the far trees take on the air */
+.garden__tree--back .garden__leaves,
+.garden__tree--back .garden__leaves-mid,
+.garden__tree--back .garden__leaves-lit,
+.garden__tree--back .garden__trunk {
+  fill: var(--far);
+}
+.garden__tree--back .garden__leaf-marks,
+.garden__tree--back .garden__bark {
+  display: none;
+}

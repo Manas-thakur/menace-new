@@ -19,7 +19,7 @@ const CHIRPS = [
   { text: '짹짹', lang: 'ko' },
   { text: 'chirp!', lang: 'en' },
 ];
-const FIRST_PERCHES = ['ticket-a', 'ticket-b', 'finial', 'name', 'stamp'];
+const FIRST_PERCHES = ['ticket-a', 'ticket-b', 'rosette-l', 'name', 'rosette-r'];
 const COUNT = 3;
 
 function SparrowArt() {

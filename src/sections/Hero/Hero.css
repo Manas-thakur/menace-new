@@ -1,5 +1,5 @@
-/* Hero — "Side A". Mustard paper, a Mughal-arch window onto a fused sunset skyline,
- * the gothic wordmark breaking the frame, and the record dial on the right edge. */
+/* Hero — "Side A". Mustard paper, a sandstone gateway whose arch looks out on Humayun's
+ * Tomb (painting/), the gothic wordmark breaking the frame, and the record dial on the right edge. */
 
 .hero {
   background: var(--color-mustard);
@@ -20,25 +20,8 @@
 
 /* ── Arch window ─────────────────────────────────────── */
 /* The window looks out on Delhi as it is right now (data-sky, from the sun's real
- * height over the city): dusk is the house look; dawn, day and night repaint it. */
+ * place over the city): the painting inside (painting/) is lit by it. */
 .hero__arch-wrap {
-  --sky-top: var(--color-sunset-top);
-  --sky-mid: color-mix(in oklch, var(--color-sunset-top) 50%, var(--color-orange));
-  --sky-bottom: var(--color-orange);
-  --sky-ink: var(--color-maroon-deep);
-  --sky-ink-o: 0.3;
-  --sun-a: var(--color-gold);
-  --sun-b: var(--color-saffron);
-  --sun-bottom: 13%;
-  --sun-size: 52%;
-  --glow: transparent;
-  --stars-o: 0;
-  --cloud-o: 0.94;
-  --far: var(--color-maroon);
-  --mid: var(--color-maroon-deep);
-  --recess: var(--color-sunset-top);
-  --glass: var(--color-ink-2);
-  --trees: var(--color-leaf-deep);
   --lanterns: 0;
   position: absolute;
   z-index: 1;
@@ -48,121 +31,17 @@
   height: min(56svh, 150vw);
 }
 .hero__arch-wrap[data-sky='night'] {
-  --sky-top: var(--color-indigo-night);
-  --sky-mid: var(--color-indigo);
-  --sky-bottom: var(--color-violet);
-  --sky-ink: var(--color-indigo-night);
-  --sky-ink-o: 0.5;
-  --sun-a: transparent;
-  --sun-b: transparent;
-  --sun-bottom: 17%;
-  --sun-size: 40%;
-  --glow: color-mix(in oklch, var(--color-paper-2) 20%, transparent);
-  --stars-o: 1;
-  --cloud-o: 0.26;
-  --far: var(--color-indigo);
-  --mid: var(--color-indigo-night);
-  --recess: var(--color-gold);
-  --glass: var(--color-gold);
-  --trees: color-mix(in oklch, var(--color-leaf-deep) 45%, var(--color-indigo-night));
   --lanterns: 1;
-}
-.hero__arch-wrap[data-sky='dawn'] {
-  --sky-top: var(--color-indigo);
-  --sky-mid: var(--color-dawn-rose);
-  --sky-bottom: var(--color-saffron);
-  --sky-ink: var(--color-indigo);
-  --sky-ink-o: 0.26;
-  --sun-bottom: 3%;
-  --glow: color-mix(in oklch, var(--color-dawn-gold) 38%, transparent);
-  --stars-o: 0.35;
-  --cloud-o: 0.86;
-  --far: var(--color-violet);
-  --recess: var(--color-dawn-rose);
-}
-.hero__arch-wrap[data-sky='day'] {
-  --sky-top: var(--color-royal);
-  --sky-mid: var(--color-royal-2);
-  --sky-bottom: var(--color-sky);
-  --sky-ink: var(--color-royal);
-  --sky-ink-o: 0.34;
-  --sun-a: var(--color-paper);
-  --sun-b: var(--color-gold);
-  --sun-bottom: 20%;
-  --sun-size: 42%;
-  --glow: color-mix(in oklch, var(--color-paper) 26%, transparent);
-  --cloud-o: 1;
-  --recess: var(--color-sky);
 }
 .hero__arch {
   position: absolute;
   inset: 0;
   clip-path: url(#hero-arch);
-  background: var(--sky-top);
-}
-.hero__sky {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, var(--sky-top) 8%, var(--sky-mid) 50%, var(--sky-bottom) 82%);
-}
-/* stars, for the night (and the last of them at dawn) */
-.hero__stars {
-  position: absolute;
-  inset: 0 0 42%;
-  background-image:
-    radial-gradient(circle, var(--color-paper) 0 1.1px, transparent 1.7px),
-    radial-gradient(circle, color-mix(in oklch, var(--color-paper) 75%, transparent) 0 0.8px, transparent 1.3px),
-    radial-gradient(circle, color-mix(in oklch, var(--color-paper-3) 80%, transparent) 0 1.4px, transparent 2px);
-  background-size: 97px 83px, 61px 53px, 167px 131px;
-  background-position: 13px 21px, 37px 9px, 71px 47px;
-  -webkit-mask-image: linear-gradient(180deg, #000 35%, transparent);
-  mask-image: linear-gradient(180deg, #000 35%, transparent);
-  opacity: var(--stars-o);
-  pointer-events: none;
-}
-.hero__mandala {
-  --tx-color: var(--sky-ink);
-  --tx-opacity: var(--sky-ink-o);
-  --tx-size: clamp(300px, 30vw, 860px);
-  -webkit-mask-position: 50% 12%;
-  mask-position: 50% 12%;
-}
-.hero__halftone {
-  --tx-color: var(--sky-ink);
-  --tx-opacity: 0.6;
-  --tx-size: clamp(6px, 0.5vw, 13px);
-  --ht-angle: 180deg;
-  bottom: 40%;
-}
-.hero__glow {
-  position: absolute;
-  left: 50%;
-  bottom: calc(var(--sun-bottom) - var(--sun-size) * 0.3);
-  width: calc(var(--sun-size) * 1.6);
-  aspect-ratio: 1;
-  translate: -50% 0;
-  border-radius: 50%;
-  background: radial-gradient(closest-side, var(--glow), transparent);
-  pointer-events: none;
-}
-.hero__sun {
-  position: absolute;
-  left: 50%;
-  bottom: var(--sun-bottom);
-  width: var(--sun-size);
-  aspect-ratio: 1;
-  translate: -50% 0;
-  border-radius: 50%;
-  background: linear-gradient(180deg, var(--sun-a), var(--sun-b));
-  -webkit-mask: linear-gradient(180deg, #000 0 50%, transparent 50% 54%, #000 54% 62%, transparent 62% 67%, #000 67% 74%, transparent 74% 80%, #000 80% 86%, transparent 86%);
-  mask: linear-gradient(180deg, #000 0 50%, transparent 50% 54%, #000 54% 62%, transparent 62% 67%, #000 67% 74%, transparent 74% 80%, #000 80% 86%, transparent 86%);
+  background: var(--color-sunset-top);
+  /* the painting is drawn in the window's own units (cqw, cqh) */
+  container-type: size;
 }
 
-.cloud {
-  position: absolute;
-  fill: var(--color-paper-3);
-  opacity: var(--cloud-o, 0.94);
-}
 /* tonight's moon, inside the sun's disc */
 .moon {
   position: absolute;
@@ -175,26 +54,6 @@
 }
 .moon__lit {
   fill: var(--color-paper-2);
-}
-.hero__cloud--a {
-  left: 2%;
-  top: 55%;
-  width: 24%;
-  animation: cloud-drift 16s var(--ease-in-out) infinite alternate;
-}
-.hero__cloud--b {
-  right: 5%;
-  top: 38%;
-  width: 17%;
-  animation: cloud-drift 21s var(--ease-in-out) -7s infinite alternate-reverse;
-}
-@keyframes cloud-drift {
-  from {
-    transform: translateX(-4%);
-  }
-  to {
-    transform: translateX(5%);
-  }
 }
 
 /* Kites */
@@ -220,14 +79,6 @@
 .kite--crimson {
   --k1: var(--color-crimson);
   --k2: var(--color-gold);
-}
-.kite--teal {
-  --k1: var(--color-peacock);
-  --k2: var(--color-paper);
-}
-.kite--gold {
-  --k1: var(--color-gold);
-  --k2: var(--color-signal);
 }
 .kite__a {
   fill: var(--k1);
@@ -273,77 +124,6 @@
   vector-effect: non-scaling-stroke;
 }
 
-/* Skyline */
-.skyline {
-  position: absolute;
-  left: -7.5%;
-  bottom: 0;
-  width: 115%;
-  height: auto;
-}
-.skyline__far {
-  fill: var(--far);
-  opacity: 0.6;
-}
-.skyline__mid {
-  fill: var(--mid);
-}
-.skyline__flute {
-  fill: none;
-  stroke: var(--color-maroon);
-  stroke-width: 1.5;
-  opacity: 0.7;
-}
-.skyline__recess {
-  fill: var(--recess);
-}
-.skyline__petal {
-  fill: var(--color-maroon);
-}
-.skyline__bridge {
-  fill: var(--color-ink);
-}
-.metro {
-  animation: metro-drive 17s linear infinite;
-}
-@keyframes metro-drive {
-  from {
-    transform: translateX(-1150px);
-  }
-  to {
-    transform: translateX(1750px);
-  }
-}
-.metro__body {
-  fill: var(--color-paper-2);
-}
-.metro__roof {
-  fill: var(--color-khaki);
-}
-.metro__glass {
-  fill: var(--glass);
-}
-.metro__stripe {
-  fill: var(--color-crimson);
-}
-.metro__door {
-  fill: none;
-  stroke: var(--color-khaki);
-  stroke-width: 1.5;
-}
-.metro__bogie {
-  fill: var(--color-ink);
-}
-.metro__lamp {
-  fill: var(--color-electric);
-}
-.trees {
-  fill: var(--trees);
-}
-.trees__light {
-  fill: var(--color-leaf);
-  opacity: 0.4;
-}
 
 /* Arch frame */
 .hero__frame {
@@ -412,39 +192,6 @@
 
 /* Rubber stamp role label — inked onto the paper. Mobile: in the gap between the
  * arch and the dial. Desktop: over the arch's right shoulder. */
-.hero__stamp {
-  position: absolute;
-  z-index: 2;
-  top: calc(100% + 1.4svh);
-  left: 50%;
-  translate: -50% 0;
-  /* on narrow screens the ticket under the arch says the same thing */
-  display: none;
-  justify-items: center;
-  gap: 0.15em;
-  padding: 0.45em 0.8em 0.5em;
-  border: 3px solid currentColor;
-  outline: 1.5px solid currentColor;
-  outline-offset: 3px;
-  color: var(--color-crimson);
-  rotate: -4deg;
-  font-family: var(--font-condensed);
-  text-transform: uppercase;
-  white-space: nowrap;
-  mix-blend-mode: multiply;
-  filter: url(#hero-ink);
-}
-.hero__stamp-small {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  letter-spacing: var(--tracking-wide);
-}
-.hero__stamp-big {
-  font-weight: 900;
-  font-size: var(--text-xl);
-  line-height: 0.9;
-  letter-spacing: 0.04em;
-}
 
 /* ── Scroll cue ──────────────────────────────────────── */
 .hero__cue {
@@ -491,10 +238,6 @@
     height: auto;
     bottom: 0;
   }
-  .skyline {
-    left: 0;
-    width: 100%;
-  }
   .hero__name {
     top: 17%;
   }
@@ -504,15 +247,7 @@
   .hero__last {
     font-size: clamp(3rem, 7.4vw, 13rem);
   }
-  .hero__stamp {
-    top: 4%;
-    left: auto;
-    right: -1%;
-    translate: none;
-    rotate: 8deg;
-    display: grid;
-  }
-  .hero__cue {
+    .hero__cue {
     display: grid;
   }
 }
@@ -695,14 +430,6 @@
 /* ── Side A's hint: nine deep cuts inside ──────────────────────────── */
 
 /* ── Perches for the sparrows (Sparrows.tsx) ── */
-.perch--finial {
-  top: 0;
-  left: 50%;
-}
-.perch--stamp {
-  top: -5px;
-  left: 66%;
-}
 .hero__last {
   position: relative;
 }
@@ -713,4 +440,91 @@
 .perch--record {
   top: 0;
   left: 50%;
+}
+
+/* ── The gateway round the window (Portal.tsx) ── */
+.hero__portal {
+  --stone: color-mix(in oklch, var(--color-terracotta-deep) 80%, var(--color-maroon));
+  --marble: var(--color-paper-2);
+  --fillet: var(--color-maroon-deep);
+  position: absolute;
+  z-index: -1;
+  inset: -2svh -4vw -2.4svh;
+  pointer-events: none;
+}
+/* weathered stone: grain, and the light falling off towards the edges */
+.hero__portal::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(130% 95% at 50% 62%, transparent 45%, color-mix(in oklch, var(--color-shadow) 38%, transparent)),
+    url('/textures/grain.svg') 0 0 / 240px 240px;
+  opacity: 0.55;
+}
+.portal {
+  display: block;
+  overflow: visible;
+}
+.portal__stone {
+  fill: var(--stone);
+}
+.portal__joint {
+  fill: none;
+  stroke: var(--color-maroon-deep);
+  stroke-width: 1;
+  opacity: 0.32;
+}
+.portal__band {
+  fill: none;
+  stroke: var(--marble);
+}
+.portal__ring {
+  fill: none;
+  stroke: var(--marble);
+  stroke-width: 3;
+}
+.portal__ring--fine {
+  stroke-width: 1.2;
+  opacity: 0.75;
+}
+.portal__petals {
+  fill: var(--marble);
+  stroke: var(--fillet);
+  stroke-width: 0.8;
+  stroke-linejoin: round;
+}
+.portal__petals--back {
+  opacity: 0.55;
+}
+.portal__seed {
+  fill: var(--marble);
+}
+.portal__core {
+  fill: var(--stone);
+  stroke: var(--marble);
+  stroke-width: 1.5;
+}
+.portal__fillet {
+  fill: none;
+  stroke: var(--fillet);
+}
+.portal__arch {
+  fill: none;
+  stroke: var(--marble);
+}
+@media (min-width: 64rem) {
+  .hero__portal {
+    inset: -3svh -2.5vw 0;
+  }
+}
+/* the portal's marble band replaces the old outline; the fine gilt line stays */
+.hero__frame-outer {
+  display: none;
+}
+
+/* the paper grain over the painting */
+.hero__grain {
+  --tx-opacity: 0.14;
+  z-index: 3;
 }

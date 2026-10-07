@@ -3,7 +3,7 @@ import { deepCut } from '../../data/deep';
 import { discover } from '../../lib/deep';
 import { useReveal } from './useReveal';
 
-type KiteProps = { left: string; top: string; size: string; tone: 'crimson' | 'teal' | 'gold'; delay: number; tilt: number };
+type KiteProps = { left: string; top: string; size: string; tone: 'crimson'; delay: number; tilt: number };
 
 function KiteArt() {
   return (
@@ -29,16 +29,8 @@ function KiteArt() {
 const kiteStyle = ({ left, top, size, delay, tilt }: KiteProps) =>
   ({ left, top, width: size, ['--kite-delay' as string]: `${delay}s`, ['--kite-tilt' as string]: `${tilt}deg` }) as CSSProperties;
 
-/** A patang: two-tone diamond, bamboo spine and bow, paper tail, and a long curved string. */
-function Kite(props: KiteProps) {
-  return (
-    <div className={`kite kite--${props.tone}`} style={kiteStyle(props)}>
-      <KiteArt />
-    </div>
-  );
-}
-
-const CRIMSON: KiteProps = { left: '9%', top: '41%', size: 'clamp(2.4rem, 4.2vw, 7rem)', tone: 'crimson', delay: 0, tilt: -8 };
+// flying low on the left, clear of the name; its string runs down into the big tree
+const CRIMSON: KiteProps = { left: '7%', top: '49%', size: 'clamp(2.2rem, 3.6vw, 6rem)', tone: 'crimson', delay: 0, tilt: -8 };
 
 /**
  * Deep cut 02 — "The string". The big kite is a button: rest on it, focus it or tap
@@ -76,13 +68,7 @@ function MessengerKite({ ready }: { ready: boolean }) {
 }
 
 export function Kites({ ready = true }: { ready?: boolean }) {
-  return (
-    <>
-      <MessengerKite ready={ready} />
-      <Kite left="45.5%" top="4%" size="clamp(1.6rem, 2.4vw, 4rem)" tone="teal" delay={-2.2} tilt={6} />
-      <Kite left="84%" top="22%" size="clamp(1.8rem, 2.6vw, 4.5rem)" tone="gold" delay={-4.1} tilt={4} />
-    </>
-  );
+  return <MessengerKite ready={ready} />;
 }
 
 /** Tonight's moon over Delhi, lit on the sun's side: the right while it waxes, the left as it wanes. */
@@ -98,15 +84,6 @@ export function Moon({ phase }: { phase: number }) {
     <svg className="moon" viewBox="-50 -50 100 100" aria-hidden="true">
       <circle className="moon__dark" r="49.5" />
       <path className="moon__lit" d={d} />
-    </svg>
-  );
-}
-
-/** Retro flat-bottomed cloud. */
-export function Cloud({ className, style }: { className?: string; style?: CSSProperties }) {
-  return (
-    <svg className={`cloud ${className ?? ''}`} style={style} viewBox="0 0 260 90" aria-hidden="true">
-      <path d="M8 86h244c6 0 8-8 3-12-8-7-22-7-30-2 2-20-14-36-34-32-6-24-36-36-58-22-14-18-46-16-56 6-20-8-44 6-42 28-14-4-28 4-30 18-1 8 5 16 3 16z" />
     </svg>
   );
 }
