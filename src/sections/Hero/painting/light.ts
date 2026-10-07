@@ -77,8 +77,9 @@ export function lightFor(sky: Sky, sun: Sun): Light {
     // a low sun is weak only in its last degrees; in golden hour it still lights the stone hard
     direct = smooth(-1.5, 3.5, sun.altitude);
     warm = 1 - smooth(4, 26, sun.altitude);
-    // with the sun behind the building, its face sees only the sky
-    ambient = (sky === 'day' ? 0.4 : 0.27) * (s.w < 0 ? 0.72 : 1);
+    // with the sun behind the building its face sees only the sky: by day that is still
+    // a bright sky (the middle ink); at sunrise and sunset it falls to silhouette
+    ambient = sky === 'day' ? 0.45 : 0.27 * (s.w < 0 ? 0.72 : 1);
   }
 
   const face = (n: Vec) => tone(Math.min(1, ambient + direct * Math.max(0, dot(n, s)) * (1 - ambient)));
