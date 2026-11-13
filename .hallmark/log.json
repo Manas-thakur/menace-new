@@ -38,5 +38,13 @@
     "source": "https://rendezvous-iitd.org/",
     "enrichment": "Cover window redrawn as one poster view: Humayun's Tomb across its garden, drawn to its measured west elevation, three-tone cel shading in the house inks, lit from the sun's real bearing and height (banded sun setting behind the dome, floodlit at night); red-sandstone gateway with lotus rosettes round the arch; poster clouds, print trees, halftone; the fused skyline, metro and second kite retired",
     "brief": "Background behind the name: less crowded, more detailed and precise, like art that matches the theme; fix the empty space round the arch"
+  },
+  {
+    "date": "2026-11-13",
+    "macrostructure": "Stacked Drawers (studied)",
+    "theme": "studied-DNA, original cover",
+    "source": "https://rendezvous-iitd.org/",
+    "enrichment": "Cover redrawn as a live pixel-art Delhi rooftop on one 12 fps canvas under the real sky over Delhi: a cat, a desi dog, sparrows, pigeons, a kid with a kite; name and an RPG-style menu box in Pixelify Sans over it. The arch-window cover saved at /?only=arch. Performance pass: drawers mount one per task after the intro, covered drawers pause and stop painting on every screen size, no Lenis on touch devices",
+    "brief": "Fix glitches and hangs on weak phones; replace the home page with something live: pixel art scenery with pixel pets moving around"
   }
 ]

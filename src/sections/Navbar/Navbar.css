@@ -24,6 +24,8 @@
 }
 .navbar__turn {
   display: inline-flex;
+  /* turned every scroll frame: its own layer, so a turn is a compositor update, not a repaint */
+  will-change: transform;
 }
 .navbar__mark {
   width: clamp(2.25rem, 2.6vw, 3.25rem);

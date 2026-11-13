@@ -4,7 +4,8 @@ import { flags, prefersReducedMotion } from './lib/motion';
 import { keepFocusVisible, naturalTop, startSmoothScroll } from './lib/scroll';
 import { SvgDefs } from './components/primitives/Print';
 import { Kit } from './components/primitives/Kit';
-import { Hero } from './sections/Hero/Hero';
+import { RooftopCover } from './sections/Rooftop/RooftopCover';
+import { INTRO_DONE } from './lib/intro';
 import { Navbar } from './sections/Navbar/Navbar';
 import { DeepToast } from './components/deep/DeepToast';
 import { LinerNotes } from './components/deep/LinerNotes';
@@ -13,6 +14,8 @@ export type SectionProps = { index: number };
 
 /* The lake cover (मानसरोवर) is saved, not shipped on the page: its own chunk, at /?only=lake. */
 const LakePage = lazy(() => import('./sections/Lake/Lake').then((m) => ({ default: m.LakePage })));
+/* So is the arch-window cover (Humayun's Tomb under Delhi's sky): at /?only=arch. */
+const ArchCover = lazy(() => import('./sections/Hero/Hero').then((m) => ({ default: m.Hero })));
 type Section = ComponentType<SectionProps>;
 
 /* The hero ships in the main bundle for a fast first paint; the drawers below the
@@ -70,6 +73,74 @@ function useSections(ids: string[]) {
   return sections;
 }
 
+/**
+ * How many drawers are on the page so far. Mounting all eight in one go asks a phone
+ * to style and lay out the whole record in a single frame (seconds on a weak one),
+ * right while the hero's intro is playing. So the intro gets the main thread to
+ * itself, then the drawers arrive one per task, top first, with a frame painted in
+ * between. A visitor who scrolls, taps or presses a key early starts them at once.
+ */
+function useMountedCount(total: number, loaded: boolean, immediate: boolean) {
+  const [count, setCount] = useState(0);
+  const [started, setStarted] = useState(immediate);
+
+  useEffect(() => {
+    if (started) return;
+    const go = () => setStarted(true);
+    const events = ['wheel', 'touchstart', 'keydown', 'pointerdown', 'scroll'] as const;
+    events.forEach((e) => window.addEventListener(e, go, { once: true, passive: true }));
+    window.addEventListener(INTRO_DONE, go, { once: true });
+    const fallback = window.setTimeout(go, 3600);
+    return () => {
+      events.forEach((e) => window.removeEventListener(e, go));
+      window.removeEventListener(INTRO_DONE, go);
+      window.clearTimeout(fallback);
+    };
+  }, [started]);
+
+  useEffect(() => {
+    if (!loaded || !started || count >= total) return;
+    let timer = 0;
+    // after the last drawer's frame has painted, in a fresh task
+    const raf = requestAnimationFrame(() => {
+      timer = window.setTimeout(() => setCount((c) => c + 1), 0);
+    });
+    return () => {
+      cancelAnimationFrame(raf);
+      window.clearTimeout(timer);
+    };
+  }, [loaded, started, count, total]);
+
+  return count;
+}
+
+/**
+ * A drawer that the next one has slid over completely is out of sight, at every
+ * screen size: mark it covered so its loops pause and it is not painted. (Pinned
+ * drawers still "intersect" the viewport, so the IntersectionObserver can't tell.)
+ */
+function useCoveredDrawers(ready: boolean) {
+  useGSAP(
+    () => {
+      if (!ready) return;
+      const drawers = gsap.utils.toArray<HTMLElement>('.drawer');
+      drawers.forEach((el, i) => {
+        const next = drawers[i + 1];
+        if (!next) return;
+        ScrollTrigger.create({
+          start: () => naturalTop(next),
+          end: 'max',
+          invalidateOnRefresh: true,
+          onToggle: (self) => {
+            el.dataset.covered = String(self.isActive);
+          },
+        });
+      });
+    },
+    { dependencies: [ready] }
+  );
+}
+
 /** Each covered drawer recedes (scales back, dims) while the next slides over it. */
 function useStackRecede(ready: boolean) {
   useGSAP(
@@ -102,8 +173,6 @@ function useStackRecede(ready: boolean) {
                 scrub: true,
                 invalidateOnRefresh: true,
                 onToggle: (self) => promote(self.isActive),
-                onLeave: () => (el.dataset.covered = 'true'),
-                onEnterBack: () => (el.dataset.covered = 'false'),
               },
             })
             .fromTo(inner, { scale: 1, transformOrigin: origin }, { scale: 0.93, ease: 'none' }, 0)
@@ -118,7 +187,8 @@ function useStackRecede(ready: boolean) {
 
 function FullPage() {
   const sections = useSections(DRAWERS.map((d) => d.id));
-  const ready = sections !== null;
+  const mounted = useMountedCount(DRAWERS.length, sections !== null, flags.noIntro || prefersReducedMotion());
+  const ready = sections !== null && mounted >= DRAWERS.length;
 
   useEffect(() => {
     const stop = startSmoothScroll();
@@ -135,6 +205,7 @@ function FullPage() {
     document.fonts.ready.then(() => ScrollTrigger.refresh());
   }, [ready]);
 
+  useCoveredDrawers(ready);
   useStackRecede(ready);
 
   return (
@@ -144,10 +215,11 @@ function FullPage() {
         Skip to content
       </a>
       <div className="stack">
-        <Hero index={0} />
+        <RooftopCover index={0} />
         <Navbar />
-        <main id="main">
-          {sections?.map((Section, i) => {
+        {/* holds the record's length while drawers are still arriving, so the page can scroll from the start */}
+        <main id="main" style={ready ? undefined : { minHeight: `${(DRAWERS.length - mounted) * 100}svh` }}>
+          {sections?.slice(0, mounted).map((Section, i) => {
             const d = DRAWERS[i];
             return Section ? (
               <DrawerBoundary key={d.id} id={d.id} label={d.label}>
@@ -177,7 +249,7 @@ function Preview({ id }: { id: string }) {
   return (
     <div className="is-preview">
       <SvgDefs />
-      {isHero ? <Hero index={0} /> : <Navbar />}
+      {isHero ? <RooftopCover index={0} /> : <Navbar />}
       {!isHero && Section && (
         <DrawerBoundary id={id} label={id}>
           <Section index={index} />
@@ -198,6 +270,19 @@ export default function App() {
         <SvgDefs />
         <Kit />
       </>
+    );
+  }
+  if (flags.only === 'arch') {
+    return (
+      <div className="is-preview">
+        <SvgDefs />
+        <Suspense fallback={null}>
+          <ArchCover index={0} />
+        </Suspense>
+        <div className="grain" aria-hidden="true" />
+        <DeepToast />
+        <LinerNotes />
+      </div>
     );
   }
   if (flags.only === 'lake') {

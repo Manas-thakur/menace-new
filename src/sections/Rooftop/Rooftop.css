@@ -1,0 +1,391 @@
+/* Hallmark · cover: "Rooftop" — a live pixel-art Delhi chhat under the real sky ·
+ * tone: playful · anchor: the house inks (gold on indigo night, cream on mustard day)
+ * display: Pixelify Sans (cover only) · body: Newsreader (site) · motion: one 12 fps canvas,
+ * paused off screen · enrichment: Tier A canvas pixel art, hand-drawn in code */
+
+.roof {
+  background: var(--color-indigo-night);
+  color: var(--color-cream);
+}
+
+.roof__stage {
+  position: relative;
+  height: 100svh;
+  min-height: 34rem;
+  overflow: clip;
+}
+
+.roof__canvas {
+  position: absolute;
+  inset: 0 auto auto 0;
+  display: block;
+  max-width: none;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.roof__bubbles {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* speech bubbles over the cast (positioned by the scene) */
+.rooftop__bubble {
+  position: absolute;
+  left: 0;
+  top: 0;
+  max-width: min(17rem, 72vw);
+  padding: 0.35em 0.6em 0.4em;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  border: 2px solid var(--color-ink);
+  box-shadow: 3px 3px 0 var(--color-ink);
+  font: 600 var(--text-sm) / 1.2 var(--font-pixel);
+  text-align: center;
+  width: max-content;
+  opacity: 0;
+  transition: opacity 120ms steps(2);
+}
+.rooftop__bubble[lang='hi'] {
+  font-family: var(--font-deva);
+  font-weight: 400;
+}
+.rooftop__bubble[lang='ko'] {
+  font-family: var(--font-hangul);
+  font-weight: 400;
+}
+.rooftop__bubble::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
+  background: var(--color-paper);
+  box-shadow:
+    2px 0 0 var(--color-ink),
+    -2px 0 0 var(--color-ink),
+    0 2px 0 var(--color-ink);
+}
+.rooftop__bubble.is-on {
+  opacity: 1;
+  animation: roof-pop 240ms steps(3) both;
+}
+@keyframes roof-pop {
+  from {
+    scale: 0.6;
+  }
+}
+
+/* ── Name, line, and the game box ─────────────────────────── */
+.roof__hud {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-lg) var(--gutter) 0;
+  pointer-events: none;
+}
+.roof__hud a,
+.roof__hud button,
+.roof__first {
+  pointer-events: auto;
+}
+
+.roof__title {
+  min-width: 0;
+}
+.roof__name-wrap {
+  position: relative;
+}
+
+.roof__name {
+  display: flex;
+  flex-direction: column;
+  font: 700 clamp(3.1rem, 12.5vw, 8.75rem) / 0.86 var(--font-pixel);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--color-cream);
+  text-shadow:
+    0.045em 0.045em 0 var(--color-ink),
+    0.09em 0.09em 0 color-mix(in oklch, var(--color-ink) 45%, transparent);
+}
+.roof__first {
+  position: relative;
+  width: fit-content;
+  cursor: help;
+}
+.roof__last {
+  color: var(--color-gold);
+}
+.roof__deva {
+  position: absolute;
+  left: 0;
+  bottom: 0.02em;
+  font-family: var(--font-deva);
+  font-size: 0.86em;
+  line-height: 1;
+  text-transform: none;
+  white-space: nowrap;
+  opacity: 0;
+}
+.roof__latin,
+.roof__deva {
+  transition: opacity 240ms steps(3);
+}
+.roof__name[data-open] .roof__latin {
+  opacity: 0;
+}
+.roof__name[data-open] .roof__deva {
+  opacity: 1;
+}
+
+.roof__tag {
+  position: absolute;
+  left: 0;
+  top: calc(100% + var(--space-2xs));
+  z-index: 4;
+  display: grid;
+  gap: 0.2em;
+  width: max-content;
+  max-width: min(20rem, 80vw);
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  border: 2px solid var(--color-ink);
+  box-shadow: 4px 4px 0 var(--color-ink);
+  font: 500 var(--text-sm) / 1.3 var(--font-pixel);
+  visibility: hidden;
+  opacity: 0;
+  transition:
+    opacity 200ms steps(3),
+    visibility 0s 200ms;
+}
+.roof__tag[data-open] {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 200ms steps(3);
+}
+.roof__tag-deva {
+  font: 400 var(--text-lg) / 1.1 var(--font-deva);
+  color: var(--color-crimson);
+}
+
+.roof__tagline {
+  max-width: 30ch;
+  margin-top: var(--space-sm);
+  font: 500 clamp(1rem, 1.5vw, 1.25rem) / 1.35 var(--font-pixel);
+  color: var(--color-cream);
+  text-shadow: 2px 2px 0 var(--color-ink);
+}
+
+/* An RPG text window: hard pixel border, stepped shadow, a ▶ cursor on the choice. */
+.roof__box {
+  flex: none;
+  align-self: flex-start;
+  width: min(100%, 21rem);
+  padding: var(--space-sm) var(--space-md) var(--space-sm);
+  background: color-mix(in oklch, var(--color-night) 90%, transparent);
+  color: var(--color-cream);
+  border: 3px solid var(--color-cream);
+  box-shadow:
+    0 0 0 3px var(--color-ink),
+    6px 6px 0 3px var(--color-ink);
+  font: 500 var(--text-sm) / 1.35 var(--font-pixel);
+}
+.roof__now {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  color: var(--color-khaki);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+}
+.roof__dot {
+  width: 0.55em;
+  height: 0.55em;
+  background: var(--color-signal);
+  animation: roof-blink 1.6s steps(1) infinite;
+}
+@keyframes roof-blink {
+  50% {
+    opacity: 0.25;
+  }
+}
+.roof__now-what {
+  margin-top: 0.15em;
+  font-size: var(--text-md);
+  font-weight: 700;
+  color: var(--color-gold);
+}
+.roof__clock {
+  color: var(--color-khaki);
+  font-size: var(--text-xs);
+}
+.roof__menu ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15em 1.1em;
+  margin-top: var(--space-xs);
+  padding-top: var(--space-xs);
+  border-top: 2px dashed color-mix(in oklch, var(--color-cream) 35%, transparent);
+}
+.roof__menu a,
+.roof__cuts {
+  position: relative;
+  display: inline-block;
+  padding: 0.15em 0 0.15em 1em;
+  font: inherit;
+  white-space: nowrap;
+}
+.roof__menu a::before,
+.roof__cuts::before {
+  content: '▶';
+  position: absolute;
+  left: 0;
+  font-size: 0.7em;
+  top: 0.45em;
+  color: var(--color-gold);
+  opacity: 0;
+}
+.roof__menu a:hover,
+.roof__menu a:focus-visible,
+.roof__cuts:hover,
+.roof__cuts:focus-visible {
+  color: var(--color-gold);
+}
+.roof__menu a:hover::before,
+.roof__menu a:focus-visible::before,
+.roof__cuts:hover::before,
+.roof__cuts:focus-visible::before {
+  opacity: 1;
+}
+.roof__menu a:active,
+.roof__cuts:active {
+  translate: 1px 1px;
+}
+.roof__cuts {
+  margin-top: var(--space-2xs);
+  color: var(--color-khaki);
+  font-size: var(--text-xs);
+}
+
+/* keyboard-only twins of the pointer secrets: hidden until focused */
+.roof__sr-btn {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.roof__sr-btn:focus-visible {
+  position: static;
+  width: auto;
+  height: auto;
+  clip-path: none;
+  display: block;
+  margin-top: var(--space-2xs);
+  padding: 0.2em 0.5em;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font: 600 var(--text-xs) / 1.2 var(--font-pixel);
+}
+
+.roof__hint {
+  position: absolute;
+  z-index: 2;
+  left: var(--gutter);
+  bottom: var(--space-sm);
+  font: 500 var(--text-xs) / 1 var(--font-pixel);
+  color: var(--color-cream);
+  text-shadow: 1px 1px 0 var(--color-ink);
+  opacity: 0.75;
+  pointer-events: none;
+}
+.roof__cue {
+  position: absolute;
+  z-index: 2;
+  right: var(--gutter);
+  bottom: var(--space-xs);
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  color: var(--color-cream);
+  font: 700 var(--text-md) / 1 var(--font-pixel);
+  text-shadow: 2px 2px 0 var(--color-ink);
+}
+.roof__cue span {
+  animation: roof-bob 1.2s steps(2) infinite;
+}
+@keyframes roof-bob {
+  50% {
+    translate: 0 4px;
+  }
+}
+
+@media (min-width: 48rem) {
+  .roof__hud {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-xl);
+    padding-top: var(--space-xl);
+  }
+  .roof__menu ul {
+    flex-direction: column;
+    flex-wrap: nowrap;
+  }
+}
+
+/* short phones: tighten the stack so the scene keeps its roof */
+@media (max-width: 47.99rem) and (max-height: 44rem) {
+  .roof__tagline {
+    display: none;
+  }
+  .roof__clock {
+    display: none;
+  }
+}
+
+/* ── Intro: the scene blinks on like a cartridge, then the type drops in ── */
+.is-intro .roof__canvas {
+  animation: roof-on 640ms steps(5) both;
+}
+.is-intro .roof__first {
+  animation: roof-drop 420ms steps(4) 220ms both;
+}
+.is-intro .roof__last {
+  animation: roof-drop 420ms steps(4) 380ms both;
+}
+.is-intro .roof__tagline {
+  animation: roof-on 360ms steps(3) 640ms both;
+}
+.is-intro .roof__box {
+  animation: roof-box 420ms steps(4) 760ms both;
+}
+@keyframes roof-on {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes roof-drop {
+  from {
+    opacity: 0;
+    translate: 0 -0.35em;
+  }
+}
+@keyframes roof-box {
+  from {
+    opacity: 0;
+    clip-path: inset(0 0 100% 0);
+  }
+}

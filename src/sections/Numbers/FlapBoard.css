@@ -195,6 +195,9 @@
   font-weight: 800;
   font-variant-numeric: tabular-nums;
   box-shadow: 0 0.05em 0.08em color-mix(in oklch, var(--color-shadow) 80%, transparent);
+  /* each cell is fixed-size and changes its glyph dozens of times a second while it
+   * flutters: keep that relayout inside the cell instead of the whole page */
+  contain: size layout style;
 }
 .flap__half,
 .flap__leaf {

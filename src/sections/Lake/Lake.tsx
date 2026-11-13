@@ -14,7 +14,7 @@ import { found, stillness } from './verses';
 import './Lake.css';
 
 /* Saved, not live: the cover that was the first page from 980053b to 9241aa3, kept here
- * whole and viewable at /?only=lake. The record's first page is sections/Hero again.
+ * whole and viewable at /?only=lake. The record's first page is the rooftop (sections/Rooftop).
  *
  * Side A, the cover: मानसरोवर, the lake of the mind.
  *

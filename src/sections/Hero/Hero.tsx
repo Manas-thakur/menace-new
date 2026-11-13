@@ -8,6 +8,7 @@ import { profile } from '../../data/profile';
 import { deepCut } from '../../data/deep';
 import { discover } from '../../lib/deep';
 import { useReveal } from './useReveal';
+import { INTRO_DONE } from '../../lib/intro';
 import { Kites } from './Sky';
 import { Portal } from './Portal';
 import { Painting } from './painting/Painting';
@@ -129,7 +130,13 @@ export function Hero({ index }: SectionProps) {
         gsap.set(stage, { visibility: 'visible' });
 
         gsap
-          .timeline({ defaults: { ease: 'expoOut' }, onComplete: () => setIntroDone(true) })
+          .timeline({
+            defaults: { ease: 'expoOut' },
+            onComplete: () => {
+              setIntroDone(true);
+              window.dispatchEvent(new Event(INTRO_DONE));
+            },
+          })
           .from('.hero__portal', { opacity: 0, duration: 0.9, ease: 'power2.out' }, 0)
           .from('.hero__arch', { scaleY: 0, transformOrigin: '50% 100%', duration: 1.15 }, 0.05)
           .from('.hero__frame', { opacity: 0, duration: 0.6 }, 0.55)

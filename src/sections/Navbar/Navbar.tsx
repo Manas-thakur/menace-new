@@ -60,8 +60,13 @@ export function Navbar() {
     measure();
     // the record in the bar turns as the page plays: about a third of a turn per screen
     const still = prefersReducedMotion();
+    let lastTurn = '';
     const turn = (y: number) => {
-      if (!still && turnRef.current) turnRef.current.style.rotate = `${((y / window.innerHeight) * 120).toFixed(1)}deg`;
+      if (still || !turnRef.current) return;
+      const t = `rotate(${((y / window.innerHeight) * 120).toFixed(1)}deg)`;
+      if (t === lastTurn) return;
+      lastTurn = t;
+      turnRef.current.style.transform = t;
     };
     const st = ScrollTrigger.create({
       start: 0,

@@ -5,7 +5,9 @@ import { prefersReducedMotion } from './motion';
 let lenis: Lenis | null = null;
 
 export function startSmoothScroll(): () => void {
-  if (prefersReducedMotion()) return () => {};
+  // Touch scrolling is already native momentum (Lenis leaves it alone), so on phones
+  // and tablets Lenis would only add work to every scroll frame: skip it there.
+  if (prefersReducedMotion() || window.matchMedia('(hover: none) and (pointer: coarse)').matches) return () => {};
   lenis = new Lenis({ lerp: 0.11, wheelMultiplier: 0.95, smoothWheel: true });
   lenis.on('scroll', ScrollTrigger.update);
   const tick = (time: number) => lenis?.raf(time * 1000);

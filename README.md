@@ -31,7 +31,7 @@ All facts live in **`src/data/profile.ts`** — roles, projects, press clippings
 
 | # | Drawer | Idea | Signature motion |
 |---|---|---|---|
-| 0 | Hero — *Side A* | A red-sandstone gateway, and through its arch Humayun's Tomb across the garden, painted as a poster; gothic wordmark; an Admit One ticket on the record | Arch rises, the painting surfaces, record rings spin in, wordmark stamps down; a kite sways, black kites circle. The window shows the sky over Delhi *right now* (below), and the ticket is punched for every deep cut found |
+| 0 | Cover — *Side A* | A Delhi chhat (rooftop) live in pixel art: Bittu the cat, Sheru the dog, gauraiya on the parapet, pigeons on the water tank, a kid flying a kite; name, line and a game-style menu over the sky | The sky is Delhi's *right now* (below); the cast wanders, naps, chases the pointer and talks back when tapped; the metro crosses the skyline |
 | — | Nav | Black slab; the record dial in the hero is a second, playful nav | Active section tracks scroll; circular-reveal menu on phones |
 | 1 | About | Laptop-lid sticker wall + "Think. Use tools. Finish the job." | Stickers slap on; draggable |
 | 2 | Press — *The Kulhad Times* | Newspaper clippings of wins and milestones | Clippings pop in, tape sticks; chai pours into a kulhad |
@@ -42,7 +42,19 @@ All facts live in **`src/data/profile.ts`** — roles, projects, press clippings
 | 7 | Photos — *Darkroom* | A 36-exposure roll of Manas's photographs, three ways: on the line, as a contact sheet under a loupe, and on a colour wheel | Prints fly between views; negatives turn positive under the loupe; brushing the line makes prints swing |
 | 8 | Contact — *Side B* | Greeting in नमस्ते / 안녕하세요 / Hello, live clocks | Record spins; greeting flips |
 
-## The window onto Delhi
+## The rooftop
+
+The cover is a Delhi chhat at this moment, drawn live in pixel art on one small canvas (`src/sections/Rooftop/`). The sky is the sky over the city right now, worked out by `src/lib/delhiSky.ts`: cobalt by day with the sun where it really is, a banded poster sun on the skyline at dawn and dusk, and at night the stars, tonight's moon in its real phase, lit windows, a bulb on the clothesline post and a lantern on the kite string.
+
+Who lives up there: **Bittu**, an orange tabby who naps on the charpai and stalks the pointer across the floor; **Sheru**, a desi dog with a red collar who ambles after the cat; three **gauraiya** on the parapet, the clothesline and the charpai; **pigeons** on the water tank who take a lap over the roof now and then; and a **kid** with a charkhi, flying a kite off the edge. Tap any of them and they answer in Hindi, Korean or English. Tap the floor to scatter grain: the sparrows come down for it, and the cat notices. At night everyone sleeps where they are.
+
+It stays light on a weak phone: the canvas is a few hundred pixels across and scaled up with crisp edges, the sky, the city and the terrace are painted once into still layers, and the cast is redrawn twelve times a second only while the cover is on screen (it stops when the next drawer covers it or the tab is hidden). With reduced motion it is a still picture that still answers taps. The name, the line and the menu are real HTML text over it, so they stay sharp and readable to screen readers.
+
+`?sky=dawn|day|dusk|night` shows a given hour, and `?sun=altitude,bearing` puts the sun anywhere.
+
+## Saved cover: the arch window onto Delhi
+
+The previous cover is kept whole at **`/?only=arch`** (`src/sections/Hero/`).
 
 The arch is a window, and what it shows is Humayun's Tomb across its garden under the sky over Delhi at this moment. The tomb is drawn to the building's real proportions, measured off straight-on photographs of the west front: the seventeen-cell plinth, the iwans and their marble inlay, the jali windows, the four kiosks and the double dome with its finial (`src/sections/Hero/painting/`). It is painted the way the rest of the site is printed, in the house inks: every face in one of three flat tones, shadows with hard edges, halftone low in the sky.
 
@@ -55,7 +67,7 @@ The arch is a window, and what it shows is Humayun's Tomb across its garden unde
 
 Three gauraiya live on the cover: house sparrows, Delhi's state bird and one the city is slowly losing. They perch on what is already there (the name, the gateway's rosettes, the ticket's edge, the record), blink, peck, hop and look round; come slowly and they turn to look at you, rush them and they fly to another perch. Tap one and it chirps in a bubble: चीं-चीं, 짹짹, chirp. They sing most at dawn, and when the window shows Delhi's night they sleep where they sit (`src/sections/Hero/Sparrows.tsx`).
 
-The ticket's clock carries the same sky (☀ ◐ ☾), the contact page says what hour it is where he is, and screen readers are told what is in the window. `?sky=dawn|day|dusk|night` shows a given hour, and `?sun=altitude,bearing` (say `?sun=20,120`) puts the sun anywhere.
+The ticket's clock carries the same sky (☀ ◐ ☾), and screen readers are told what is in the window.
 
 ## Deep cuts
 
@@ -75,7 +87,7 @@ The ticket's clock carries the same sky (☀ ◐ ☾), the contact page says wha
 
 The ticket on the cover is a punch card for them, like a Delhi bus ticket: each cut a visitor finds is punched clean through it, chad and all.
 
-Every line lives in **`src/data/deep.ts`** — originals in their own script with a free translation, and a source. Rewrite them there. A visitor's finds are remembered in their own browser (`localStorage`, key `tensorman:deep-cuts`); the **Liner notes** (from the ticket, the footer, or the "deep cut found" notice) list what they've found and hint at the rest. Developers get one more in the browser console.
+Every line lives in **`src/data/deep.ts`** — originals in their own script with a free translation, and a source. Rewrite them there. A visitor's finds are remembered in their own browser (`localStorage`, key `tensorman:deep-cuts`); the **Liner notes** (from the cover's *Deep cuts* line, the footer, or the "deep cut found" notice) list what they've found and hint at the rest. Developers get one more in the browser console.
 
 ## Saved cover: मानसरोवर, the lake of the mind
 
