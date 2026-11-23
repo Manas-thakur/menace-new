@@ -7,13 +7,14 @@ import { INTRO_DONE } from '../../lib/intro';
 import { profile } from '../../data/profile';
 import { deepCut } from '../../data/deep';
 import { discover } from '../../lib/deep';
+import { useDelhiSky, type Sky } from '../../lib/delhiSky';
 import { useReveal } from '../Hero/useReveal';
 import './PondHome.css';
 
 /* Side A — मानस, the mind, the same word as the lake Mānasarovar: so the home page is a pond.
  * Squishkit's Lily pond (src/vendor/squishkit, MIT), full bleed, in its doodle look: koi gliding
- * under the pads, water lilies, a frog, dragonflies, ripples. Over it, one quiet plate: the name,
- * the line, the way in. Touch the water and an old poem surfaces. */
+ * under the pads, water lilies, a frog, dragonflies, ripples. Over it, a note pinned to the page:
+ * a taped card with the name and the line, a sticky note for right now, pencil marks in the margin. Touch the water and an old poem surfaces. */
 
 const SECTIONS: [string, string][] = [
   ['About', 'about'],
@@ -22,6 +23,8 @@ const SECTIONS: [string, string][] = [
   ['Photos', 'photos'],
   ['Say hello', 'contact'],
 ];
+
+const SKY_MARK: Record<Sky, string> = { night: '☾', dawn: '◐', day: '☀', dusk: '◑' };
 
 function useLocalTime(timeZone: string) {
   const fmt = useMemo(() => new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone }), [timeZone]);
@@ -42,6 +45,7 @@ export function PondHome({ index }: SectionProps) {
   const [ready, setReady] = useState(false);
   const [poem, setPoem] = useState(false);
   const time = useLocalTime(profile.timeZone);
+  const { sky } = useDelhiSky();
 
   // Deep cut 01 — rest on the name (or tap it): Manas turns to मानस and says what it means.
   const mind = deepCut('mind');
@@ -127,14 +131,31 @@ export function PondHome({ index }: SectionProps) {
           )}
         </p>
 
-        <div className="pondhome__plate">
-          <p className="pondhome__now">
-            <span className="pondhome__dot loop" aria-hidden="true" />
-            {profile.now} · Delhi {time}
-          </p>
+        {/* A note pinned over the pond: taped card, a sticky note, pencil marks in the margin. */}
+        <div className="pondhome__note">
+          <span className="pondhome__tape" aria-hidden="true" />
+
+          <aside className="pondhome__sticky" aria-label="Right now">
+            <span className="pondhome__sticky-head">right now →</span>
+            <span>AI infra &amp; agent harnesses at Ocally</span>
+            <span className="pondhome__sticky-time">
+              Delhi {time} <span aria-hidden="true">{SKY_MARK[sky]}</span>
+            </span>
+          </aside>
+
           <div className="pondhome__name-wrap">
+            <p className="pondhome__hi" aria-hidden="true">
+              hi, I’m
+              <svg className="pondhome__arrow" viewBox="0 0 64 40" focusable="false">
+                <path d="M3 5C17 6 33 14 46 30" />
+                <path d="M36 27L46 30L47 19" />
+              </svg>
+            </p>
             <h1 className="pondhome__name" aria-label={`${profile.first} ${profile.last}`} data-open={name.open || undefined}>
               <span className="pondhome__first" aria-hidden="true" onClick={name.toggle} {...name.pointer}>
+                <svg className="pondhome__swipe" viewBox="0 0 120 30" preserveAspectRatio="none" focusable="false">
+                  <path d="M3 13C31 8 76 9 117 5L118 21C79 26 39 23 5 27Z" />
+                </svg>
                 <span className="pondhome__latin">{profile.first}</span>
                 <span className="pondhome__deva" lang="sa">
                   {mind.lines[0].text}
@@ -149,18 +170,35 @@ export function PondHome({ index }: SectionProps) {
               <span lang="sa">{mind.lines[0].text}</span> · {mind.lines[1].text} {mind.lines[2].text}
             </p>
           </div>
-          <p className="pondhome__line">{profile.tagline}</p>
+
+          <p className="pondhome__line">
+            I build AI that doesn’t stop at the demo: agents that think a task through, reach for the right tools, and{' '}
+            <mark>finish the job</mark>.
+          </p>
+
           <nav aria-label="Sections (cover)">
             <ul className="pondhome__links">
-              {SECTIONS.map(([label, id]) => (
+              {SECTIONS.slice(0, -1).map(([label, id]) => (
                 <li key={id}>
                   <a href={`#${id}`} onClick={go(id)}>
                     {label}
                   </a>
                 </li>
               ))}
+              <li className="pondhome__hello">
+                <a href="#contact" onClick={go('contact')}>
+                  Say hello
+                  <svg className="pondhome__ring" viewBox="0 0 120 40" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+                    <path d="M14 10C40 1 103 2 114 15C124 29 64 38 26 34C2 31 3 15 22 8C38 3 62 3 78 5" />
+                  </svg>
+                </a>
+              </li>
             </ul>
           </nav>
+
+          <p className="pondhome__psst" aria-hidden="true">
+            psst, the pond is real. touch it ↗
+          </p>
           <button type="button" className="pondhome__sr-btn" onClick={touch}>
             Touch the water
           </button>

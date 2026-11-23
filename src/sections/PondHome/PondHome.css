@@ -1,17 +1,19 @@
-/* Hallmark · cover: Squishkit's Lily pond, full bleed, doodle look (crayon) · one quiet plate over it
- * (Newsreader name, the line, the way in) · motion: the pond's own canvas, held still while the
- * cover is out of sight · no blur behind the plate on purpose: a backdrop filter over a moving
- * canvas would be redrawn every frame */
+/* Hallmark · cover: Squishkit's Lily pond, full bleed, doodle look (crayon) · over it, a note pinned to
+ * the page (studied from Dribbble scrapbook and annotated-hero shots, not copied): a taped cream card,
+ * a yellow sticky note, pencil marks in the margin (an arrow, a highlighter swipe, a circled hello) ·
+ * type: Newsreader in heavy ink for the name, Patrick Hand for the handwriting, Barlow Condensed caps
+ * for the links · motion: the pond's own canvas, held still while the cover is out of sight; no blur
+ * behind the card, since a backdrop filter over a moving canvas is redrawn every frame */
 
 .pondhome {
   background: var(--color-teal-night);
-  color: var(--color-cream);
+  color: var(--color-ink);
 }
 
 .pondhome__stage {
   position: relative;
   height: 100svh;
-  min-height: 34rem;
+  min-height: 36rem;
   overflow: clip;
   background: var(--color-peacock);
 }
@@ -33,58 +35,106 @@
   height: 100%;
 }
 
-/* ── the plate ── */
-.pondhome__plate {
+/* ── the note ── */
+.pondhome__note {
   position: absolute;
   left: var(--gutter);
-  bottom: clamp(1.5rem, 6svh, 3.5rem);
+  bottom: clamp(2rem, 7svh, 4rem);
   z-index: 2;
   display: grid;
   gap: var(--space-sm);
-  width: min(34rem, calc(100% - 2 * var(--gutter)));
-  padding: clamp(1.25rem, 3vw, 2rem);
-  border-radius: 18px;
-  background: color-mix(in oklch, var(--color-teal-night) 86%, transparent);
-  box-shadow: 0 24px 48px -24px color-mix(in oklch, var(--color-night) 90%, transparent);
+  width: min(33rem, calc(100% - 2 * var(--gutter)));
+  padding: clamp(1.75rem, 3vw, 2.25rem) clamp(1.25rem, 3vw, 2rem) clamp(1.25rem, 2.5vw, 1.75rem);
+  border-radius: 3px;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  rotate: -1.2deg;
+  box-shadow:
+    0 1px 0 color-mix(in oklch, var(--color-ink) 12%, transparent),
+    0 28px 44px -26px color-mix(in oklch, var(--color-night) 85%, transparent);
+}
+.pondhome__tape {
+  position: absolute;
+  top: -0.85rem;
+  left: 38%;
+  width: 6.5rem;
+  height: 1.6rem;
+  background: color-mix(in oklch, var(--color-chai-light) 62%, transparent);
+  rotate: -3deg;
+  box-shadow: 0 1px 2px color-mix(in oklch, var(--color-ink) 18%, transparent);
 }
 
-.pondhome__now {
-  display: flex;
-  align-items: center;
-  gap: 0.55em;
-  color: color-mix(in oklch, var(--color-cream) 78%, transparent);
-  font: 500 var(--text-sm) / 1.3 var(--font-condensed);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
+/* the sticky note, stuck over the card's corner */
+.pondhome__sticky {
+  position: absolute;
+  top: -1.9rem;
+  right: -1.4rem;
+  z-index: 1;
+  display: grid;
+  gap: 0.15em;
+  width: 10.5rem;
+  padding: 0.8rem 0.85rem 0.9rem;
+  background: var(--color-auto-yellow);
+  color: var(--color-ink);
+  font: 400 var(--text-md) / 1.2 var(--font-hand);
+  rotate: 5deg;
+  box-shadow: 0 16px 22px -14px color-mix(in oklch, var(--color-night) 80%, transparent);
 }
-.pondhome__dot {
-  flex: none;
-  width: 0.5em;
-  height: 0.5em;
-  border-radius: 50%;
-  background: var(--color-phosphor);
-  animation: pondhome-dot 2s var(--ease-in-out) infinite;
+.pondhome__sticky-head {
+  color: var(--color-crimson);
 }
-@keyframes pondhome-dot {
-  50% {
-    opacity: 0.35;
-  }
+.pondhome__sticky-time {
+  margin-top: 0.2em;
+  font-size: var(--text-sm);
+  opacity: 0.8;
 }
 
+/* "hi, I'm" in pencil, with an arrow down to the name */
 .pondhome__name-wrap {
   position: relative;
 }
+.pondhome__hi {
+  position: relative;
+  width: fit-content;
+  margin-bottom: 0.1em;
+  color: var(--color-ink-soft);
+  font: 400 var(--text-lg) / 1 var(--font-hand);
+  rotate: -3deg;
+}
+.pondhome__arrow {
+  position: absolute;
+  left: calc(100% + 0.3em);
+  top: 0.35em;
+  width: 2.6em;
+  height: 1.6em;
+  fill: none;
+  stroke: var(--color-ink-soft);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .pondhome__name {
-  font: 600 clamp(2.6rem, 6.4vw, 4.75rem) / 0.98 var(--font-serif);
-  letter-spacing: -0.02em;
-  color: var(--color-cream);
+  font: 800 clamp(2.75rem, 6.2vw, 4.6rem) / 0.95 var(--font-serif);
+  letter-spacing: -0.025em;
+  color: var(--color-ink);
   overflow-wrap: normal;
 }
 .pondhome__first {
   position: relative;
   display: inline-block;
-  color: var(--color-gold);
+  isolation: isolate;
   cursor: help;
+}
+.pondhome__swipe {
+  position: absolute;
+  left: -0.08em;
+  right: -0.1em;
+  bottom: 0.02em;
+  z-index: -1;
+  width: calc(100% + 0.18em);
+  height: 0.5em;
+  fill: color-mix(in oklch, var(--color-gold) 85%, transparent);
 }
 .pondhome__deva {
   position: absolute;
@@ -107,15 +157,15 @@
 .pondhome__tag {
   position: absolute;
   left: 0;
-  bottom: calc(100% + var(--space-xs));
+  top: calc(100% + var(--space-2xs));
   z-index: 3;
   width: max-content;
   max-width: min(24rem, 80vw);
-  padding: 0.55em 0.9em;
-  border-radius: 10px;
-  background: var(--color-paper);
-  color: var(--color-ink);
-  font: 500 var(--text-sm) / 1.4 var(--font-serif);
+  padding: 0.5em 0.85em;
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font: 400 var(--text-md) / 1.3 var(--font-hand);
+  rotate: 1deg;
   visibility: hidden;
   opacity: 0;
   transition:
@@ -129,40 +179,83 @@
 }
 .pondhome__tag [lang='sa'] {
   font-family: var(--font-deva);
-  color: var(--color-crimson);
+  color: var(--color-gold);
 }
 
 .pondhome__line {
-  max-width: 36ch;
-  color: color-mix(in oklch, var(--color-cream) 86%, transparent);
-  font: 400 clamp(1.05rem, 1.4vw, 1.2rem) / 1.5 var(--font-serif);
+  max-width: 34ch;
+  color: var(--color-ink-2);
+  font: 400 clamp(1.05rem, 1.35vw, 1.18rem) / 1.5 var(--font-serif);
+}
+.pondhome__line mark {
+  padding: 0 0.1em;
+  background: linear-gradient(
+    transparent 55%,
+    color-mix(in oklch, var(--color-lotus) 70%, transparent) 55%,
+    color-mix(in oklch, var(--color-lotus) 70%, transparent) 92%,
+    transparent 92%
+  );
+  color: inherit;
 }
 
+/* ── the way in ── */
 .pondhome__links {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: var(--space-2xs) var(--space-md);
   margin-top: var(--space-2xs);
   padding-top: var(--space-sm);
-  border-top: 1px solid color-mix(in oklch, var(--color-cream) 18%, transparent);
+  border-top: 2px dashed color-mix(in oklch, var(--color-ink) 22%, transparent);
 }
 .pondhome__links a {
+  position: relative;
   display: inline-block;
-  padding: 0.2em 0;
-  color: var(--color-cream);
-  font: 600 var(--text-md) / 1.2 var(--font-condensed);
+  padding: 0.25em 0;
+  color: var(--color-ink);
+  font: 700 var(--text-md) / 1.1 var(--font-condensed);
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
   white-space: nowrap;
   background: linear-gradient(currentColor, currentColor) 0 100% / 0 2px no-repeat;
-  transition:
-    background-size 200ms var(--ease-out),
-    color 150ms var(--ease-out);
+  transition: background-size 200ms var(--ease-out);
 }
 .pondhome__links a:hover,
 .pondhome__links a:focus-visible {
-  color: var(--color-gold);
   background-size: 100% 2px;
+}
+.pondhome__hello {
+  margin-left: 0.4em;
+}
+.pondhome__hello a {
+  padding-inline: 0.5em 1.1em;
+  color: var(--color-crimson);
+  background: none;
+}
+.pondhome__ring {
+  position: absolute;
+  top: -0.5em;
+  left: -0.45em;
+  width: calc(100% + 2.1em);
+  height: calc(100% + 1em);
+  fill: none;
+  stroke: var(--color-crimson);
+  stroke-width: 2;
+  stroke-linecap: round;
+  pointer-events: none;
+  transition: rotate 200ms var(--ease-out);
+}
+.pondhome__hello a:hover .pondhome__ring,
+.pondhome__hello a:focus-visible .pondhome__ring {
+  rotate: -3deg;
+}
+
+.pondhome__psst {
+  justify-self: end;
+  margin-top: calc(var(--space-2xs) * -1);
+  color: var(--color-ink-soft);
+  font: 400 var(--text-sm) / 1 var(--font-hand);
+  rotate: -2deg;
 }
 
 /* ── the old pond ── */
@@ -177,11 +270,11 @@
   max-width: calc(100% - 2 * var(--gutter));
   padding: 0.8em 1.2em;
   translate: -50% 0;
-  border-radius: 14px;
   background: var(--color-paper);
   color: var(--color-ink);
-  font: 500 var(--text-md) / 1.4 var(--font-serif);
+  font: 400 var(--text-lg) / 1.3 var(--font-hand);
   text-align: center;
+  rotate: 1deg;
   box-shadow: 0 18px 36px -20px color-mix(in oklch, var(--color-night) 90%, transparent);
   opacity: 0;
   pointer-events: none;
@@ -194,7 +287,7 @@
   display: none;
 }
 .pondhome__poem [lang='ja'] {
-  font-size: var(--text-lg);
+  font-family: var(--font-serif);
   color: var(--color-crimson);
 }
 
@@ -231,16 +324,24 @@
   clip-path: none;
   justify-self: start;
   padding: 0.3em 0.7em;
-  border-radius: 8px;
-  background: var(--color-paper);
-  color: var(--color-ink);
+  background: var(--color-ink);
+  color: var(--color-paper);
   font-size: var(--text-sm);
 }
 
 @media (max-width: 47.99rem) {
-  .pondhome__plate {
+  .pondhome__note {
     bottom: var(--space-xl);
     gap: var(--space-xs);
+    rotate: -0.8deg;
+  }
+  /* lifted clear of the name: on a phone it sits above the card's corner */
+  .pondhome__sticky {
+    top: -6.4rem;
+    right: 0.2rem;
+    width: 9rem;
+    padding: 0.6rem 0.7rem 0.7rem;
+    font-size: var(--text-sm);
   }
   .pondhome__links {
     gap: var(--space-2xs) var(--space-sm);
@@ -250,13 +351,23 @@
   }
 }
 
-/* ── intro: the pond clears, then the plate rises ── */
-.is-intro .pondhome__plate {
-  animation: pondhome-rise 700ms var(--ease-out) 250ms both;
+/* ── intro: the note is pinned on ── */
+.is-intro .pondhome__note {
+  animation: pondhome-pin 700ms var(--ease-out) 250ms both;
 }
-@keyframes pondhome-rise {
+.is-intro .pondhome__sticky {
+  animation: pondhome-stick 500ms var(--ease-out) 700ms both;
+}
+@keyframes pondhome-pin {
   from {
     opacity: 0;
-    translate: 0 14px;
+    translate: 0 18px;
+    rotate: 2deg;
+  }
+}
+@keyframes pondhome-stick {
+  from {
+    opacity: 0;
+    scale: 1.15;
   }
 }

@@ -44,7 +44,7 @@ All facts live in **`src/data/profile.ts`** — roles, projects, press clippings
 
 ## The pond
 
-मानस is Sanskrit for the mind, and the same word as the lake Mānasarovar: so the home page is a pond. It is **Squishkit**'s *Lily pond* scene (https://squishkit.vercel.app/site/scenes.html#pond, MIT), full bleed, in its doodle look (wax crayon on warm paper, a wobbly pencil line): koi gliding under the pads, water lilies, a frog, dragonflies and ripples (`src/sections/PondHome/`). Over it sits one quiet plate: what he's doing now and the time in Delhi, the name, the line, and the sections.
+मानस is Sanskrit for the mind, and the same word as the lake Mānasarovar: so the home page is a pond. It is **Squishkit**'s *Lily pond* scene (https://squishkit.vercel.app/site/scenes.html#pond, MIT), full bleed, in its doodle look (wax crayon on warm paper, a wobbly pencil line): koi gliding under the pads, water lilies, a frog, dragonflies and ripples (`src/sections/PondHome/`). Over it, a note pinned to the page: a taped card with the name (a highlighter swipe under it), the line and the sections, a sticky note for right now and the time in Delhi, and pencil marks in the margin.
 
 Rest on the name and it turns to मानस. Touch the water and Bashō's old pond surfaces (deep cut 02).
 
