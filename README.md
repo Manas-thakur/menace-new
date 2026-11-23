@@ -31,7 +31,7 @@ All facts live in **`src/data/profile.ts`** — roles, projects, press clippings
 
 | # | Drawer | Idea | Signature motion |
 |---|---|---|---|
-| 0 | Cover — *Side A* | मानस is the mind, the same word as the lake Mānasarovar: so the home page is a pond. Squishkit's Lily pond, full bleed, in its paper look, with one quiet plate: the name, the line, the way in | Koi glide under the pads, a frog sits, dragonflies hover; touch the water and Bashō's old pond surfaces |
+| 0 | Cover — *Side A* | मानस is the mind, the same word as the lake Mānasarovar: so the home page is a pond. Squishkit's Lily pond, full bleed, in its doodle look, with one quiet plate: the name, the line, the way in | Koi glide under the pads, a frog sits, dragonflies hover; touch the water and Bashō's old pond surfaces |
 | — | Nav | Black slab; the record dial in the hero is a second, playful nav | Active section tracks scroll; circular-reveal menu on phones |
 | 1 | About | Laptop-lid sticker wall + "Think. Use tools. Finish the job." | Stickers slap on; draggable |
 | 2 | Press — *The Kulhad Times* | Newspaper clippings of wins and milestones | Clippings pop in, tape sticks; chai pours into a kulhad |
@@ -44,7 +44,7 @@ All facts live in **`src/data/profile.ts`** — roles, projects, press clippings
 
 ## The pond
 
-मानस is Sanskrit for the mind, and the same word as the lake Mānasarovar: so the home page is a pond. It is **Squishkit**'s *Lily pond* scene (https://squishkit.vercel.app/site/scenes.html#pond, MIT), full bleed, in its paper look: koi gliding under the pads, water lilies, a frog, dragonflies and ripples (`src/sections/PondHome/`). Over it sits one quiet plate: what he's doing now and the time in Delhi, the name, the line, and the sections.
+मानस is Sanskrit for the mind, and the same word as the lake Mānasarovar: so the home page is a pond. It is **Squishkit**'s *Lily pond* scene (https://squishkit.vercel.app/site/scenes.html#pond, MIT), full bleed, in its doodle look (wax crayon on warm paper, a wobbly pencil line): koi gliding under the pads, water lilies, a frog, dragonflies and ripples (`src/sections/PondHome/`). Over it sits one quiet plate: what he's doing now and the time in Delhi, the name, the line, and the sections.
 
 Rest on the name and it turns to मानस. Touch the water and Bashō's old pond surfaces (deep cut 02).
 

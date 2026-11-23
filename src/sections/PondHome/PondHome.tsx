@@ -11,7 +11,7 @@ import { useReveal } from '../Hero/useReveal';
 import './PondHome.css';
 
 /* Side A — मानस, the mind, the same word as the lake Mānasarovar: so the home page is a pond.
- * Squishkit's Lily pond (src/vendor/squishkit, MIT), full bleed, in its paper look: koi gliding
+ * Squishkit's Lily pond (src/vendor/squishkit, MIT), full bleed, in its doodle look: koi gliding
  * under the pads, water lilies, a frog, dragonflies, ripples. Over it, one quiet plate: the name,
  * the line, the way in. Touch the water and an old poem surfaces. */
 
@@ -75,7 +75,7 @@ export function PondHome({ index }: SectionProps) {
       if (!alive || !hostRef.current) return;
       const el = document.createElement('squish-scene');
       el.setAttribute('name', 'pond');
-      el.setAttribute('look', 'paper');
+      el.setAttribute('look', 'crayon'); // Squishkit's doodle look: wax crayon on warm paper
       el.setAttribute('px', window.innerWidth < 600 ? '3' : '4');
       el.setAttribute('aria-hidden', 'true');
       hostRef.current.appendChild(el);
