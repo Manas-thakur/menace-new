@@ -25,3 +25,5 @@ THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRI
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
 CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
+
+One scene is changed on purpose: the Lily pond's shader (`pond` in `scenes/shaders-nature.js`) is seen from 10% further up, and a pad with a lily has its notch on the far side from the flower, edged dark like the rim. Nothing else is changed. (The CPU fallback in `scenes/scenes-nature.js`, drawn only without WebGL, is left as it was.)

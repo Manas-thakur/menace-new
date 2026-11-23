@@ -629,7 +629,10 @@ float koi(vec2 p, float L, float i) {
 vec4 scene(vec2 uv) {
   vec2 q = vec2(uv.x * A, uv.y), G = floor(F);
   float sky = 1.;
-  vec2 wq = q + vec2(M.x * .006, 0.);
+  /* tensorman.me: seen from 10% further up, about the middle of the screen (Z), so a little more pond shows */
+  float Z = 1.1, P = PX() * Z;
+  vec2 zq = (q - vec2(A * .5, .5)) * Z + vec2(A * .5, .5);
+  vec2 wq = zq + vec2(M.x * .006, 0.);
   /* the water: deep green, caustics shimmering, the sky's soft reflection drifting */
   float n = fbm3(wq * 2.5 + vec2(T * .02, 0.));
   vec3 col = mix(C(26, 82, 96), C(48, 126, 120), n);
@@ -662,7 +665,7 @@ vec4 scene(vec2 uv) {
   for (int i = 0; i < 3; i++) {
     float fi = float(i), tt = T * .18 + fi / 3., k = fract(tt), id = floor(tt);
     vec2 c = vec2(hash(vec2(id, fi)) * A, hash(vec2(fi, id + 3.)));
-    if (abs(length(wq - c) - k * .12) < PX() * .7) col = mix(col, C(190, 236, 226), (1. - k) * .6);
+    if (abs(length(wq - c) - k * .12) < P * .7) col = mix(col, C(190, 236, 226), (1. - k) * .6);
   }
   /* the lily pads, a water lily on some */
   for (int i = 0; i < 7; i++) {
@@ -672,13 +675,16 @@ vec4 scene(vec2 uv) {
     vec2 r = wq - pc;
     if (length(r - vec2(.012, -.016)) < pd.z && length(r) >= pd.z) col *= .72;
     if (length(r) > pd.z) continue;
-    float na = h1(fi + 11.) * 6.283 + .1 * sin(T * .2 + fi), a = atan(r.y, r.x);
+    /* tensorman.me: a pad with a lily has its notch on the far side from the flower, so the notch never
+     * cuts through the flower; every notch is edged dark like the rim */
+    bool lily = fi == 0. || fi == 3. || fi == 4.;
+    float na = (lily ? -.64 + .5 * (h1(fi + 11.) - .5) : h1(fi + 11.) * 6.283) + .1 * sin(T * .2 + fi), a = atan(r.y, r.x);
     float da = abs(mod(a - na + 3.1416, 6.2832) - 3.1416);
     if (da < .3 && length(r) > pd.z * .08) continue;
     sky = 0.;
     float l = dot(r / pd.z, normalize(vec2(-.6, .8)));
     col = l > .45 ? C(136, 204, 100) : C(96, 174, 82);
-    if (length(r) > pd.z - PX() * 1.2) col = C(54, 120, 64);
+    if (length(r) > pd.z - P * 1.2 || (length(r) > pd.z * .08 && (da - .3) * length(r) < P * 1.2)) col = C(54, 120, 64);
     if (sin(a * 11. + fi) > .93 && length(r) > pd.z * .15) col = mix(col, C(150, 214, 110), .7);
     if (fi == 0. || fi == 3. || fi == 4.) {
       vec2 lp = r + vec2(pd.z * .2, -pd.z * .15);
@@ -715,23 +721,23 @@ vec4 scene(vec2 uv) {
     if (length(r / vec2(.014, .008)) < 1.) { sky = 0.; col = r.x > 0. ? C(255, 196, 214) : C(255, 226, 236); }
   }
   /* a grassy bank in one corner, mossy stones in the other */
-  float bn = noise(q * 9.);
-  if (length((q - vec2(-.06 + M.x * .012, 1.1)) * vec2(.75, 1.)) < .3 + .04 * bn) {
+  float bn = noise(zq * 9.);
+  if (length((zq - vec2(-.06 + M.x * .012, 1.1)) * vec2(.75, 1.)) < .3 + .04 * bn) {
     sky = 0.;
     col = mix(C(96, 156, 74), C(136, 194, 92), step(.5, hash(vec2(G.x, floor(G.y / 3.)))));
-    if (length((q - vec2(-.06 + M.x * .012, 1.1)) * vec2(.75, 1.)) > .3 + .04 * bn - PX() * 2.) col = C(60, 110, 60);
+    if (length((zq - vec2(-.06 + M.x * .012, 1.1)) * vec2(.75, 1.)) > .3 + .04 * bn - P * 2.) col = C(60, 110, 60);
   }
   for (int i = 0; i < 4; i++) {
     float fi = float(i);
     vec2 sc = vec2(A + .02 - .09 * fi - .04 * h1(fi) + M.x * .012, .02 + .05 * mod(fi, 2.) + .03 * h1(fi + 2.));
     float sr = .05 + .03 * h1(fi + 4.);
-    vec2 r = q - sc;
+    vec2 r = zq - sc;
     if (length(r - vec2(-.008, -.01)) < sr && length(r) >= sr) col *= .7;
     if (length(r) < sr) {
       sky = 0.;
       float l = dot(r / sr, normalize(vec2(-.6, .8)));
       col = l > .35 ? C(196, 192, 200) : l > -.3 ? C(152, 148, 164) : C(110, 106, 126);
-      if (l > .2 && noise(q * 30. + fi) > .55) col = C(116, 170, 92);
+      if (l > .2 && noise(zq * 30. + fi) > .55) col = C(116, 170, 92);
     }
   }
   /* dragonflies darting over it all */
@@ -739,7 +745,7 @@ vec4 scene(vec2 uv) {
     float fi = float(i), t = T * .25 + fi * 3.;
     vec2 pos = vec2(A * (.5 + .38 * sin(t * .9 + fi) * cos(t * .37)), .5 + .32 * sin(t * 1.3 + fi * 2.));
     vec2 vel = vec2(A * .38 * (.9 * cos(t * .9 + fi) * cos(t * .37) - .37 * sin(t * .9 + fi) * sin(t * .37)), .32 * 1.3 * cos(t * 1.3 + fi * 2.));
-    vec2 dir = normalize(vel + 1e-4), nr = vec2(-dir.y, dir.x), r = q - pos;
+    vec2 dir = normalize(vel + 1e-4), nr = vec2(-dir.y, dir.x), r = zq - pos;
     if (dot(r, r) > .01) continue;
     float al = dot(r, dir), ac = dot(r, nr);
     float fl = .9 + .1 * sin(T * 40. + fi);
@@ -747,7 +753,7 @@ vec4 scene(vec2 uv) {
       float wo = k == 0 ? .006 : -.004;
       if (length(vec2(al - wo, abs(ac) - .024 * fl) / vec2(.008, .023 * fl)) < 1.) col = mix(col, C(230, 244, 255), .6);
     }
-    if (abs(ac) < PX() * (al > .004 ? 1.2 : .7) && al > -.05 && al < .014) { sky = 0.; col = al > .004 ? C(30, 60, 120) : C(70, 160, 240); }
+    if (abs(ac) < P * (al > .004 ? 1.2 : .7) && al > -.05 && al < .014) { sky = 0.; col = al > .004 ? C(30, 60, 120) : C(70, 160, 240); }
   }
   return vec4(col, sky);
 }`,
