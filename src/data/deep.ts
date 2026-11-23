@@ -6,7 +6,7 @@
 // classic in its original language with a free translation, or a plain fact about
 // the object it is hidden in. Rewrite anything — the site reads it from here.
 
-export type DeepLang = 'en' | 'hi' | 'sa' | 'ko';
+export type DeepLang = 'en' | 'hi' | 'sa' | 'ko' | 'ja';
 
 export type DeepLine = { text: string; lang?: DeepLang };
 
@@ -42,13 +42,13 @@ export const deepCuts: DeepCut[] = [
     source: 'Sanskrit mānasa, “of the mind” — the same word as the lake Mānasarovar.',
   },
   {
-    id: 'string',
+    id: 'pond',
     no: 2,
-    title: 'The string',
-    where: 'Side A · the kites',
-    hint: 'Follow a kite down to the ground.',
-    lines: [{ text: 'A kite climbs only because someone on the ground holds the string.' }],
-    source: 'Every Delhi rooftop on the fifteenth of August.',
+    title: 'The old pond',
+    where: 'Side A · the pond',
+    hint: 'Touch the water.',
+    lines: [{ text: '古池や 蛙飛び込む 水の音', lang: 'ja' }, { text: 'The old pond. A frog jumps in. The sound of the water.' }],
+    source: 'Matsuo Bashō, 1686: the best-known poem about a pond, and all of it is one splash.',
   },
   {
     id: 'slowly',

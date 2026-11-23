@@ -1,6 +1,4 @@
 import type { CSSProperties } from 'react';
-import { deepCut } from '../../data/deep';
-import { discover } from '../../lib/deep';
 import { useReveal } from './useReveal';
 
 type KiteProps = { left: string; top: string; size: string; tone: 'crimson'; delay: number; tilt: number };
@@ -38,8 +36,9 @@ const CRIMSON: KiteProps = { left: '7%', top: '49%', size: 'clamp(2.2rem, 3.6vw,
  * notes up a kite line.
  */
 function MessengerKite({ ready }: { ready: boolean }) {
-  const cut = deepCut('string');
-  const reveal = useReveal(() => discover('string'), { enabled: ready });
+  // the kite line was a deep cut while this was the cover; saved now, it is just said
+  const cut = { lines: [{ text: 'A kite climbs only because someone on the ground holds the string.' }] };
+  const reveal = useReveal(() => {}, { enabled: ready });
   return (
     <>
       <button

@@ -46,5 +46,13 @@
     "source": "https://rendezvous-iitd.org/",
     "enrichment": "Cover redrawn as a live pixel-art Delhi rooftop on one 12 fps canvas under the real sky over Delhi: a cat, a desi dog, sparrows, pigeons, a kid with a kite; name and an RPG-style menu box in Pixelify Sans over it. The arch-window cover saved at /?only=arch. Performance pass: drawers mount one per task after the intro, covered drawers pause and stop painting on every screen size, no Lenis on touch devices",
     "brief": "Fix glitches and hangs on weak phones; replace the home page with something live: pixel art scenery with pixel pets moving around"
+  },
+  {
+    "date": "2026-11-24",
+    "macrostructure": "Stacked Drawers (studied)",
+    "theme": "studied-DNA, pond cover",
+    "source": "https://squishkit.vercel.app/site/scenes.html#pond",
+    "enrichment": "Cover is Squishkit's Lily pond scene, full bleed, paper look (vendored, trimmed, MIT), with one plate: now line, Newsreader name (मानस deep cut), the tagline, section links; touching the water surfaces Bashō's old pond (deep cut 02, replacing the kite). Rooftop saved at /?only=rooftop",
+    "brief": "Use the Squishkit pond scene as the home page, rebuilt on top of the remote main"
   }
 ]

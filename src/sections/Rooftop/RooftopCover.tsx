@@ -66,16 +66,13 @@ export function RooftopCover({ index }: SectionProps) {
     const canvas = canvasRef.current;
     const bubbles = bubblesRef.current;
     if (!stage || !canvas || !bubbles) return;
-    const string = deepCut('string');
     const roof = new Rooftop(canvas, stage, bubbles, {
       sky,
       sun,
       moon,
       still: prefersReducedMotion(),
-      onString: () => {
-        discover('string');
-        return { text: string.lines[0].text, lang: 'en' };
-      },
+      // the kite line was a deep cut while this was the cover; saved now, it is just said
+      onString: () => ({ text: 'A kite climbs only because someone on the ground holds the string.', lang: 'en' }),
     });
     engine.current = roof;
 

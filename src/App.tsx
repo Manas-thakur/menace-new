@@ -4,7 +4,7 @@ import { flags, prefersReducedMotion } from './lib/motion';
 import { keepFocusVisible, naturalTop, startSmoothScroll } from './lib/scroll';
 import { SvgDefs } from './components/primitives/Print';
 import { Kit } from './components/primitives/Kit';
-import { RooftopCover } from './sections/Rooftop/RooftopCover';
+import { PondHome } from './sections/PondHome/PondHome';
 import { INTRO_DONE } from './lib/intro';
 import { Navbar } from './sections/Navbar/Navbar';
 import { DeepToast } from './components/deep/DeepToast';
@@ -16,6 +16,8 @@ export type SectionProps = { index: number };
 const LakePage = lazy(() => import('./sections/Lake/Lake').then((m) => ({ default: m.LakePage })));
 /* So is the arch-window cover (Humayun's Tomb under Delhi's sky): at /?only=arch. */
 const ArchCover = lazy(() => import('./sections/Hero/Hero').then((m) => ({ default: m.Hero })));
+/* And the pixel rooftop: at /?only=rooftop. */
+const RooftopCover = lazy(() => import('./sections/Rooftop/RooftopCover').then((m) => ({ default: m.RooftopCover })));
 type Section = ComponentType<SectionProps>;
 
 /* The hero ships in the main bundle for a fast first paint; the drawers below the
@@ -215,7 +217,7 @@ function FullPage() {
         Skip to content
       </a>
       <div className="stack">
-        <RooftopCover index={0} />
+        <PondHome index={0} />
         <Navbar />
         {/* holds the record's length while drawers are still arriving, so the page can scroll from the start */}
         <main id="main" style={ready ? undefined : { minHeight: `${(DRAWERS.length - mounted) * 100}svh` }}>
@@ -249,7 +251,7 @@ function Preview({ id }: { id: string }) {
   return (
     <div className="is-preview">
       <SvgDefs />
-      {isHero ? <RooftopCover index={0} /> : <Navbar />}
+      {isHero ? <PondHome index={0} /> : <Navbar />}
       {!isHero && Section && (
         <DrawerBoundary id={id} label={id}>
           <Section index={index} />
@@ -272,12 +274,13 @@ export default function App() {
       </>
     );
   }
-  if (flags.only === 'arch') {
+  if (flags.only === 'arch' || flags.only === 'rooftop') {
+    const Saved = flags.only === 'arch' ? ArchCover : RooftopCover;
     return (
       <div className="is-preview">
         <SvgDefs />
         <Suspense fallback={null}>
-          <ArchCover index={0} />
+          <Saved index={0} />
         </Suspense>
         <div className="grain" aria-hidden="true" />
         <DeepToast />

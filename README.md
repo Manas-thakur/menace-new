@@ -31,7 +31,7 @@ All facts live in **`src/data/profile.ts`** — roles, projects, press clippings
 
 | # | Drawer | Idea | Signature motion |
 |---|---|---|---|
-| 0 | Cover — *Side A* | A Delhi chhat (rooftop) live in pixel art: Bittu the cat, Sheru the dog, gauraiya on the parapet, pigeons on the water tank, a kid flying a kite; name, line and a game-style menu over the sky | The sky is Delhi's *right now* (below); the cast wanders, naps, chases the pointer and talks back when tapped; the metro crosses the skyline |
+| 0 | Cover — *Side A* | मानस is the mind, the same word as the lake Mānasarovar: so the home page is a pond. Squishkit's Lily pond, full bleed, in its paper look, with one quiet plate: the name, the line, the way in | Koi glide under the pads, a frog sits, dragonflies hover; touch the water and Bashō's old pond surfaces |
 | — | Nav | Black slab; the record dial in the hero is a second, playful nav | Active section tracks scroll; circular-reveal menu on phones |
 | 1 | About | Laptop-lid sticker wall + "Think. Use tools. Finish the job." | Stickers slap on; draggable |
 | 2 | Press — *The Kulhad Times* | Newspaper clippings of wins and milestones | Clippings pop in, tape sticks; chai pours into a kulhad |
@@ -42,15 +42,17 @@ All facts live in **`src/data/profile.ts`** — roles, projects, press clippings
 | 7 | Photos — *Darkroom* | A 36-exposure roll of Manas's photographs, three ways: on the line, as a contact sheet under a loupe, and on a colour wheel | Prints fly between views; negatives turn positive under the loupe; brushing the line makes prints swing |
 | 8 | Contact — *Side B* | Greeting in नमस्ते / 안녕하세요 / Hello, live clocks | Record spins; greeting flips |
 
-## The rooftop
+## The pond
 
-The cover is a Delhi chhat at this moment, drawn live in pixel art on one small canvas (`src/sections/Rooftop/`). The sky is the sky over the city right now, worked out by `src/lib/delhiSky.ts`: cobalt by day with the sun where it really is, a banded poster sun on the skyline at dawn and dusk, and at night the stars, tonight's moon in its real phase, lit windows, a bulb on the clothesline post and a lantern on the kite string.
+मानस is Sanskrit for the mind, and the same word as the lake Mānasarovar: so the home page is a pond. It is **Squishkit**'s *Lily pond* scene (https://squishkit.vercel.app/site/scenes.html#pond, MIT), full bleed, in its paper look: koi gliding under the pads, water lilies, a frog, dragonflies and ripples (`src/sections/PondHome/`). Over it sits one quiet plate: what he's doing now and the time in Delhi, the name, the line, and the sections.
 
-Who lives up there: **Bittu**, an orange tabby who naps on the charpai and stalks the pointer across the floor; **Sheru**, a desi dog with a red collar who ambles after the cat; three **gauraiya** on the parapet, the clothesline and the charpai; **pigeons** on the water tank who take a lap over the roof now and then; and a **kid** with a charkhi, flying a kite off the edge. Tap any of them and they answer in Hindi, Korean or English. Tap the floor to scatter grain: the sparrows come down for it, and the cat notices. At night everyone sleeps where they are.
+Rest on the name and it turns to मानस. Touch the water and Bashō's old pond surfaces (deep cut 02).
 
-It stays light on a weak phone: the canvas is a few hundred pixels across and scaled up with crisp edges, the sky, the city and the terrace are painted once into still layers, and the cast is redrawn twelve times a second only while the cover is on screen (it stops when the next drawer covers it or the tab is hidden). With reduced motion it is a still picture that still answers taps. The name, the line and the menu are real HTML text over it, so they stay sharp and readable to screen readers.
+Squishkit's scene code is vendored in `src/vendor/squishkit`, trimmed to what the pond needs (see `LICENSE.md` there). It loads after the first paint in its own chunk, and the pond holds still whenever the cover is covered by the next drawer, off screen, or the tab is hidden; with reduced motion it is a still picture.
 
-`?sky=dawn|day|dusk|night` shows a given hour, and `?sun=altitude,bearing` puts the sun anywhere.
+## Saved cover: the pixel rooftop
+
+The previous cover, a Delhi chhat drawn live in pixel art with a cat, a dog, sparrows, pigeons and a kid flying a kite, is kept whole at **`/?only=rooftop`** (`src/sections/Rooftop/`).
 
 ## Saved cover: the arch window onto Delhi
 
@@ -76,7 +78,7 @@ The ticket's clock carries the same sky (☀ ◐ ☾), and screen readers are to
 | # | Cut | Where | What it says |
 |---|---|---|---|
 | 01 | मानस | the name in the hero | Manas is Sanskrit for *the mind* — he builds the other kind |
-| 02 | The string | the crimson kite | a kite climbs only because someone on the ground holds the string |
+| 02 | The old pond | the water on the cover (touch it) | Bashō: the old pond, a frog jumps in, the sound of the water |
 | 03 | Slowly | the kulhad in The Kulhad Times | Kabir: धीरे धीरे रे मना… |
 | 04 | The quiet frequency | the radio, at 108.0 (the end of the dial) | Bhagavad Gita 2.47 |
 | 05 | One step | the station clock on the departures board | Korean proverb 천 리 길도 한 걸음부터 |
