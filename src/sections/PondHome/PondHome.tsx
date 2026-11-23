@@ -122,15 +122,6 @@ export function PondHome({ index }: SectionProps) {
         <div ref={hostRef} className="pondhome__water" aria-hidden="true" onClick={touch} />
         <p className="visually-hidden">A lily pond seen from above: koi gliding under the pads, water lilies, a frog and dragonflies.</p>
 
-        <p className="pondhome__poem" aria-live="polite" data-on={poem || undefined}>
-          {poem && (
-            <>
-              <span lang="ja">{oldPond.lines[0].text}</span>
-              <span>{oldPond.lines[1].text}</span>
-            </>
-          )}
-        </p>
-
         {/* A note pinned over the pond: taped card, a sticky note, pencil marks in the margin. */}
         <div className="pondhome__note">
           <span className="pondhome__tape" aria-hidden="true" />
@@ -156,19 +147,28 @@ export function PondHome({ index }: SectionProps) {
                 <svg className="pondhome__swipe" viewBox="0 0 120 30" preserveAspectRatio="none" focusable="false">
                   <path d="M3 13C31 8 76 9 117 5L118 21C79 26 39 23 5 27Z" />
                 </svg>
-                <span className="pondhome__latin">{profile.first}</span>
-                <span className="pondhome__deva" lang="sa">
-                  {mind.lines[0].text}
-                </span>
+                {/* only the word that's showing takes up room, so the swipe and "Thakur" follow it */}
+                {name.open ? (
+                  <span key="deva" className="pondhome__deva" lang="sa">
+                    {mind.lines[0].text}
+                  </span>
+                ) : (
+                  <span key="latin" className="pondhome__latin">
+                    {profile.first}
+                  </span>
+                )}
               </span>{' '}
               <span aria-hidden="true">{profile.last}</span>
             </h1>
             <button type="button" className="pondhome__sr-btn" aria-expanded={name.open} aria-controls="pondhome-tag" onClick={name.toggle}>
               What does “{profile.first}” mean?
             </button>
-            <p id="pondhome-tag" className="pondhome__tag" aria-hidden={!name.open} data-open={name.open || undefined}>
-              <span lang="sa">{mind.lines[0].text}</span> · {mind.lines[1].text} {mind.lines[2].text}
-            </p>
+            {/* the meaning opens in its own room under the name, pushing the line down, never over it */}
+            <div className="pondhome__meaning" data-open={name.open || undefined}>
+              <p id="pondhome-tag" aria-hidden={!name.open}>
+                ↳ <span lang="sa">{mind.lines[0].text}</span> is Sanskrit for the mind. {mind.lines[2].text}
+              </p>
+            </div>
           </div>
 
           <p className="pondhome__line">
@@ -196,9 +196,19 @@ export function PondHome({ index }: SectionProps) {
             </ul>
           </nav>
 
-          <p className="pondhome__psst" aria-hidden="true">
-            psst, the pond is real. touch it ↗
-          </p>
+          {/* the margin note turns into the poem when the water is touched: in the note, never over it */}
+          <div className="pondhome__margin" aria-live="polite">
+            {poem ? (
+              <p key="poem" className="pondhome__poem">
+                <span lang="ja">{oldPond.lines[0].text}</span>
+                <span>{oldPond.lines[1].text.toLowerCase()}</span>
+              </p>
+            ) : (
+              <p key="psst" className="pondhome__psst" aria-hidden="true">
+                psst, the pond is real. touch it ↗
+              </p>
+            )}
+          </div>
           <button type="button" className="pondhome__sr-btn" onClick={touch}>
             Touch the water
           </button>
