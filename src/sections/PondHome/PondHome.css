@@ -81,7 +81,7 @@
   box-shadow: 0 16px 22px -14px color-mix(in oklch, var(--color-night) 80%, transparent);
 }
 .pondhome__sticky-head {
-  color: var(--color-crimson);
+  color: var(--color-maroon);
 }
 .pondhome__sticky-time {
   margin-top: 0.2em;
